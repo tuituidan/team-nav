@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>团队网址导航</title>
+    <!-- CSS  -->
+    <link rel="stylesheet" href="css/materialize-font.css">
+    <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+    <style type="text/css">
+        .card-row{
+            padding: 8px;
+            background-color: #f9f9f9;
+        }
+        .row{
+            margin-bottom: 0;
+        }
+        .card{
+            padding: 12px;
+        }
+        img.responsive-img {
+            vertical-align: middle;
+        }
+        .row .col {
+            padding: 0 8px;
+        }
+        .card-cat{
+            font-size: 18px;
+            color: #555;
+            padding: 10px !important;
+        }
+        .card-cat i{
+            vertical-align: middle;
+        }
+        .card .card-title {
+            font-size: 18px;
+        }
+        .card .card-action {
+            position: relative;
+            background-color: inherit;
+            border-top: 1px solid rgba(160,160,160,0.2);
+            padding: 10px 0 0 0;
+            margin-top: 10px;
+        }
+        .input-field input[type=search] {
+            background-color: white;
+            color: #444444;
+        }
+        nav .input-field label.active i {
+            color: #444444;
+        }
+        .side-nav .active {
+            background-color: #00897b;
+            color: white;
+        }
+
+        .autocomplete-content li .highlight {
+            color: #26a69a;
+        }
+        .dropdown-content li>a, .dropdown-content li>span {
+            color: #444;
+        }
+    </style>
+
+</head>
+
+<body>
+<ul class="side-nav fixed">
+    <li>
+        <div style="text-align: center">
+            <img src="assets/logo.jpg">
+        </div>
+    </li>
+    <li><a class="waves-effect" href="#">第二链接</a></li>
+    <li><a class="waves-effect active" href="#">子标题</a></li>
+    <li><a class="waves-effect" href="#">第三链接</a></li>
+</ul>
+<div style="left: 300px;position: fixed;width: calc(100% - 300px);height: 100%;overflow-y: scroll;">
+    <div class="row search-panel">
+        <nav>
+            <div class="nav-wrapper">
+                <form>
+                    <div class="input-field">
+                        <input id="search" type="search" class="autocomplete" placeholder="请输入图片标签进行搜索" required="">
+                        <label class="label-icon active" for="search">
+                            <i class="material-icons">search</i>
+                        </label>
+                        <i class="material-icons">close</i>
+                    </div>
+                </form>
+            </div>
+        </nav>
+    </div>
+    <div class="card-row">
+
+    </div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/materialize.js"></script>
+<script src="js/template.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('input.autocomplete').autocomplete({
+            data: {
+                "Apple": null,
+                "Microsoft": null,
+                "Google": 'http://placehold.it/250x250'
+            }
+        });
+        const $searchList = $(".card-row");
+        const list = [{
+            title: '常用导航',
+            items: [{
+                title: '开发环境',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '稳定环境',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '系统管理',
+                url: 'http://172.25.16.223:8088/zgba'
+            }]
+        }, {
+            title: '常用文档',
+            items: [{
+                title: '研发计划',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '环境搭建',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '重构情况',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '权限配置',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '问题记录',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '对接进度',
+                url: 'http://172.25.16.223:8088/zgba'
+            }]
+        }, {
+            title: '微服务支持平台',
+            items: [{
+                title: 'Eureka',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: 'Gateway',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: 'Master',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: 'Monitor',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '镜像仓库',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '镜像仓库UI',
+                url: 'http://172.25.16.223:8088/zgba'
+            }]
+        }, {
+            title: '微服务支持平台',
+            items: [{
+                title: 'Eureka',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: 'Gateway',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: 'Master',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: 'Monitor',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '镜像仓库',
+                url: 'http://172.25.16.223:8088/zgba'
+            }, {
+                title: '镜像仓库UI',
+                url: 'http://172.25.16.223:8088/zgba'
+            }]
+        }];
+        for (let item of list) {
+            $searchList.append(template('itemHtml', item));
+        }
+    });
+</script>
+<script type="text/html" id="itemHtml">
+    <div class="row">
+        <div class="col s12 card-cat"><i class="material-icons">turned_in_not</i>{{title}}</div>
+        {{each items as item}}
+        <div class="col s3">
+            <div class="card hoverable">
+                <div class="row valign-wrapper">
+                    <div class="col s3">
+                        <img src="assets/151150067014081.jpg" alt="" class="circle responsive-img">
+                    </div>
+                    <div class="col s9">
+                      <span class="card-title truncate">{{item.title}}</span>
+                        <span class="black-text truncate">{{item.url}}</span>
+                    </div>
+                </div>
+<!--                <div class="card-action">-->
+<!--                    <a href="#" class="teal">这是一个链接</a>-->
+<!--                    <a href="#" class="teal">这是一个链接</a>-->
+<!--                </div>-->
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</script>
+</body>
+</html>
