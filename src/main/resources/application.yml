@@ -14,8 +14,8 @@ spring:
       settings:
         web-allow-others: true
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     generate-ddl: true
     database: h2

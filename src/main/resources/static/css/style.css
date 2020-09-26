@@ -5,49 +5,95 @@
  *
  * Made By MaterializeCSS.com
  */
-
-.icon-block {
-    padding: 0 15px;
+.right-main {
+    left: 300px;
+    position: fixed;
+    width: calc(100% - 300px);
+    height: 100%;
+    overflow-y: scroll;
 }
-
-.icon-block .material-icons {
-    font-size: inherit;
+.card-row{
+    padding: 8px;
 }
-
-/* region logo */
-.logo-img{
-    height: 50px;
+.row{
+    margin-bottom: 0;
+}
+.card{
+    padding: 12px;
+    color: #0366d6;
+    box-shadow: 0 2px 2px 0 rgba(16,116,231,0.14), 0 1px 5px 0 rgba(16,116,231,0.12), 0 3px 1px -2px rgba(16,116,231,0.2);
+}
+.hoverable:hover {
+    transition: box-shadow .25s;
+    box-shadow: 0 8px 17px 0 rgba(3,102,214,0.2), 0 6px 20px 0 rgba(3,102,214,0.19);
+}
+img.responsive-img {
     vertical-align: middle;
 }
-nav .logo-text{
-    width: 160px;
-    height: 50px;
+.row .col {
+    padding: 0 8px;
+}
+.card-cat{
+    font-size: 20px;
+    color: #24292e;
+    padding: 10px !important;
+}
+.card-cat i{
     vertical-align: middle;
 }
-.logo-text text {
-    font-family: Lora;
-    letter-spacing: 10px;
-    stroke: #ffffff;
-    font-size: 32px;
-    font-weight: 700;
-    animation: textAnimate 5s infinite alternate;
+.card .card-title {
+    font-size: 18px;
 }
-
-@keyframes textAnimate {
-    0% {
-        stroke-dasharray: 0 50%;
-        stroke-dashoffset:  20%;
-        fill:hsl(0, 0%, 100%)
-
-    }
-    100% {
-        stroke-dasharray: 50% 0;
-        stroke-dashoffstet: -20%;
-        fill: hsla(200, 18%, 26%, 1);
-    }
-
+.card .card-action {
+    position: relative;
+    background-color: inherit;
+    border-top: 1px solid rgba(160,160,160,0.2);
+    padding: 10px 0 0 0;
+    margin-top: 10px;
 }
-/* endregion*/
+.input-field input[type=search] {
+    background-color: white;
+    color: #444444;
+}
+nav .input-field label.active i {
+    color: #444444;
+}
+.side-nav{
+    background-color: #05264c;
+}
+.side-nav a{
+    color: #c8e1ff;
+}
+.side-nav .active {
+    background-color: #34485f;
+    color: white;
+}
+.side-nav a:hover {
+    background-color: #34485f;
+}
+.valign-wrapper{
+    cursor: pointer;
+}
+.logo-text{
+    color: white;
+    font-size: 28px;
+    line-height: 108px;
+    text-align: left;
+}
+.logo-main{
+    text-align: center;
+    margin: 15px 0;
+}
+.countdown-text{
+    font-weight: bold;
+    font-size: 30px;
+    color: black;
+    float: left;
+    margin-left: 60px;
+}
+.countdown-time{
+    float: left;
+}
 
 /* region GitHub Cornor*/
 .github-corner :hover .octo-arm {
@@ -173,161 +219,3 @@ nav .logo-text{
     }
 }
 /* endregion*/
-
-
-/* region banner */
-.fullpage-wrapper {
-    width: 100%;
-    height: 42vh;
-    background: radial-gradient(#353c44, #37474f);
-    display: flex;
-}
-.reactor-container {
-    width: 300px;
-    height: 300px;
-    margin: auto;
-    border: 1px dashed #888;
-    position: relative;
-    border-radius: 50%;
-    background-color: #384c50;
-    border: 1px solid rgb(18, 20, 20);
-    box-shadow: 0px 0px 32px 8px rgb(18, 20, 20), 0px 0px 4px 1px rgb(18, 20, 20) inset;
-}
-.reactor-container-inner {
-    height: 238px;
-    width: 238px;
-    background-color: rgb(22, 26, 27);;
-    box-shadow: 0px 0px 4px 1px #52FEFE;
-}
-
-.abs-center {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: auto;
-}
-
-.core-outer {
-    width: 180px;
-    height: 180px;
-    border: 1px solid #52FEFE;
-    background-color: #FFFFFF;
-    box-shadow: 0px 0px 2px 1px #52FEFE, 0px 0px 10px 5px #52FEFE inset;
-    transition: 1s all;
-    z-index: 1;
-}
-
-.core-outer:hover {
-    transform:rotate(360deg);
-}
-.core-wrapper {
-    width: 180px;
-    height: 180px;
-    background-color: #073c4b;
-    box-shadow: 0px 0px 5px 4px #52FEFE, 0px 0px 6px 2px #52FEFE inset;
-}
-.tunnel {
-    width: 220px;
-    height: 220px;
-    background-color: #FFFFFF;
-    box-shadow: 0px 0px 5px 1px #52FEFE, 0px 0px 5px 4px #52FEFE inset;
-}
-.coil-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    animation: 3s infinite linear reactor-anim;
-}
-.coil {
-    position: absolute;
-    width: 30px;
-    height: 20px;
-    top: calc(50% - 110px);
-    left: calc(50% - 15px);
-    transform-origin: 15px 110px;
-    background-color:#073c4b;
-    box-shadow: 0px 0px 5px #52FEFE inset;
-}
-.coil-1 {
-    transform: rotate(0deg);
-}
-.coil-2 {
-    transform: rotate(45deg);
-}
-.coil-3 {
-    transform: rotate(90deg);
-}
-.coil-4 {
-    transform: rotate(135deg);
-}
-.coil-5 {
-    transform: rotate(180deg);
-}
-.coil-6 {
-    transform: rotate(225deg);
-}
-.coil-7 {
-    transform: rotate(270deg);
-}
-.coil-8 {
-    transform: rotate(315deg);
-}
-@keyframes reactor-anim {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* endregion */
-
-/* region card */
-.card.small {
-    height: 340px;
-}
-.card .card-image .card-title{
-    padding: 8px;
-}
-.card .card-title{
-    font-size: 18px;
-}
-.card .card-icon{
-    float: left;
-    margin-right: 5px;
-    font-size: 22px;
-}
-.card.small .card-image, .card.medium .card-image, .card.large .card-image {
-    max-height: 55%;
-}
-.card.small .card-image+.card-content, .card.medium .card-image+.card-content, .card.large .card-image+.card-content {
-    max-height: 45%;
-}
-.card .card-content {
-    padding: 4px 12px;
-}
-
-.card .card-action {
-    padding: 6px;
-}
-.chip{
-    height: 25px;
-    line-height: 25px;
-    font-weight: normal;
-    margin: 3px;
-}
-
-.card .card-content p {
-    margin: 5px 0;
-}
-
-.truncate-3 {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-}
-/* endregion */
