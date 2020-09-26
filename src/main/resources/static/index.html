@@ -11,13 +11,18 @@
     <style type="text/css">
         .card-row{
             padding: 8px;
-            background-color: #f9f9f9;
         }
         .row{
             margin-bottom: 0;
         }
         .card{
             padding: 12px;
+            color: #0366d6;
+            box-shadow: 0 2px 2px 0 rgba(16,116,231,0.14), 0 1px 5px 0 rgba(16,116,231,0.12), 0 3px 1px -2px rgba(16,116,231,0.2);
+        }
+        .hoverable:hover {
+            transition: box-shadow .25s;
+            box-shadow: 0 8px 17px 0 rgba(3,102,214,0.2), 0 6px 20px 0 rgba(3,102,214,0.19);
         }
         img.responsive-img {
             vertical-align: middle;
@@ -26,8 +31,8 @@
             padding: 0 8px;
         }
         .card-cat{
-            font-size: 18px;
-            color: #555;
+            font-size: 20px;
+            color: #24292e;
             padding: 10px !important;
         }
         .card-cat i{
@@ -50,16 +55,31 @@
         nav .input-field label.active i {
             color: #444444;
         }
+        .side-nav{
+            background-color: #05264c;
+        }
+        .side-nav a{
+            color: #c8e1ff;
+        }
         .side-nav .active {
-            background-color: #00897b;
+            background-color: #34485f;
             color: white;
         }
-
-        .autocomplete-content li .highlight {
-            color: #26a69a;
+        .side-nav a:hover {
+            background-color: #34485f;
         }
-        .dropdown-content li>a, .dropdown-content li>span {
-            color: #444;
+        .valign-wrapper{
+            cursor: pointer;
+        }
+        .logo-text{
+            color: white;
+            font-size: 28px;
+            line-height: 108px;
+            text-align: left;
+        }
+        .logo-main{
+            text-align: center;
+            margin: 15px 0;
         }
     </style>
 
@@ -68,8 +88,15 @@
 <body>
 <ul class="side-nav fixed">
     <li>
-        <div style="text-align: center">
-            <img src="assets/logo.jpg">
+        <div class="logo-main">
+            <div class="row">
+                <div class="col s3">
+                    <img alt="" style="margin-top: 30px" src="assets/1180894.png"/>
+                </div>
+                <div class="col s9 logo-text">
+                    <span>团队服务导航</span>
+                </div>
+            </div>
         </div>
     </li>
     <li><a class="waves-effect" href="#">第二链接</a></li>
@@ -82,7 +109,7 @@
             <div class="nav-wrapper">
                 <form>
                     <div class="input-field">
-                        <input id="search" type="search" class="autocomplete" placeholder="请输入图片标签进行搜索" required="">
+                        <input id="search" type="search" placeholder="请输入图片标签进行搜索" required="">
                         <label class="label-icon active" for="search">
                             <i class="material-icons">search</i>
                         </label>
@@ -101,13 +128,6 @@
 <script src="js/template.js"></script>
 <script type="text/javascript">
     $(function () {
-        $('input.autocomplete').autocomplete({
-            data: {
-                "Apple": null,
-                "Microsoft": null,
-                "Google": 'http://placehold.it/250x250'
-            }
-        });
         const $searchList = $(".card-row");
         const list = [{
             title: '常用导航',
@@ -189,20 +209,24 @@
             $searchList.append(template('itemHtml', item));
         }
     });
+
+    function clickHandler() {
+        console.log('click');
+    }
 </script>
 <script type="text/html" id="itemHtml">
     <div class="row">
         <div class="col s12 card-cat"><i class="material-icons">turned_in_not</i>{{title}}</div>
         {{each items as item}}
         <div class="col s3">
-            <div class="card hoverable">
+            <div class="card hoverable" onclick="clickHandler()">
                 <div class="row valign-wrapper">
                     <div class="col s3">
                         <img src="assets/151150067014081.jpg" alt="" class="circle responsive-img">
                     </div>
                     <div class="col s9">
                       <span class="card-title truncate">{{item.title}}</span>
-                        <span class="black-text truncate">{{item.url}}</span>
+                        <span class="truncate">{{item.url}}</span>
                     </div>
                 </div>
 <!--                <div class="card-action">-->
