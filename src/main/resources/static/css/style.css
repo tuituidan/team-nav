@@ -86,11 +86,12 @@ nav .input-field label.active i {
 }
 
 .side-nav a {
-    color: #c8e1ff;
+    color: #a5bad2;
+    font-size: 20px;
 }
 
 .side-nav .active {
-    background-color: #34485f;
+    background-color: #2c4056;
     color: white;
 }
 
