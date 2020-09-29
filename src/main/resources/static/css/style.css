@@ -65,7 +65,13 @@ img.responsive-img {
     padding: 10px 0 0 0;
     margin-top: 10px;
 }
-
+.card-action-btn{
+    border: 1px solid #0366d6;
+    border-radius: 6px;
+    padding: 3px 5px;
+    margin-right: 5px !important;
+    color: #0366d6 !important;
+}
 .input-field input[type=search] {
     background-color: white;
     color: #444444;
