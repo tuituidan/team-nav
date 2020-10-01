@@ -5,21 +5,12 @@
  *
  * Made By MaterializeCSS.com
  */
-.right-main {
-    left: 300px;
-    position: fixed;
-    width: calc(100% - 300px);
-    height: 100%;
-    overflow-y: scroll;
-}
+
 
 .card-row {
     padding: 8px;
 }
 
-.row {
-    margin-bottom: 0;
-}
 
 .card {
     padding: 10px;
@@ -36,9 +27,6 @@ img.responsive-img {
     vertical-align: middle;
 }
 
-.row .col {
-    padding: 0 8px;
-}
 
 .card-cat {
     font-size: 20px;
@@ -58,62 +46,10 @@ img.responsive-img {
     padding: 6px;
 }
 
-.card .card-action {
-    position: relative;
-    background-color: inherit;
-    border-top: 1px solid rgba(160, 160, 160, 0.2);
-    padding: 10px 0 0 0;
-    margin-top: 10px;
-}
-.card-action-btn{
-    border: 1px solid #0366d6;
-    border-radius: 6px;
-    padding: 3px 5px;
-    margin-right: 5px !important;
-    color: #0366d6 !important;
-}
-.input-field input[type=search] {
-    background-color: white;
-    color: #444444;
-}
-
-nav .input-field label.active i {
-    color: #444444;
-}
-
-.side-nav {
-    background-color: #05264c;
-}
-
-.side-nav a {
-    color: #a5bad2;
-    font-size: 20px;
-}
-
-.side-nav .active {
-    background-color: #2c4056;
-    color: white;
-}
-
-.side-nav a:hover {
-    background-color: #34485f;
-}
-
 .valign-wrapper {
     cursor: pointer;
 }
 
-.logo-text {
-    color: white;
-    font-size: 28px;
-    line-height: 108px;
-    text-align: left;
-}
-
-.logo-main {
-    text-align: center;
-    margin: 15px 0;
-}
 
 .countdown-text {
     font-weight: bold;

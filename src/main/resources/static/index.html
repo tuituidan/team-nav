@@ -8,174 +8,179 @@
     <link rel="stylesheet" href="css/materialize-font.css">
     <link href="css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
     <link rel="stylesheet" href="libs/countdown/jquery.countdown.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/commons.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
-<ul class="side-nav fixed">
-    <li>
-        <div class="logo-main">
-            <div class="row">
-                <div class="col s3">
-                    <img alt="" style="margin-top: 30px" src="assets/1180894.png"/>
+<div id="app">
+    <ul class="side-nav fixed">
+        <li>
+            <div class="logo-main">
+                <div class="row">
+                    <div class="col s3">
+                        <img alt="" style="margin-top: 30px" src="assets/1180894.png"/>
+                    </div>
+                    <div class="col s9 logo-text">
+                        <span>团队服务导航</span>
+                    </div>
                 </div>
-                <div class="col s9 logo-text">
-                    <span>团队服务导航</span>
+            </div>
+        </li>
+        <li><a class="waves-effect active" href="#">常用导航</a></li>
+        <li v-for="item in datas"><a class="waves-effect" href="#" v-text="item.title"></a></li>
+    </ul>
+    <div class="right-main">
+        <nav class="z-depth-4 grey lighten-4">
+            <div class="nav-wrapper">
+                <div class="countdown-text">v2.1.3发布倒计时：</div>
+                <div class="countdown-time"></div>
+                <ul class="right">
+                    <li><a href="https://github.com/tuituidan" class="github-corner" target="_blank"
+                           title="Follow me on GitHub"
+                           aria-label="Follow me on GitHub">
+                        <svg width="62" height="62" viewBox="0 0 250 250" class="github-svg" aria-hidden="true">
+                            <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+                            <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+                                  fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+                            <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+                                  fill="currentColor" class="octo-body"></path>
+                        </svg>
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="card-row">
+            <div class="row" v-for="item in datas">
+                <div class="col s12 card-cat"><i class="material-icons">turned_in_not</i><span
+                        v-text="item.title"></span></div>
+                <div class="col s3" v-for="data in item.items">
+                    <div class="card hoverable" @click="clickHandler(data)">
+                        <div class="row valign-wrapper">
+                            <div class="col s3">
+                                <img src="assets/151150067014081.jpg" alt="" class="logo-img circle responsive-img">
+                            </div>
+                            <div class="col s9">
+                                <span class="card-title truncate" v-text="data.title"></span>
+                                <span class="truncate" v-text="data.url"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </li>
-    <li><a class="waves-effect" href="#">常用导航</a></li>
-    <li><a class="waves-effect active" href="#">基础服务</a></li>
-    <li><a class="waves-effect" href="#">微服务支持平台</a></li>
-    <li><a class="waves-effect" href="#">业务支撑服务</a></li>
-    <li><a class="waves-effect" href="#">场景服务</a></li>
-    <li><a class="waves-effect" href="#">常用文档</a></li>
-</ul>
-<div class="right-main">
-    <nav class="z-depth-4 grey lighten-4">
-        <div class="nav-wrapper">
-            <div class="countdown-text">v2.1.3发布倒计时：</div>
-            <div class="countdown-time"></div>
-            <ul class="right">
-                <li><a href="https://github.com/tuituidan" class="github-corner" target="_blank" title="Follow me on GitHub"
-                       aria-label="Follow me on GitHub">
-                    <svg width="62" height="62" viewBox="0 0 250 250" class="github-svg" aria-hidden="true">
-                        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
-                        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
-                              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
-                        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
-                              fill="currentColor" class="octo-body"></path>
-                    </svg>
-                </a></li>
-            </ul>
-        </div>
-    </nav>
-    <div class="card-row">
-
     </div>
 </div>
+
 <script src="js/jquery.min.js"></script>
 <script src="js/materialize.js"></script>
 <script src="libs/countdown/jquery.countdown.js"></script>
-<script src="js/template.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/axios.min.js"></script>
 <script type="text/javascript">
     $(function () {
         $('.countdown-time').countdown({
-            timestamp	: new Date(2021,8,30,0,0,0),
-            callback	: function(days, hours, minutes, seconds){
+            timestamp: new Date(2021, 8, 30, 0, 0, 0),
+            callback: function (days, hours, minutes, seconds) {
 
             }
         });
-        const $searchList = $(".card-row");
-        const list = [{
-            title: '常用导航',
-            items: [{
-                title: '开发环境',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '稳定环境',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '系统管理',
-                url: 'http://172.25.16.223:8088/zgba'
-            }]
-        }, {
-            title: '基础服务',
-            items: [{
-                title: '研发计划',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '环境搭建',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '重构情况',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '权限配置',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '问题记录',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '对接进度',
-                url: 'http://172.25.16.223:8088/zgba'
-            }]
-        }, {
-            title: '微服务支持平台',
-            items: [{
-                title: 'Eureka',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: 'Gateway',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: 'Master',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: 'Monitor',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '镜像仓库',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '镜像仓库UI',
-                url: 'http://172.25.16.223:8088/zgba'
-            }]
-        }, {
-            title: '业务支撑服务',
-            items: [{
-                title: 'Eureka',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: 'Gateway',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: 'Master',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: 'Monitor',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '镜像仓库',
-                url: 'http://172.25.16.223:8088/zgba'
-            }, {
-                title: '镜像仓库UI',
-                url: 'http://172.25.16.223:8088/zgba'
-            }]
-        }];
-        for (let item of list) {
-            $searchList.append(template('itemHtml', item));
-        }
     });
 
-    function clickHandler() {
-        console.log('click');
-    }
-</script>
-<script type="text/html" id="itemHtml">
-    <div class="row">
-        <div class="col s12 card-cat"><i class="material-icons">turned_in_not</i>{{title}}</div>
-        {{each items as item}}
-        <div class="col s3">
-            <div class="card hoverable" onclick="clickHandler()">
-                <div class="row valign-wrapper">
-                    <div class="col s3">
-                        <img src="assets/151150067014081.jpg" alt="" class="logo-img circle responsive-img">
-                    </div>
-                    <div class="col s9">
-                      <span class="card-title truncate">{{item.title}}</span>
-                        <span class="truncate">{{item.url}}</span>
-                    </div>
-                </div>
-                <div class="card-action">
-                    <a href="#" class="card-action-btn">编辑</a>
-                    <a href="#" class="card-action-btn">删除</a>
-                </div>
-            </div>
-        </div>
-        {{/each}}
-    </div>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                datas: [{
+                    title: '常用导航',
+                    items: [{
+                        title: '开发环境',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '稳定环境',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '系统管理',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }]
+                }, {
+                    title: '基础服务',
+                    items: [{
+                        title: '研发计划',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '环境搭建',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '重构情况',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '权限配置',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '问题记录',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '对接进度',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }]
+                }, {
+                    title: '微服务支持平台',
+                    items: [{
+                        title: 'Eureka',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: 'Gateway',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: 'Master',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: 'Monitor',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '镜像仓库',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '镜像仓库UI',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }]
+                }, {
+                    title: '业务支撑服务',
+                    items: [{
+                        title: 'Eureka',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: 'Gateway',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: 'Master',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: 'Monitor',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '镜像仓库',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }, {
+                        title: '镜像仓库UI',
+                        url: 'http://172.25.16.223:8088/zgba'
+                    }]
+                }]
+            }
+        },
+        methods: {
+            init() {
+
+            },
+            clickHandler(data) {
+                Materialize.toast(data.title);
+            }
+        },
+        mounted() {
+            this.init();
+        }
+    });
 </script>
 </body>
 </html>
