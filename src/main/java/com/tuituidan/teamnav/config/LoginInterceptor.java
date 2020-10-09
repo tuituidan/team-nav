@@ -1,5 +1,6 @@
 package com.tuituidan.teamnav.config;
 
+import com.tuituidan.teamnav.consts.Consts;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,7 +18,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (request.getServletPath().startsWith("admin")) {
+        if (request.getServletPath().startsWith(Consts.ADMIN)) {
             response.sendRedirect("/noauth.html");
         }
         return true;

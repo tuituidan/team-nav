@@ -1,18 +1,23 @@
 package com.tuituidan.teamnav.controller;
 
+import com.tuituidan.teamnav.consts.Consts;
 import com.tuituidan.teamnav.entity.Site;
 import com.tuituidan.teamnav.service.SiteService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
 import java.util.List;
-
 import javax.annotation.Resource;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * SiteController.
@@ -23,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "网址")
 @RestController
-@RequestMapping("/api/v1/site")
+@RequestMapping(Consts.API_V1 +"/site")
 public class SiteController {
 
     @Resource
