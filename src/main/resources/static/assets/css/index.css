@@ -6,7 +6,12 @@
  * Made By MaterializeCSS.com
  */
 
-
+.btn-home{
+    background-color: #cccccc;
+}
+.btn-home:hover{
+    background-color: #05264c;
+}
 .card-row {
     padding: 8px;
 }

@@ -6,7 +6,10 @@
     color: #a5bad2;
     font-size: 20px;
 }
-
+.side-nav i {
+    color: #a5bad2 !important;
+    margin: 0 8px 0 0 !important;
+}
 .side-nav .active {
     background-color: #2c4056;
     color: white;
