@@ -29,36 +29,21 @@
 </ul>
 <div class="right-main">
     <div style="margin: 20px">
-        <div style="margin: 20px 0">
-            <a class="waves-effect waves-light btn"><i class="material-icons left">add</i>添加</a>
-        </div>
-        <div class="card">
-            <table class="bordered striped highlight centered">
-                <thead>
-                <tr>
-                    <th data-field="id">分组</th>
-                    <th data-field="name">年龄</th>
-                    <th data-field="price">民族</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>张三</td>
-                    <td>17</td>
-                    <td>汉</td>
-                </tr>
-                <tr>
-                    <td>李四</td>
-                    <td>12</td>
-                    <td>苗</td>
-                </tr>
-                <tr>
-                    <td>李明</td>
-                    <td>25</td>
-                    <td>汉</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">event_note</i>
+                        <input id="icon_prefix" type="text" class="validate">
+                        <label for="icon_prefix">发布版本</label>
+                    </div>
+                    <div class="input-field col s6 mydatepick" >
+                        <i class="material-icons prefix">schedule</i>
+                        <input id="icon_telephone" type="date" class="datepicker">
+                        <label for="icon_telephone"></label>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -66,7 +51,22 @@
 <script src="../assets/js/materialize.js"></script>
 <script type="text/javascript">
     $(function () {
-
+        $('.datepicker').pickadate({
+            selectMonths: true, // Creates a dropdown to control month
+            selectYears: 15,
+            weekdaysLetter: [ '日', '一', '二', '三', '四', '五', '六' ],
+            today: '今天',
+            clear: '清除',
+            close: '关闭',
+            monthsFull: [ '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+            monthsShort: [ '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月' ],
+            weekdaysFull: [ '周日', '周一', '周二', '周三', '周四', '周五', '周六' ],
+            weekdaysShort: [ '日', '一', '二', '三', '四', '五', '六' ]
+        });
+        // 这个坑，日期选择组件点开就闪退，阻止冒泡事件后点击空白处又不能关闭了，只能手动关闭，将就着用
+        $(".input-field").click(function (event) {
+            event.stopPropagation();
+        });
     });
 </script>
 </body>
