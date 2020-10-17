@@ -21,6 +21,17 @@
 .logo-main {
     text-align: center;
     margin: 15px 0;
+    padding: 0 !important;
+    overflow: hidden;
+    height: 100px !important;
+    cursor: pointer;
+    line-height: 100px !important;
+}
+.logo-main:hover{
+    background-color: #05264c !important;
+}
+.logo-image {
+    margin-top: 30px
 }
 .logo-text {
     color: white;

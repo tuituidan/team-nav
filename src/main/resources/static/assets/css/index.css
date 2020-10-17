@@ -7,9 +7,6 @@
  */
 
 .btn-home{
-    background-color: #cccccc;
-}
-.btn-home:hover{
     background-color: #05264c;
 }
 .card-row {
