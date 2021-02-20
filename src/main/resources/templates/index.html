@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>team-nav</title>
+    <link rel="stylesheet" href="../static/assets/lib/iview/iview.css">
+    <link rel="stylesheet" href="../static/assets/css/common.css">
+    <link rel="stylesheet" href="../static/assets/css/index.css">
+</head>
+<body>
+<div v-cloak id="app">
+    <section class="admin-layout-container">
+        <div class="layout">
+            <Layout>
+                <Sider ref="sidebar" class="sidebar" hide-trigger collapsible width="260" :collapsed-width="80"
+                       v-model.trim="isCollapsed">
+                    <div class="logo">
+                        <div v-if="!isCollapsed" class="logo-saiqu">
+                            <Avatar class="logo-avatar"
+                                    shape="square" icon="ios-paper-plane"
+                                    src="../static/assets/images/logo.png"></Avatar>
+                            <span class="logo-text">团队服务导航</span>
+                        </div>
+                        <Avatar v-else class="logo-avatar"
+                                shape="square" icon="ios-paper-plane"
+                                src="../static/assets/images/logo.png"/>
+                    </div>
+                    <i-menu
+                            ref="side_menu"
+                            :active-name="activeMenuName"
+                            :open-names="openMenuName"
+                            theme="light"
+                            width="260px"
+                            :class="menuitemClasses"
+                            @on-select="choosedMenu"
+                            v-if="!isCollapsed">
+                        <template v-for="(menu,menu_index) in datas">
+                            <menu-item :name="menu.title" :key="menu.title">
+                                <Icon :size="24" type="ios-home" :key="menu_index"></Icon>
+                                <span>{{menu.title}}</span>
+                            </menu-item>
+                        </template>
+                    </i-menu>
+                    <div class="dropdown-wrap" v-if="isCollapsed">
+                        <div class="dw-content">
+                            <template v-for="(menu,menu_index) in datas">
+                                <Dropdown transfer placement="right-start"
+                                          @on-click="dropdownClick" :key="menu_index">
+                                    <i-button class="dd-btn" type="text">
+                                        <Icon :size="28" type="ios-home"></Icon>
+                                    </i-button>
+                                    <dropdown-menu class="dd-menu" slot="list">
+                                        <dropdown-item :name="menu.title">
+                                            <div class="ddi-wapper">
+                                                <Icon :size="24" type="ios-home"></Icon>
+                                                <span class="ddi-text" v-text="menu.title"></span>
+                                            </div>
+                                        </dropdown-item>
+                                    </dropdown-menu>
+                                </Dropdown>
+                            </template>
+                        </div>
+                    </div>
+                </Sider>
+                <Layout :style="{marginLeft: !isCollapsed?'260px':'80px'}">
+                    <!-- :style="{width: isCollapsed?'calc(100% - 78px)':'calc(100% - 230px)'}" -->
+                    <i-header class="layout-header-bar">
+                        <div class="header-wapper">
+                            <div class="header-left">
+                                <Icon @click.native="collapsedSider" :class="rotateIcon" type="md-menu"
+                                      size="28"></Icon>
+                                <span class="header-title">gitlab合并请求统计</span>
+                            </div>
+                            <div class="header-right">
+                                <i-button type="text" icon="md-exit" class="btn-blue" size="large" @click="quit">退出系统
+                                </i-button>
+                            </div>
+                        </div>
+                    </i-header>
+                    <i-content class="main-content">
+                        <Row v-for="item in datas" :id="item.title">
+                            <i-col span="24" class="card-cat" v-text="item.title"></i-col>
+                            <i-col span="6"  v-for="data in item.items">
+                                <Tooltip :content="data.url" max-width="320" style="width:calc(100% - 10px)">
+                                    <Card class="nav-card">
+                                        <Row>
+                                            <i-col span="4">
+                                                <Avatar class="card-avatar" icon="ios-person" size="large" src="../static/assets/images/header.jpg" />
+                                            </i-col>
+                                            <i-col span="20">
+                                                <div class="card-title" v-text="data.title"></div>
+                                                <div class="card-content" v-text="data.url"></div>
+                                            </i-col>
+                                        </Row>
+                                    </Card>
+                                </Tooltip>
+                            </i-col>
+                        </Row>
+                    </i-content>
+                </Layout>
+            </Layout>
+        </div>
+    </section>
+</div>
+<script src="../static/assets/lib/vue.min.js"></script>
+<script src="../static/assets/lib/iview/iview.min.js"></script>
+<script src="../static/assets/lib/axios.min.js"></script>
+<script src="../static/assets/js/vue-utils.js"></script>
+<script src="../static/assets/js/index.js"></script>
+</body>
+</html>
