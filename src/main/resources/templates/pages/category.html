@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="category">
+    <template id="page-category">
+        <div>
+            <Alert show-icon closable>
+                提示
+                <Icon type="ios-bulb-outline" slot="icon"></Icon>
+                <template slot="desc">展示您作为开发者的项目，添加项目也只能添加您作为项目开发者、项目维护者、项目所属者的项目。</template>
+            </Alert>
+            <div class="search-panel">
+                <div class="panel-right">
+                    <i-button type="success" icon="md-add" @click="openProjModal()">添加</i-button>
+                </div>
+            </div>
+            <div class="table-panel">
+                <i-table border stripe :columns="table.columns" :data="table.datas">
+                    <template slot-scope="{ row, index }" slot="action">
+                        <i-button type="primary" size="small" @click="openProjModal(row)">编辑</i-button>
+                        <Poptip confirm transfer
+                                title="您确定要删除此项目吗？"
+                                @on-ok="deleteItem(row.id)">
+                            <i-button type="error" size="small">删除</i-button>
+                        </Poptip>
+                    </template>
+                </i-table>
+            </div>
+        </div>
+    </template>
+    <script type="text/javascript">
+        Vue.component('page-category', {
+            template: '#page-category',
+            data() {
+                return {
+                    table: {
+                        columns: [{
+                            title: '序号',
+                            type: 'index',
+                            width: 66,
+                            align: 'center'
+                        }, {
+                            title: '项目',
+                            key: 'nameWithSpace',
+                            tooltip: true
+                        }, {
+                            title: '描述',
+                            key: 'desc',
+                            tooltip: true
+                        }, {
+                            title: '开发人员',
+                            key: 'developerNames',
+                            tooltip: true
+                        }, {
+                            title: '目标分支',
+                            key: 'targetBranch'
+                        }, {
+                            title: '标签',
+                            key: 'labelNames',
+                            tooltip: true
+                        }, {
+                            title: '操作',
+                            slot: 'action',
+                            width: 160,
+                            align: 'center'
+                        }],
+                        datas: []
+                    }
+                }
+            },
+            methods: {
+                deleteItem(id) {
+                    this.$http.delete(`/api/v1/projects/${id}`)
+                        .then(() => {
+                            this.$notice.suc('删除成功');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            this.$notice.err(err.response.data);
+                        });
+                },
+                openProjModal(item) {
+                    this.$refs.projModal.open(item);
+                }
+            }
+        })
+    </script>
+</div>
+</html>

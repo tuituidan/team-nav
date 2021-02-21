@@ -19,3 +19,6 @@ spring:
       ddl-auto: update
     generate-ddl: true
     database: h2
+  thymeleaf:
+    cache: false
+projects: 减刑假释,巡视巡查

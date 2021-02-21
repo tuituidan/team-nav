@@ -13,7 +13,7 @@ import org.slf4j.helpers.MessageFormatter;
  */
 @Slf4j
 @UtilityClass
-public class StringKit {
+public class StringExtUtils {
 
     /**
      * 使用 Slf4j 中的字符串格式化方式来格式化字符串.

@@ -1,12 +1,13 @@
 package com.tuituidan.teamnav.controller;
 
 import com.tuituidan.teamnav.consts.Consts;
-import com.tuituidan.teamnav.entity.Tag;
-import com.tuituidan.teamnav.service.TagService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import com.tuituidan.teamnav.entity.Category;
+import com.tuituidan.teamnav.service.CategoryService;
+
 import java.util.List;
+
 import javax.annotation.Resource;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * TagController.
+ * CategoryController.
  *
  * @author zhujunhan
  * @version 1.0
@@ -27,27 +28,23 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(Consts.API_V1 + "/tag")
-@Api(tags = "分类")
-public class TagController {
+public class CategoryController {
 
     @Resource
-    private TagService tagService;
+    private CategoryService categoryService;
 
-    @ApiOperation("列表查询")
     @GetMapping
-    public ResponseEntity<List<Tag>> select() {
-        return ResponseEntity.ok(tagService.select());
+    public ResponseEntity<List<Category>> select() {
+        return ResponseEntity.ok(categoryService.select());
     }
 
-    @ApiOperation("添加分类")
     @PostMapping
-    public ResponseEntity<Void> add(@RequestBody Tag tag) {
+    public ResponseEntity<Void> add(@RequestBody Category tag) {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @ApiOperation("修改分类")
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") Integer id, @RequestBody Tag tag) {
+    public ResponseEntity<Void> update(@PathVariable("id") Integer id, @RequestBody Category tag) {
         return ResponseEntity.noContent().build();
     }
 

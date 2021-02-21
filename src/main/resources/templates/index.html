@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
     <title>team-nav</title>
-    <link rel="stylesheet" href="../static/assets/lib/iview/iview.css">
-    <link rel="stylesheet" href="../static/assets/css/common.css">
-    <link rel="stylesheet" href="../static/assets/css/index.css">
+    <link type="text/css" rel="stylesheet" th:href="@{/assets/lib/iview/iview.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/assets/css/common.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/assets/css/index.css}">
 </head>
 <body>
 <div v-cloak id="app">
@@ -103,10 +103,10 @@
         </div>
     </section>
 </div>
-<script src="../static/assets/lib/vue.min.js"></script>
-<script src="../static/assets/lib/iview/iview.min.js"></script>
-<script src="../static/assets/lib/axios.min.js"></script>
-<script src="../static/assets/js/vue-utils.js"></script>
-<script src="../static/assets/js/index.js"></script>
+<script type="text/javascript" th:src="@{/assets/lib/vue.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/vue-utils.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/index.js}"></script>
 </body>
 </html>

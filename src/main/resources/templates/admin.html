@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>gitlab</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/assets/lib/iview/iview.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/assets/css/common.css}">
+    <link type="text/css" rel="stylesheet" th:href="@{/assets/css/admin.css}">
+</head>
+<div v-cloak id="app">
+    <section class="admin-layout-container">
+        <div class="layout">
+            <Layout>
+                <Sider ref="sidebar" class="sidebar" hide-trigger collapsible width="230" :collapsed-width="78"
+                       v-model.trim="isCollapsed">
+                    <div class="logo">
+                        <div class="xfind-line" v-if="!isCollapsed">
+                            <div class="line-h"></div>
+                        </div>
+                        <div v-if="!isCollapsed" class="logo-saiqu">
+                            <Avatar icon="ios-person" size="large" ></Avatar>
+                            <span class="user-name" th:text="${page}"></span>
+                        </div>
+                        <Avatar icon="ios-person" size="large" v-else />
+                    </div>
+                    <i-menu
+                            ref="side_menu"
+                            :active-name="activeMenuName"
+                            :open-names="openMenuName"
+                            theme="light"
+                            width="230px"
+                            :class="menuitemClasses"
+                            @on-select="choosedMenu"
+                            v-if="!isCollapsed">
+                        <template v-for="(menu,menu_index) in menus">
+                            <submenu :name="menu.name" v-if="menu.children" :key="menu_index">
+                                <template slot="title">
+                                    <Icon :size="20" :type="menu.icon"></Icon>
+                                    <span>{{menu.title}}</span>
+                                </template>
+                                <menu-item :name="child.name" v-for="(child ,child_index) in menu.children"
+                                           :key="child_index">
+                                    <Icon :size="20" :type="child.icon"></Icon>
+                                    <span>{{child.title}}</span>
+                                </menu-item>
+                            </submenu>
+                            <menu-item :name="menu.name" v-if="!menu.children" :key="menu_index">
+                                <Icon :size="20" :type="menu.icon" :key="menu_index"></Icon>
+                                <span>{{menu.title}}</span>
+                            </menu-item>
+                        </template>
+                    </i-menu>
+                    <div class="dropdown-wrap" v-if="isCollapsed">
+                        <div class="dw-content">
+                            <template v-for="(menu,menu_index) in menus">
+                                <Dropdown transfer placement="right-start" v-if="menu.children"
+                                          @on-click="dropdownClick" :key="menu_index">
+                                    <i-button class="dd-btn" type="text">
+                                        <Icon :size="25" :type="menu.icon"></Icon>
+                                    </i-button>
+                                    <dropdown-menu class="dd-menu" slot="list">
+                                        <template v-for="(child, i) in menu.children">
+                                            <dropdown-menu :name="child.name" :key="i">
+                                                <div class="ddi-wapper">
+                                                    <Icon :size="16" :type="child.icon"></Icon>
+                                                    <span class="ddi-text">
+                                                    {{ child.title }}
+                                                </span>
+                                                </div>
+                                            </dropdown-menu>
+                                        </template>
+                                    </dropdown-menu>
+                                </Dropdown>
+                                <Dropdown transfer v-if="!menu.children" placement="right-start"
+                                          @on-click="dropdownClick" :key="menu_index">
+                                    <i-button class="dd-btn" type="text">
+                                        <Icon :size="25" :type="menu.icon"></Icon>
+                                    </i-button>
+                                    <dropdown-menu class="dd-menu" slot="list">
+                                        <dropdown-menu :name="menu.name">
+                                            <div class="ddi-wapper">
+                                                <Icon :size="16" :type="menu.icon"></Icon>
+                                                <span class="ddi-text">
+                                                {{ menu.title }}
+                                            </span>
+                                            </div>
+                                        </dropdown-menu>
+                                    </dropdown-menu>
+                                </Dropdown>
+                            </template>
+                        </div>
+                    </div>
+                </Sider>
+                <Layout>
+                    <!-- :style="{width: isCollapsed?'calc(100% - 78px)':'calc(100% - 230px)'}" -->
+                    <i-header class="layout-header-bar">
+                        <div class="header-wapper">
+                            <div class="header-left">
+                                <Icon @click.native="collapsedSider" :class="rotateIcon" type="md-menu"
+                                      size="28"></Icon>
+                                <span class="header-title">gitlab合并请求统计</span>
+                            </div>
+                            <div class="header-right">
+                                <i-button type="text" icon="md-exit" class="btn-blue" size="large" @click="quit">退出系统
+                                </i-button>
+                            </div>
+                        </div>
+                    </i-header>
+                    <i-content class="main-content">
+                        <section class="master-page-container">
+                            <div th:utext="'<page-'+${page}+'></page-'+${page}+'>'"></div>
+                        </section>
+                    </i-content>
+                </Layout>
+            </Layout>
+        </div>
+    </section>
+</div>
+<script type="text/javascript" th:src="@{/assets/lib/vue.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/vue-utils.js}"></script>
+<div th:replace="'pages/'+${page}::${page}"></div>
+<script type="text/javascript" th:src="@{/assets/js/admin.js}"></script>
+</body>
+</html>

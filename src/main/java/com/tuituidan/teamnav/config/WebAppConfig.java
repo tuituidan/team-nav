@@ -20,7 +20,6 @@ public class WebAppConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/**")
-                .excludePathPatterns("/assets/**", "/noauth.html");
+        registry.addInterceptor(loginInterceptor);//.addPathPatterns("/admin/**");
     }
 }

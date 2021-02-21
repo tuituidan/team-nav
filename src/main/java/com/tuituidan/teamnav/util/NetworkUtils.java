@@ -17,14 +17,14 @@ import lombok.extern.slf4j.Slf4j;
  */
 @UtilityClass
 @Slf4j
-public class IpKit {
+public class NetworkUtils {
 
     /**
      * 获取本机IP.
      *
      * @return IP
      */
-    public static String getIpAddress() {
+    public static String getLocalIp() {
         try {
             InetAddress candidateAddress = null;
             for (Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces(); ifaces.hasMoreElements(); ) {
