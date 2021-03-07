@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="com-icon-select">
+    <style type="text/css">
+        .com-icon-select .icon-select-panel {
+            height: 200px;
+            overflow-y: scroll;
+        }
+
+        .com-icon-select .icon-select-panel .ivu-icon {
+            cursor: pointer;
+            margin: 3px;
+        }
+
+        .com-icon-select .icon-select-search-panel {
+            padding: 5px;
+        }
+    </style>
+    <template id="com-icon-select">
+        <Dropdown :value="value"
+                  class="com-icon-select" :style="{width:width+'px'}" @on-visible-change="visibleChange" trigger="click">
+            <i-input readonly :prefix="value" placeholder="请选择" v-model="value" :suffix="inputSuffix"></i-input>
+            <DropdownMenu slot="list">
+                <div class="icon-select-search-panel">
+                    <i-input placeholder="搜索..." v-model="searchVal" search @on-change="searchHandler"></i-input>
+                </div>
+                <div class="icon-select-panel">
+                    <Icon :title="icon" v-for="icon in searchVals" :type="icon" size="35"
+                          @click.native="selectIcon(icon)"></Icon>
+                </div>
+            </DropdownMenu>
+        </Dropdown>
+    </template>
+    <script type="text/javascript">
+        Vue.component('com-icon-select', {
+            template: '#com-icon-select',
+            props: {
+                width: {
+                    type: Number,
+                    default: 350
+                },
+                value: {
+                    type: String
+                }
+            },
+            data() {
+                return {
+                    inputSuffix: 'ios-arrow-down',
+                    searchVal: '',
+                    datas: [],
+                    searchVals: []
+                }
+            },
+            mounted() {
+                this.init();
+            },
+            methods: {
+                init() {
+                    this.$http.get('/api/v1/category/icons')
+                        .then(res => {
+                            this.datas = this.searchVals = res.data;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+                visibleChange(visible) {
+                    this.inputSuffix = visible ? 'ios-arrow-up' : 'ios-arrow-down';
+                    if (!visible) {
+                        this.searchVal = '';
+                        this.searchVals = this.datas;
+                    }
+                },
+                selectIcon(val) {
+                    this.value = val;
+                    this.$emit('input', val);
+                },
+                searchHandler() {
+                    if (this.searchVal === '') {
+                        this.searchVals = this.datas;
+                    }
+                    this.searchVals = this.datas.filter(item => item.includes(this.searchVal));
+                }
+            }
+        })
+    </script>
+</div>
+</html>

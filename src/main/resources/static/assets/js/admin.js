@@ -24,18 +24,16 @@ new Vue({
                     href: '/admin/card'
                 },
                 {
-                    title: '发布设置',
-                    name: 'merge-requests',
-                    icon: 'ios-time',
-                    href: ''
+                    title: '系统设置',
+                    name: 'settings',
+                    icon: 'md-settings',
+                    href: '/admin/settings'
                 }
             ]
-            // ------------------------------  菜单操作结束  --------------------------------
         }
     },
     mounted() {
-        const submenus = this.menus.find(item => item.name === 'merge-requests');
-        submenus.children = [];
+        // s
     },
     computed: {
         rotateIcon() {
@@ -51,11 +49,7 @@ new Vue({
             ]
         }
     },
-    // ------------------------------  菜单操作结束  --------------------------------
     methods: {
-        quit() {
-            location.href = '/api/v1/login/out';
-        },
         collapsedSider() {
             this.$refs.sidebar.toggleCollapse();
         },
@@ -83,6 +77,5 @@ new Vue({
         dropdownClick(name) {
             this.choosedMenu(name);
         }
-        // ------------------------------  菜单操作结束  --------------------------------
     }
 });

@@ -1,8 +1,5 @@
 package com.tuituidan.teamnav.controller;
 
-import com.tuituidan.teamnav.service.ProjectService;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,13 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class ViewController {
-    
-    @Resource
-    private ProjectService projectService;
 
     @GetMapping({"/", "index.html"})
     public String index(ModelMap modelMap) {
-        modelMap.put("projects", projectService.select());
         return "index";
     }
 

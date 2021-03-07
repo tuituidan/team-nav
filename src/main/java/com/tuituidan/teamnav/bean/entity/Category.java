@@ -1,4 +1,4 @@
-package com.tuituidan.teamnav.entity;
+package com.tuituidan.teamnav.bean.entity;
 
 import java.io.Serializable;
 
@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
- * Card.
+ * Category.
  *
  * @author zhujunhan
  * @version 1.0
@@ -24,10 +24,9 @@ import org.hibernate.annotations.GenericGenerator;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "T_CARD")
-public class Card implements Serializable {
-
-    private static final long serialVersionUID = -4281175586987550016L;
+@Table(name = "T_CATEGORY")
+public class Category implements Serializable {
+    private static final long serialVersionUID = -369054106198786491L;
 
     @Id
     @GeneratedValue(generator = "sys_uid")
@@ -35,15 +34,13 @@ public class Card implements Serializable {
     @Column(name = "C_ID")
     private String id;
 
-    @Column(name = "C_CATEGORY")
-    private String category;
-
     @Column(name = "C_ICON")
     private String icon;
 
     @Column(name = "C_NAME")
     private String name;
 
-    @Column(name = "C_CONTENT")
-    private String content;
+    @Column(name = "N_SORT")
+    private Integer sort;
+
 }

@@ -1,6 +1,6 @@
 package com.tuituidan.teamnav.repository;
 
-import com.tuituidan.teamnav.entity.Card;
+import com.tuituidan.teamnav.bean.entity.Card;
 
 import java.util.List;
 
@@ -21,6 +21,5 @@ public interface CardRepository extends JpaRepository<Card, String> {
      * @param category category
      * @return List
      */
-    List<Card> findByCategory(String category);
-
+    List<Card> findByCategoryOrderBySortAsc(String category);
 }

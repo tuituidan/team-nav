@@ -182,7 +182,7 @@
     justify-content: flex-start;
     cursor: pointer;
     position: relative;
-    padding-left: 10px;
+    padding-left: 5px;
     background: #05264c;
 }
 
@@ -245,7 +245,12 @@
 
 .admin-layout-container .layout-header-bar .header-wapper .header-right .btn-blue {
     color: #fff;
+    background-color: #05264c;
     font-size: 16px;
+}
+.admin-layout-container .layout-header-bar .header-wapper .header-right .btn-blue:hover {
+    color: #fff;
+    background-color: #05264c;
 }
 
 
@@ -376,7 +381,9 @@
     font-size: 18px;
     padding-top: 10px
 }
-
+.header-search{
+    width: 350px;
+}
 /* 首页 end*/
 
 /* 列表页面通用 begin */

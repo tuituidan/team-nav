@@ -1,31 +1,48 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="card">
+    <div th:replace="modal/card-modal::card-modal"></div>
     <template id="page-card">
         <div>
-            <Alert show-icon closable>
-                提示
-                <Icon type="ios-bulb-outline" slot="icon"></Icon>
-                <template slot="desc">展示您作为开发者的项目，添加项目也只能添加您作为项目开发者、项目维护者、项目所属者的项目。</template>
-            </Alert>
             <div class="search-panel">
+                <div class="panel-left">
+                    <i-form ref="searchForm"
+                            label-width="100" @submit.native.prevent>
+                        <form-item label="所属分类">
+                            <i-select v-model="category" transfer @on-change="initList">
+                                <i-option v-for="item in categorys" :key="item.id" :value="item.id"
+                                          :label="item.name"></i-option>
+                            </i-select>
+                        </form-item>
+                    </i-form>
+                </div>
                 <div class="panel-right">
-                    <i-button type="success" icon="md-add" @click="openProjModal()">添加</i-button>
+                    <i-button type="success" icon="md-add" @click="openCardModal()">添加</i-button>
                 </div>
             </div>
             <div class="table-panel">
                 <i-table border stripe :columns="table.columns" :data="table.datas">
+                    <template slot-scope="{ row, index }" slot="icon-action">
+                        <div>
+                            <Avatar size="large" v-if="row.icon.src" :src="row.icon.src"></Avatar>
+                            <Avatar size="large" v-else :style="{background: row.icon.color}">{{row.icon.text}}</Avatar>
+                        </div>
+                    </template>
+                    <template slot-scope="{ row, index }" slot="sort-action">
+                        <i-button type="primary" size="small" @click="changeSort(row, 'asc')">上移</i-button>
+                        <i-button type="primary" size="small" @click="changeSort(row, 'desc')">下移</i-button>
+                    </template>
                     <template slot-scope="{ row, index }" slot="action">
-                        <i-button type="primary" size="small" @click="openProjModal(row)">编辑</i-button>
+                        <i-button type="primary" size="small" @click="openCardModal(row)">编辑</i-button>
                         <Poptip confirm transfer
-                                title="您确定要删除此项目吗？"
+                                title="您确定要删除此项吗？"
                                 @on-ok="deleteItem(row.id)">
                             <i-button type="error" size="small">删除</i-button>
                         </Poptip>
                     </template>
                 </i-table>
             </div>
-            <project-modal ref="projModal"></project-modal>
+            <card-modal ref="cardModal" @refresh="initList"></card-modal>
         </div>
     </template>
     <script type="text/javascript">
@@ -33,6 +50,8 @@
             template: '#page-card',
             data() {
                 return {
+                    categorys: [],
+                    category: '',
                     table: {
                         columns: [{
                             title: '序号',
@@ -40,24 +59,30 @@
                             width: 66,
                             align: 'center'
                         }, {
-                            title: '项目',
-                            key: 'nameWithSpace',
+                            title: '所属分类',
+                            key: 'categoryName',
                             tooltip: true
                         }, {
-                            title: '描述',
-                            key: 'desc',
+                            title: '图标',
+                            key: 'icon',
+                            slot: 'icon-action'
+                        }, {
+                            title: '标题',
+                            key: 'title',
                             tooltip: true
                         }, {
-                            title: '开发人员',
-                            key: 'developerNames',
+                            title: '内容',
+                            key: 'content',
                             tooltip: true
                         }, {
-                            title: '目标分支',
-                            key: 'targetBranch'
-                        }, {
-                            title: '标签',
-                            key: 'labelNames',
+                            title: '链接',
+                            key: 'url',
                             tooltip: true
+                        }, {
+                            title: '调整顺序',
+                            slot: 'sort-action',
+                            width: 160,
+                            align: 'center'
                         }, {
                             title: '操作',
                             slot: 'action',
@@ -68,21 +93,53 @@
                     }
                 }
             },
+            mounted() {
+                this.getCategory();
+            },
             methods: {
+                initList() {
+                    this.$http.get(`/api/v1/card`, {params: {category: this.category}})
+                        .then(res => {
+                            this.table.datas = res.data;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        })
+                },
+                getCategory() {
+                    this.$http.get('/api/v1/category')
+                        .then(res => {
+                            this.categorys = res.data;
+                            if (this.categorys.length > 0) {
+                                this.category = this.categorys[0].id;
+                                this.initList();
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
+                },
                 deleteItem(id) {
-                    this.$http.delete(`/api/v1/projects/${id}`)
+                    this.$http.delete(`/api/v1/card/${id}`)
                         .then(() => {
                             this.$notice.suc('删除成功');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 2000);
+                            this.initList();
                         })
                         .catch(err => {
                             this.$notice.err(err.response.data);
                         });
                 },
-                openProjModal(item) {
-                    this.$refs.projModal.open(item);
+                changeSort(row, direction) {
+                    this.$http.patch(`/api/v1/card/${row.id}/${direction}`)
+                        .then(res => {
+                            this.initList();
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        })
+                },
+                openCardModal(item) {
+                    this.$refs.cardModal.open(this.category, item);
                 }
             }
         })

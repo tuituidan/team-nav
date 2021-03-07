@@ -1,7 +1,9 @@
 package com.tuituidan.teamnav.controller;
 
+import com.tuituidan.teamnav.bean.dto.CardDto;
+import com.tuituidan.teamnav.bean.vo.CardTreeVo;
+import com.tuituidan.teamnav.bean.vo.CardVo;
 import com.tuituidan.teamnav.consts.Consts;
-import com.tuituidan.teamnav.entity.Card;
 import com.tuituidan.teamnav.service.CardService;
 
 import java.util.List;
@@ -28,31 +30,44 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/10/2
  */
 @RestController
-@RequestMapping(Consts.API_V1 +"/card")
+@RequestMapping(Consts.API_V1 + "/card")
 public class CardController {
 
     @Resource
     private CardService cardService;
 
-    @GetMapping
-    public ResponseEntity<List<Card>> select(@RequestParam("card") String card) {
+    @GetMapping("/tree")
+    public ResponseEntity<List<CardTreeVo>> tree() {
+        return ResponseEntity.ok(cardService.tree());
+    }
 
-        return ResponseEntity.ok(cardService.select(card));
+    @GetMapping
+    public ResponseEntity<List<CardVo>> select(@RequestParam("category") String category) {
+        return ResponseEntity.ok(cardService.select(category));
     }
 
     @PostMapping
-    public ResponseEntity<Void> add(@RequestBody Card site) {
+    public ResponseEntity<Void> add(@RequestBody CardDto cardDto) {
+        cardService.save(cardDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PatchMapping
-    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody Card site) {
-
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody CardDto cardDto) {
+        cardDto.setId(id);
+        cardService.save(cardDto);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping
+    @PatchMapping("/{id}/{direction}")
+    public ResponseEntity<Void> changeSort(@PathVariable String id, @PathVariable String direction) {
+        cardService.changeSort(id, direction);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+        cardService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

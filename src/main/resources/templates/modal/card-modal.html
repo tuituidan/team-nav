@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="card-modal">
+    <template id="card-modal">
+        <Modal v-model="show"
+               :width="520"
+               :title="edit?'编辑卡片':'添加卡片'"
+               :loading="loading"
+               :mask-closable="false"
+               @on-ok="save">
+            <i-form ref="tableForm" :model="editItem" label-width="100" :rules="editItemRules" @submit.native.prevent>
+                <form-item label="卡片类型" prop="type">
+                    <radio-group v-model="editItem.type">
+                        <Radio v-for="item in types" :label="item.id" :key="item.id" :disabled="item.disabled">{{item.name}}</Radio>
+                    </radio-group>
+                </form-item>
+                <form-item label="所属分类" prop="category">
+                    <i-select v-model="editItem.category">
+                        <i-option v-for="item in categorys" :key="item.id" :value="item.id"
+                                  :label="item.name"></i-option>
+                    </i-select>
+                </form-item>
+                <form-item label="标题" prop="title">
+                    <i-input v-model.trim="editItem.title" placeholder="标题" @on-blur="getTextIcon"></i-input>
+                </form-item>
+                <form-item label="内容" prop="content">
+                    <i-input v-model.trim="editItem.content" placeholder="内容"></i-input>
+                </form-item>
+                <form-item label="链接" prop="url">
+                    <i-input v-model.trim="editItem.url" placeholder="链接" @on-blur="getFavicons"></i-input>
+                </form-item>
+                <form-item label="图标" prop="icon">
+                    <div>
+                        <Upload ref="uploadCtl" action="/api/v1/upload"
+                                accept="image/x-icon,image/png,image/jpeg,image/jpg,image/gif,image/bmp"
+                                :on-success="uploadSuccess">
+                            <i-button icon="ios-cloud-upload-outline">上传</i-button>
+                        </Upload>
+                        <div style="margin-top: 10px">
+                            <Badge style="margin-left: 10px;" v-for="item in icons" :key="item"
+                                   @click.native="selectIcons(item)">
+                                <Avatar size="large" v-if="item.src" :src="item.src"></Avatar>
+                                <Avatar size="large" v-else :style="{background: item.color}">{{item.text}}</Avatar>
+                                <Icon type="md-checkmark-circle" slot="count" v-if="item.checked" color="#19be6b"
+                                      size="16"/>
+                            </Badge>
+                        </div>
+                    </div>
+                </form-item>
+            </i-form>
+        </Modal>
+    </template>
+    <script type="text/javascript">
+        Vue.component('card-modal', {
+            template: '#card-modal',
+            data() {
+                return {
+                    show: false,
+                    edit: false,
+                    loading: true,
+                    types: [
+                        {
+                            id: '1',
+                            name: '普通',
+                            disabled: false
+                        },
+                        {
+                            id: '2',
+                            name: '原型',
+                            disabled: true
+                        }
+                    ],
+                    categorys: [],
+                    icons: [],
+                    editItem: {
+                        type: '1',
+                        category: '',
+                        icon: null,
+                        title: '',
+                        content: '',
+                        url: ''
+                    },
+                    editItemRules: {
+                        category: [
+                            {required: true, message: '分类名称不能为空'}
+                        ],
+                        title: [
+                            {required: true, message: '分类名称不能为空'}
+                        ],
+                        content: [
+                            {required: true, message: '内容不能为空'}
+                        ],
+                        icon: [
+                            {required: true, message: '图标不能为空，请点击选择一个图标'}
+                        ]
+                    }
+                }
+            },
+            mounted() {
+                this.getCategory();
+            },
+            methods: {
+                open(category, item) {
+                    this.icons = [];
+                    this.$refs.tableForm.resetFields();
+                    this.$refs.uploadCtl.clearFiles();
+                    this.show = true;
+                    this.edit = Boolean(item);
+                    if (this.edit) {
+                        this.editItem = {...item};
+                        this.editItem.icon.checked = true;
+                        this.icons.push(this.editItem.icon);
+                        this.getTextIcon();
+                        //this.getFavicons();
+                    } else {
+                        this.editItem.id = '';
+                        this.editItem.category = category;
+                    }
+                },
+                getCategory() {
+                    this.$http.get('/api/v1/category')
+                        .then(res => {
+                            this.categorys = res.data;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
+                },
+                uploadSuccess(response) {
+                    this.icons.push({src: response, checked: false});
+                },
+                getFavicons() {
+                    if (!this.editItem.url) {
+                        return;
+                    }
+                    this.$http.get('/api/v1/card/icons', {params: {url: this.editItem.url}})
+                        .then(res => {
+                            res.data.forEach(path => this.icons.push({src: path, checked: false}));
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
+                },
+                getTextIcon() {
+                    if (!this.editItem.title) {
+                        return;
+                    }
+                    this.$http.get('/api/v1/color')
+                        .then(res => {
+                            this.icons.push({
+                                text: this.editItem.title.substring(0, 2),
+                                color: res.data,
+                                checked: false
+                            });
+                            this.icons.push({
+                                text: this.editItem.title.substring(0, 1),
+                                color: res.data,
+                                checked: false
+                            });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
+                },
+                selectIcons(item) {
+                    this.icons.forEach(it => it.checked = false);
+                    item.checked = true;
+                    this.editItem.icon = {...item};
+                },
+                save() {
+                    this.$refs.tableForm.validate(valid => {
+                        if (valid) {
+                            this.$http.post('/api/v1/card', {...this.editItem})
+                                .then(res => {
+                                    this.$notice.suc('保存成功');
+                                    this.show = false;
+                                    this.$emit('refresh')
+                                })
+                                .catch(err => {
+                                    this.cancel();
+                                });
+                        } else {
+                            this.cancel();
+                        }
+                    });
+                },
+                cancel() {
+                    this.loading = false
+                    this.$nextTick(() => {
+                        this.loading = true
+                    })
+                }
+            }
+        })
+    </script>
+</div>
+</html>

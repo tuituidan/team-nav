@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="settings">
+    <template id="page-settings">
+        <div>
+            <div style="position: absolute">
+                <div style="font-size: 20px;padding: 10px 0 20px;font-weight: bold;">待完成功能：</div>
+                <timeline>
+                    <timeline-item v-for="item in items" :key="item" color="blue">
+                        <Icon type="ios-hammer" slot="dot"></Icon>
+                        <span v-text="item"></span>
+                    </timeline-item>
+                </timeline>
+            </div>
+            <div style="text-align: center">
+                <img src="/assets/images/developing.jpg" alt="开发中">
+                <div style="font-size: 30px;font-weight: bold;margin-top: 20px;">
+                    正在努力开发中...
+                </div>
+            </div>
+        </div>
+    </template>
+    <script type="text/javascript">
+        Vue.component('page-settings', {
+            template: '#page-settings',
+            data(){
+                return {
+                    items: [
+                        '卡片图标支持字体图标选择，背景色支持自定义选择',
+                        '支持项目原型压缩包上传，并生成访问地址',
+                        '支持项目添加，显示项目发布倒计时和发布日程表',
+                        '定时检查卡片链接地址是否可用，不可用置灰',
+                        '卡片搜索支持全文检索',
+                        '显示【常用导航】分类，本地记录用户常用卡片',
+                        '后端管理加入登录鉴权，支持CC登录'
+                    ]
+                }
+            }
+        })
+    </script>
+</div>
+</html>

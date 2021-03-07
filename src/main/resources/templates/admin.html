@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <title>gitlab</title>
+    <title>team-nav</title>
     <link type="text/css" rel="stylesheet" th:href="@{/assets/lib/iview/iview.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/assets/css/common.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/assets/css/admin.css}">
@@ -19,10 +19,10 @@
                             <div class="line-h"></div>
                         </div>
                         <div v-if="!isCollapsed" class="logo-saiqu">
-                            <Avatar icon="ios-person" size="large" ></Avatar>
-                            <span class="user-name" th:text="${page}"></span>
+                            <Avatar icon="ios-person" size="large"  src="/assets/images/header.jpg"></Avatar>
+                            <span class="user-name">管理员</span>
                         </div>
-                        <Avatar icon="ios-person" size="large" v-else />
+                        <Avatar icon="ios-person" size="large" v-else src="/assets/images/header.jpg"/>
                     </div>
                     <i-menu
                             ref="side_menu"
@@ -99,10 +99,14 @@
                             <div class="header-left">
                                 <Icon @click.native="collapsedSider" :class="rotateIcon" type="md-menu"
                                       size="28"></Icon>
-                                <span class="header-title">gitlab合并请求统计</span>
+                                <span class="header-title"></span>
                             </div>
                             <div class="header-right">
-                                <i-button type="text" icon="md-exit" class="btn-blue" size="large" @click="quit">退出系统
+                                <i-button type="text"
+                                          icon="md-exit"
+                                          class="btn-blue"
+                                          to="/"
+                                          size="large">退出系统
                                 </i-button>
                             </div>
                         </div>

@@ -21,4 +21,4 @@ spring:
     database: h2
   thymeleaf:
     cache: false
-projects: 减刑假释,巡视巡查
+resource-exts: team-nav-images,team-nav-modules

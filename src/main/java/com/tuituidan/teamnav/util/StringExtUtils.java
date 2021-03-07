@@ -1,5 +1,7 @@
 package com.tuituidan.teamnav.util;
 
+import java.util.UUID;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.helpers.MessageFormatter;
@@ -15,11 +17,15 @@ import org.slf4j.helpers.MessageFormatter;
 @UtilityClass
 public class StringExtUtils {
 
+    public static String getUuid() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
     /**
      * 使用 Slf4j 中的字符串格式化方式来格式化字符串.
      *
      * @param pattern 待格式化的字符串
-     * @param args 参数
+     * @param args    参数
      * @return 格式化后的字符串
      */
     public static String format(String pattern, Object... args) {

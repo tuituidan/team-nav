@@ -1,21 +1,21 @@
 package com.tuituidan.teamnav.controller;
 
-import com.sun.xml.internal.ws.streaming.XMLReaderException;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.tuituidan.teamnav.consts.Consts;
+import com.tuituidan.teamnav.repository.CategoryRepository;
+import com.tuituidan.teamnav.service.CommonService;
 
-import java.io.InputStream;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.io.SAXReader;
-import org.springframework.core.io.ClassPathResource;
+import javax.annotation.Resource;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * CommonController.
@@ -28,22 +28,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(Consts.API_V1)
 public class CommonController {
 
-    private static final String ICON_SVG_PATH = "static/assets/lib/iview/fonts/ionicons.svg";
+    @Resource
+    private CategoryRepository categoryRepository;
 
-    @GetMapping("/icons")
-    public ResponseEntity<List<String>> icons() {
-        Document document;
-        try (InputStream inputStream = new ClassPathResource(ICON_SVG_PATH).getInputStream()) {
-            document = SAXReader.createDefault().read(inputStream);
-        } catch (Exception ex) {
-            throw new XMLReaderException("icon-xml读取失败", ex);
-        }
-        List<String> result = document.getRootElement().element("defs").element("font").elements("glyph")
-                .stream()
-                .map(element -> element.attribute("glyph-name"))
-                .filter(Objects::nonNull)
-                .map(Attribute::getValue)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(result);
+    @Resource
+    private CommonService commonService;
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> upload(MultipartFile file) {
+        return ResponseEntity.ok(commonService.upload(file));
+    }
+
+    @GetMapping("/color")
+    public ResponseEntity<String> getColor() {
+        return ResponseEntity.ok(commonService.getColor());
+    }
+
+    @GetMapping("/category/icons")
+    public ResponseEntity<List<String>> categoryIcons() {
+        return ResponseEntity.ok(commonService.categoryIcons());
+    }
+
+    @GetMapping("/card/icons")
+    public ResponseEntity<List<String>> cardIcons(String url) {
+        return ResponseEntity.ok(commonService.cardIcons(url));
+    }
+
+    @GetMapping("/backup")
+    public ResponseEntity<String> backup() {
+        return ResponseEntity.ok(JSON.toJSONString(categoryRepository.findAll(), SerializerFeature.PrettyFormat));
     }
 }

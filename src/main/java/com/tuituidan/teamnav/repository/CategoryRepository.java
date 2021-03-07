@@ -1,6 +1,6 @@
 package com.tuituidan.teamnav.repository;
 
-import com.tuituidan.teamnav.entity.Category;
+import com.tuituidan.teamnav.bean.entity.Category;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @date 2020/10/2
  */
 public interface CategoryRepository extends JpaRepository<Category, String> {
+
 }
