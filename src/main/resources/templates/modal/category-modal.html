@@ -45,6 +45,8 @@
                     this.edit = Boolean(item);
                     if (this.edit) {
                         this.editItem = {...item};
+                    } else {
+                        this.editItem.id = '';
                     }
                 },
                 save() {

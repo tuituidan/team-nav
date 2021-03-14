@@ -9,9 +9,12 @@
                :mask-closable="false"
                @on-ok="save">
             <i-form ref="tableForm" :model="editItem" label-width="100" :rules="editItemRules" @submit.native.prevent>
+                <Alert v-if="zipUploading" type="warning" show-icon>新上传的原型文件解压时间较长，请耐心等待...</Alert>
                 <form-item label="卡片类型" prop="type">
                     <radio-group v-model="editItem.type">
-                        <Radio v-for="item in types" :label="item.id" :key="item.id" :disabled="item.disabled">{{item.name}}</Radio>
+                        <Radio v-for="item in types" :disabled="edit&&editItem.type!==item.id" :label="item.id"
+                               :key="item.id">{{item.name}}
+                        </Radio>
                     </radio-group>
                 </form-item>
                 <form-item label="所属分类" prop="category">
@@ -26,12 +29,21 @@
                 <form-item label="内容" prop="content">
                     <i-input v-model.trim="editItem.content" placeholder="内容"></i-input>
                 </form-item>
-                <form-item label="链接" prop="url">
+                <form-item v-if="editItem.type==='1'" label="链接" prop="url">
                     <i-input v-model.trim="editItem.url" placeholder="链接" @on-blur="getFavicons"></i-input>
                 </form-item>
-                <form-item label="图标" prop="icon">
+                <form-item v-else label="原型文件" prop="url">
+                    <Upload action="/api/v1/upload/zip"
+                            accept="application/zip"
+                            :default-file-list="zipFileList"
+                            :on-success="uploadZipSuccess">
+                        <i-button icon="ios-cloud-upload-outline">上传</i-button>
+                    </Upload>
+                </form-item>
+                <form-item label="图标" prop="iconDto">
                     <div>
                         <Upload ref="uploadCtl" action="/api/v1/upload"
+                                :show-upload-list="false"
                                 accept="image/x-icon,image/png,image/jpeg,image/jpg,image/gif,image/bmp"
                                 :on-success="uploadSuccess">
                             <i-button icon="ios-cloud-upload-outline">上传</i-button>
@@ -57,25 +69,27 @@
                 return {
                     show: false,
                     edit: false,
+                    zipUploading: false,
+                    newZip: false,
                     loading: true,
                     types: [
                         {
                             id: '1',
-                            name: '普通',
-                            disabled: false
+                            name: '普通'
                         },
                         {
                             id: '2',
-                            name: '原型',
-                            disabled: true
+                            name: '原型'
                         }
                     ],
                     categorys: [],
                     icons: [],
+                    zipFileList: [],
                     editItem: {
                         type: '1',
                         category: '',
-                        icon: null,
+                        iconDto: null,
+                        zipDto: null,
                         title: '',
                         content: '',
                         url: ''
@@ -90,7 +104,7 @@
                         content: [
                             {required: true, message: '内容不能为空'}
                         ],
-                        icon: [
+                        iconDto: [
                             {required: true, message: '图标不能为空，请点击选择一个图标'}
                         ]
                     }
@@ -102,19 +116,28 @@
             methods: {
                 open(category, item) {
                     this.icons = [];
+                    this.zipUploading = false;
+                    this.newZip = false;
                     this.$refs.tableForm.resetFields();
                     this.$refs.uploadCtl.clearFiles();
                     this.show = true;
                     this.edit = Boolean(item);
                     if (this.edit) {
                         this.editItem = {...item};
-                        this.editItem.icon.checked = true;
-                        this.icons.push(this.editItem.icon);
+                        this.editItem.iconDto.checked = true;
+                        this.icons.push(this.editItem.iconDto);
                         this.getTextIcon();
-                        //this.getFavicons();
+                        this.zipFileList = [item.zipDto];
                     } else {
-                        this.editItem.id = '';
-                        this.editItem.category = category;
+                        this.editItem = {
+                            type: '1',
+                            category: category,
+                            iconDto: null,
+                            zipDto: null,
+                            title: '',
+                            content: '',
+                            url: ''
+                        };
                     }
                 },
                 getCategory() {
@@ -128,6 +151,14 @@
                 },
                 uploadSuccess(response) {
                     this.icons.push({src: response, checked: false});
+                },
+                uploadZipSuccess(response, file) {
+                    this.newZip = true;
+                    this.editItem.zipDto = {
+                        name: file.name,
+                        path: response
+                    }
+                    this.zipFileList = [this.editItem.zipDto];
                 },
                 getFavicons() {
                     if (!this.editItem.url) {
@@ -165,9 +196,12 @@
                 selectIcons(item) {
                     this.icons.forEach(it => it.checked = false);
                     item.checked = true;
-                    this.editItem.icon = {...item};
+                    this.editItem.iconDto = {...item};
                 },
                 save() {
+                    if (this.editItem.type === '2' && this.newZip) {
+                        this.zipUploading = true;
+                    }
                     this.$refs.tableForm.validate(valid => {
                         if (valid) {
                             this.$http.post('/api/v1/card', {...this.editItem})

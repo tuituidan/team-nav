@@ -1,6 +1,7 @@
 package com.tuituidan.teamnav.service;
 
 import com.sun.xml.internal.ws.streaming.XMLReaderException;
+import com.tuituidan.teamnav.consts.Consts;
 import com.tuituidan.teamnav.exception.ResourceReadException;
 import com.tuituidan.teamnav.exception.ResourceWriteException;
 import com.tuituidan.teamnav.util.StringExtUtils;
@@ -20,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -51,9 +53,9 @@ public class CommonService {
     private static final String ICON_SVG_PATH = "static/assets/lib/iview/fonts/ionicons.svg";
     private static final String COLOR_PATH = "config/color.txt";
 
-    private static List<String> icons = new ArrayList<>();
+    private static final List<String> ICONS = new ArrayList<>();
 
-    private static List<String> colors = new ArrayList<>();
+    private static final List<String> COLORS = new ArrayList<>();
 
     @Resource
     private RestTemplate restTemplate;
@@ -66,7 +68,7 @@ public class CommonService {
         } catch (Exception ex) {
             throw new XMLReaderException("icon-xml读取失败", ex);
         }
-        icons.addAll(document.getRootElement().element("defs").element("font").elements("glyph")
+        ICONS.addAll(document.getRootElement().element("defs").element("font").elements("glyph")
                 .stream()
                 .map(element -> element.attribute("glyph-name"))
                 .filter(Objects::nonNull)
@@ -74,7 +76,7 @@ public class CommonService {
                 .collect(Collectors.toList()));
 
         try (InputStream inputStream = new ClassPathResource(COLOR_PATH).getInputStream()) {
-            colors.addAll(IOUtils.readLines(inputStream, StandardCharsets.UTF_8));
+            COLORS.addAll(IOUtils.readLines(inputStream, StandardCharsets.UTF_8));
         } catch (Exception ex) {
             throw new ResourceReadException("color.txt读取失败", ex);
         }
@@ -85,20 +87,33 @@ public class CommonService {
                 DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()),
                 StringExtUtils.getUuid(), FilenameUtils.getExtension(file.getOriginalFilename()));
         try {
-            FileUtils.writeByteArrayToFile(new File(System.getProperty("user.dir") + url), file.getBytes());
+            FileUtils.writeByteArrayToFile(new File(Consts.ROOT_DIR + url), file.getBytes());
         } catch (Exception ex) {
             throw new ResourceWriteException("文件写入失败", ex);
         }
         return url;
     }
 
+    public String uploadZip(MultipartFile file) {
+        try {
+            byte[] datas = file.getBytes();
+            String saveFilePath = StringExtUtils.format("/team-nav-modules/{}.zip", DigestUtils.md5Hex(datas));
+            File saveFile = new File(Consts.ROOT_DIR + saveFilePath);
+            if (!saveFile.exists()) {
+                FileUtils.writeByteArrayToFile(saveFile, datas);
+            }
+            return saveFilePath;
+        } catch (Exception ex) {
+            throw new ResourceWriteException("文件写入失败", ex);
+        }
+    }
 
     public String getColor() {
-        return colors.get(new Random().nextInt(colors.size()));
+        return COLORS.get(new Random().nextInt(COLORS.size()));
     }
 
     public List<String> categoryIcons() {
-        return icons;
+        return ICONS;
     }
 
     public List<String> cardIcons(String url) {

@@ -4,9 +4,16 @@
     <template id="page-settings">
         <div>
             <div style="position: absolute">
+                <div style="font-size: 20px;padding: 10px 0 20px;font-weight: bold;">已完成功能：</div>
+                <timeline>
+                    <timeline-item v-for="item in dones" :key="item" color="green">
+                        <Icon type="ios-hammer" slot="dot"></Icon>
+                        <span v-text="item"></span>
+                    </timeline-item>
+                </timeline>
                 <div style="font-size: 20px;padding: 10px 0 20px;font-weight: bold;">待完成功能：</div>
                 <timeline>
-                    <timeline-item v-for="item in items" :key="item" color="blue">
+                    <timeline-item v-for="item in undos" :key="item" color="blue">
                         <Icon type="ios-hammer" slot="dot"></Icon>
                         <span v-text="item"></span>
                     </timeline-item>
@@ -23,11 +30,18 @@
     <script type="text/javascript">
         Vue.component('page-settings', {
             template: '#page-settings',
-            data(){
+            data() {
                 return {
-                    items: [
+                    dones: [
+                        '网址导航前端展示功能',
+                        '网址导航后台基本功能：分类和卡片的增删改查',
+                        '分类和卡片支持顺序调整',
+                        '封装分类图标下拉选择控件',
+                        '卡片图标支持根据标题文字生成、根据链接自动获取favicon、支持上传三种方式',
+                        '支持项目原型压缩包上传，并生成访问地址'
+                    ],
+                    undos: [
                         '卡片图标支持字体图标选择，背景色支持自定义选择',
-                        '支持项目原型压缩包上传，并生成访问地址',
                         '支持项目添加，显示项目发布倒计时和发布日程表',
                         '定时检查卡片链接地址是否可用，不可用置灰',
                         '卡片搜索支持全文检索',

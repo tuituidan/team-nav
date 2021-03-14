@@ -20,13 +20,19 @@ public class CardDto {
 
     private String category;
 
-    private CardIconDto icon;
+    private String icon;
+
+    private CardIconDto iconDto;
 
     private String title;
 
     private String content;
 
     private String url;
+
+    private String zip;
+
+    private CardZipDto zipDto;
 
     private Integer sort;
 

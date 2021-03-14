@@ -39,6 +39,11 @@ public class CommonController {
         return ResponseEntity.ok(commonService.upload(file));
     }
 
+    @PostMapping("/upload/zip")
+    public ResponseEntity<String> uploadZip(MultipartFile file) {
+        return ResponseEntity.ok(commonService.uploadZip(file));
+    }
+
     @GetMapping("/color")
     public ResponseEntity<String> getColor() {
         return ResponseEntity.ok(commonService.getColor());

@@ -3,16 +3,21 @@ package com.tuituidan.teamnav.service;
 import com.alibaba.fastjson.JSON;
 import com.tuituidan.teamnav.bean.dto.CardDto;
 import com.tuituidan.teamnav.bean.dto.CardIconDto;
+import com.tuituidan.teamnav.bean.dto.CardZipDto;
 import com.tuituidan.teamnav.bean.entity.Card;
 import com.tuituidan.teamnav.bean.entity.Category;
 import com.tuituidan.teamnav.bean.vo.CardTreeChildVo;
 import com.tuituidan.teamnav.bean.vo.CardTreeVo;
 import com.tuituidan.teamnav.bean.vo.CardVo;
+import com.tuituidan.teamnav.consts.Consts;
 import com.tuituidan.teamnav.repository.CardRepository;
 import com.tuituidan.teamnav.util.BeanExtUtils;
+import com.tuituidan.teamnav.util.CompletableUtils;
 import com.tuituidan.teamnav.util.StringExtUtils;
+import com.tuituidan.teamnav.util.ZipUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -91,20 +96,43 @@ public class CardService {
         return list.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo.class);
             vo.setCategoryName(categoryService.get(item.getCategory()).getName());
-            vo.setIcon(JSON.parseObject(item.getIcon(), CardIconDto.class));
+            vo.setIconDto(JSON.parseObject(item.getIcon(), CardIconDto.class));
+            if (StringUtils.isNotBlank(item.getZip())) {
+                vo.setZipDto(JSON.parseObject(item.getZip(), CardZipDto.class));
+            }
             return vo;
         }).collect(Collectors.toList());
     }
 
     public void save(CardDto cardDto) {
         Card card = BeanExtUtils.convert(cardDto, Card.class);
-        card.setIcon(saveIcon(cardDto.getIcon()));
+        card.setIcon(saveIcon(cardDto.getIconDto()));
+        if (Consts.CARD_TYPE_ZIP.equals(cardDto.getType())) {
+            saveZip(card, cardDto);
+        }
         if (StringUtils.isBlank(cardDto.getId())) {
             Integer maxSort = cardRepository.findAll().stream().max(Comparator.comparing(Card::getSort))
                     .map(Card::getSort).orElse(0);
             card.setSort(maxSort + 1);
         }
         cardRepository.save(card);
+    }
+
+    private void saveZip(Card card, CardDto cardDto) {
+        if (StringUtils.isNotBlank(cardDto.getZip())) {
+            CardZipDto existZip = JSON.parseObject(cardDto.getZip(), CardZipDto.class);
+            if (StringUtils.equals(existZip.getPath(), cardDto.getZipDto().getPath())) {
+                if (StringUtils.equals(existZip.getName(), cardDto.getZipDto().getName())) {
+                    return;
+                }
+                existZip.setName(cardDto.getZipDto().getName());
+                card.setZip(JSON.toJSONString(existZip));
+                return;
+            }
+            asyncDeleteOld(existZip.getPath());
+        }
+        card.setZip(JSON.toJSONString(cardDto.getZipDto()));
+        card.setUrl(ZipUtils.unzip(cardDto.getZipDto()));
     }
 
     private String saveIcon(CardIconDto cardIconDto) {
@@ -118,7 +146,7 @@ public class CardService {
                     DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()),
                     StringExtUtils.getUuid(), FilenameUtils.getExtension(cardIconDto.getSrc()));
             Assert.notNull(forEntity.getBody(), "获取数据失败");
-            FileUtils.writeByteArrayToFile(new File(System.getProperty("user.dir") + url),
+            FileUtils.writeByteArrayToFile(new File(Consts.ROOT_DIR + url),
                     forEntity.getBody());
             cardIconDto.setSrc(url);
         } catch (Exception ex) {
@@ -151,12 +179,26 @@ public class CardService {
         CardIconDto cardIconDto = JSON.parseObject(card.getIcon(), CardIconDto.class);
         cardRepository.deleteById(id);
         if (StringUtils.isNotBlank(cardIconDto.getSrc())) {
-            try {
-                FileUtils.forceDeleteOnExit(new File(System.getProperty("user.dir") + cardIconDto.getSrc()));
-            } catch (Exception ex) {
-                log.error("文件删除失败：【{}】", cardIconDto.getSrc(), ex);
-            }
+            asyncDeleteOld(cardIconDto.getSrc());
         }
+        if (Consts.CARD_TYPE_ZIP.equals(card.getType())) {
+            CardZipDto existZip = JSON.parseObject(card.getZip(), CardZipDto.class);
+            asyncDeleteOld(existZip.getPath());
+        }
+    }
+
+    private void asyncDeleteOld(String path) {
+        CompletableUtils.execute(() -> {
+            try {
+                FileUtils.forceDelete(new File(Consts.ROOT_DIR + path));
+                if (StringUtils.endsWith(path, ".zip")) {
+                    FileUtils.forceDelete(new File(Consts.ROOT_DIR
+                            + StringUtils.substringBeforeLast(path, ".")));
+                }
+            } catch (IOException ex) {
+                log.error("删除原文件失败：【{}】", path, ex);
+            }
+        });
     }
 
 }

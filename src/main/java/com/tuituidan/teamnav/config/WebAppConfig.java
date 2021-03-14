@@ -1,5 +1,6 @@
 package com.tuituidan.teamnav.config;
 
+import com.tuituidan.teamnav.consts.Consts;
 import com.tuituidan.teamnav.util.StringExtUtils;
 
 import javax.annotation.Resource;
@@ -36,7 +37,7 @@ public class WebAppConfig implements WebMvcConfigurer {
         for (String path : resourceExts) {
             registry.addResourceHandler(StringExtUtils.format("/{}/**", path))
                     .addResourceLocations(StringExtUtils.format("file:{}/{}/",
-                            System.getProperty("user.dir"), path));
+                            Consts.ROOT_DIR, path));
         }
 
     }

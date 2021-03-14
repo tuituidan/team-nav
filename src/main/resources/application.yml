@@ -21,4 +21,9 @@ spring:
     database: h2
   thymeleaf:
     cache: false
+
+  servlet:
+    multipart:
+      max-file-size: 40MB
+      max-request-size: 400MB
 resource-exts: team-nav-images,team-nav-modules

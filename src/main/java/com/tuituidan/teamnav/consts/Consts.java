@@ -23,4 +23,14 @@ public class Consts {
      */
     public static final String ADMIN = "/admin";
 
+    /**
+     * CARD_TYPE_ZIP.
+     */
+    public static final String CARD_TYPE_ZIP = "2";
+
+    /**
+     * ROOT_DIR.
+     */
+    public static final String ROOT_DIR = System.getProperty("user.dir");
+
 }

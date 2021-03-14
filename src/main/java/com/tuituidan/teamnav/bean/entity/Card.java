@@ -53,6 +53,9 @@ public class Card implements Serializable {
     @Column(name = "C_URL")
     private String url;
 
+    @Column(name = "C_ZIP")
+    private String zip;
+
     @Column(name = "N_SORT")
     private Integer sort;
 }

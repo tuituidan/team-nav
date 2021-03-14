@@ -1,6 +1,7 @@
 package com.tuituidan.teamnav.bean.vo;
 
 import com.tuituidan.teamnav.bean.dto.CardIconDto;
+import com.tuituidan.teamnav.bean.dto.CardZipDto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,12 +27,19 @@ public class CardVo {
 
     private String categoryName;
 
-    private CardIconDto icon;
+    private String icon;
+
+    private CardIconDto iconDto;
 
     private String title;
 
     private String content;
 
     private String url;
+
+    private String zip;
+
+    private CardZipDto zipDto;
+
     private Integer sort;
 }
