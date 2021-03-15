@@ -1,9 +1,9 @@
 package com.tuituidan.teamnav.service;
 
-import com.sun.xml.internal.ws.streaming.XMLReaderException;
 import com.tuituidan.teamnav.consts.Consts;
 import com.tuituidan.teamnav.exception.ResourceReadException;
 import com.tuituidan.teamnav.exception.ResourceWriteException;
+import com.tuituidan.teamnav.util.FileExtUtils;
 import com.tuituidan.teamnav.util.StringExtUtils;
 
 import java.io.File;
@@ -66,7 +66,7 @@ public class CommonService {
         try (InputStream inputStream = new ClassPathResource(ICON_SVG_PATH).getInputStream()) {
             document = SAXReader.createDefault().read(inputStream);
         } catch (Exception ex) {
-            throw new XMLReaderException("icon-xml读取失败", ex);
+            throw new ResourceReadException("icon-xml读取失败", ex);
         }
         ICONS.addAll(document.getRootElement().element("defs").element("font").elements("glyph")
                 .stream()
@@ -164,7 +164,7 @@ public class CommonService {
         try {
             ResponseEntity<byte[]> forEntity = restTemplate.getForEntity(url, byte[].class);
             byte[] body = forEntity.getBody();
-            if (body != null && notHtml(body)) {
+            if (body != null && !FileExtUtils.isHtml(body)) {
                 return url;
             }
         } catch (Exception ex) {
@@ -173,17 +173,5 @@ public class CommonService {
         return "";
     }
 
-    public static boolean notHtml(byte[] data) {
-        byte[] src = new byte[4];
-        System.arraycopy(data, 0, src, 0, src.length);
-        StringBuilder builder = new StringBuilder();
-        for (byte bt : src) {
-            String hv = Integer.toHexString(bt & 0xFF).toUpperCase();
-            if (hv.length() < 2) {
-                builder.append(0);
-            }
-            builder.append(hv);
-        }
-        return !"3C21444F".equals(builder.toString());
-    }
+
 }
