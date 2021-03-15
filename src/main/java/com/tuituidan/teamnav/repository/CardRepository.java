@@ -22,4 +22,14 @@ public interface CardRepository extends JpaRepository<Card, String> {
      * @return List
      */
     List<Card> findByCategoryOrderBySortAsc(String category);
+
+
+    /**
+     * findByTitleLikeOrContentLike.
+     *
+     * @param keyword1 keyword1
+     * @param keyword2 keyword2
+     * @return List
+     */
+    List<Card> findByTitleContainsOrContentContains(String keyword1, String keyword2);
 }

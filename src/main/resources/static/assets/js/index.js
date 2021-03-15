@@ -6,6 +6,7 @@ new Vue({
     el: '#app',
     data() {
         return {
+            keywords: '',
             isCollapsed: false,
             datas: []
         }
@@ -29,7 +30,7 @@ new Vue({
     },
     methods: {
         loadTree() {
-            this.$http.get('/api/v1/card/tree')
+            this.$http.get(`/api/v1/card/tree?keywords=${this.keywords}`)
                 .then(res => {
                     this.datas = res.data;
                 })

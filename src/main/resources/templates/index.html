@@ -66,7 +66,11 @@
                             <div class="header-left">
                                 <Icon @click.native="collapsedSider" :class="rotateIcon" type="md-menu"
                                       size="28"></Icon>
-                                <i-input class="header-search" search placeholder="搜索..."></i-input>
+                                <i-input class="header-search"
+                                         search
+                                         placeholder="搜索..."
+                                         v-model="keywords"
+                                         @on-change="loadTree"></i-input>
                             </div>
                             <div class="header-right">
                                 <i-button icon="md-exit" to="/admin/category" class="btn-blue" size="large">管理

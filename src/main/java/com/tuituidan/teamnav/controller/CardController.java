@@ -37,8 +37,8 @@ public class CardController {
     private CardService cardService;
 
     @GetMapping("/tree")
-    public ResponseEntity<List<CardTreeVo>> tree() {
-        return ResponseEntity.ok(cardService.tree());
+    public ResponseEntity<List<CardTreeVo>> tree(String keywords) {
+        return ResponseEntity.ok(cardService.tree(keywords));
     }
 
     @GetMapping

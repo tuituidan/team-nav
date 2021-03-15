@@ -61,12 +61,13 @@ public class CardService {
     @Resource
     private RestTemplate restTemplate;
 
-    public List<CardTreeVo> tree() {
+    public List<CardTreeVo> tree(String keywords) {
         List<Category> categories = categoryService.select();
         if (CollectionUtils.isEmpty(categories)) {
             return Collections.emptyList();
         }
-        List<Card> cards = cardRepository.findAll();
+        List<Card> cards = StringUtils.isBlank(keywords)
+                ? cardRepository.findAll() : cardRepository.findByTitleContainsOrContentContains(keywords, keywords);
         if (CollectionUtils.isEmpty(cards)) {
             return Collections.emptyList();
         }
