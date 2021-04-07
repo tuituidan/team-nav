@@ -9,7 +9,6 @@ new Vue({
             isCollapsed: false,
             title: '首页',
             activeMenuName: sessionStorage.activeAdminMenuName || 'category',
-            openMenuName: sessionStorage.openAdminMenuName ? [sessionStorage.openAdminMenuName] : [],
             menus: [
                 {
                     title: '分类列表',
@@ -62,12 +61,10 @@ new Vue({
             this.menus.forEach(_menu => {
                 if (_menu.name === name) {
                     menu = _menu;
-                    sessionStorage.openAdminMenuName = null;
                 } else if (_menu.children) {
                     _menu.children.forEach(child => {
                         if (child.name === name) {
                             menu = child;
-                            sessionStorage.openAdminMenuName = _menu.name;
                         }
                     })
                 }

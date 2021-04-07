@@ -10,10 +10,10 @@ import lombok.experimental.UtilityClass;
  * @date 2021/3/15
  */
 @UtilityClass
-public class FileExtUtils {
+public class FileTypeUtils {
 
     private static final String FILE_HEADER_HTML = "3C21444F";
-    
+
     private static final String FILE_HEADER_ZIP = "504B0304";
 
     /**

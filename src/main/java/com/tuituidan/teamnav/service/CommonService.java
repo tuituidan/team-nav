@@ -3,7 +3,7 @@ package com.tuituidan.teamnav.service;
 import com.tuituidan.teamnav.consts.Consts;
 import com.tuituidan.teamnav.exception.ResourceReadException;
 import com.tuituidan.teamnav.exception.ResourceWriteException;
-import com.tuituidan.teamnav.util.FileExtUtils;
+import com.tuituidan.teamnav.util.FileTypeUtils;
 import com.tuituidan.teamnav.util.StringExtUtils;
 
 import java.io.File;
@@ -164,7 +164,7 @@ public class CommonService {
         try {
             ResponseEntity<byte[]> forEntity = restTemplate.getForEntity(url, byte[].class);
             byte[] body = forEntity.getBody();
-            if (body != null && !FileExtUtils.isHtml(body)) {
+            if (body != null && !FileTypeUtils.isHtml(body)) {
                 return url;
             }
         } catch (Exception ex) {
