@@ -1,0 +1,71 @@
+package com.tuituidan.openhub.controller;
+
+import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.service.CommonService;
+import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+/**
+ * CommonController.
+ *
+ * @author tuituidan
+ * @version 1.0
+ * @date 2021/2/21
+ */
+@RestController
+@RequestMapping(Consts.API_V1)
+public class CommonController {
+
+    @Resource
+    private CommonService commonService;
+
+    /**
+     * 上传图标
+     *
+     * @param file 图标文件
+     * @return 保存路径
+     */
+    @PostMapping("/upload")
+    public ResponseEntity<String> upload(MultipartFile file) {
+        return ResponseEntity.ok(commonService.upload(file));
+    }
+
+    /**
+     * 上传原型
+     *
+     * @param file 原型文件
+     * @return 保存路径
+     */
+    @PostMapping("/upload/zip")
+    public ResponseEntity<String> uploadZip(MultipartFile file) {
+        return ResponseEntity.ok(commonService.uploadZip(file));
+    }
+
+    /**
+     * 获取分类的图标
+     *
+     * @return List
+     */
+    @GetMapping("/category/icons")
+    public ResponseEntity<List<String>> categoryIcons() {
+        return ResponseEntity.ok(commonService.categoryIcons());
+    }
+
+    /**
+     * 获取卡片对应链接的 favicon.ico 用于icon
+     *
+     * @param url url
+     * @return List
+     */
+    @GetMapping("/card/icons")
+    public ResponseEntity<List<String>> cardIcons(String url) {
+        return ResponseEntity.ok(commonService.cardIcons(url));
+    }
+
+}

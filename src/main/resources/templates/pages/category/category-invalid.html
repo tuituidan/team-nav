@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="category-invalid">
+    <template id="page-category-invalid">
+        <div>
+            <div class="search-panel">
+                <div class="panel-left">
+                    <i-input style="width: 400px;"
+                             search
+                             enter-button
+                             v-model="queryParam.keywords"
+                             @on-enter="initList"
+                             @on-search="initList"
+                             placeholder="关键字搜索..."></i-input>
+                </div>
+            </div>
+            <div class="table-panel">
+                <i-table border stripe :columns="table.columns" :data="table.datas">
+                    <template slot-scope="{ row, index }" slot="icon-action">
+                        <Icon :title="row.icon" :type="row.icon" size="20"></Icon>
+                        <span v-text="row.icon"></span>
+                    </template>
+                    <template slot-scope="{ row, index }" slot="action">
+                        <i-button type="info" size="small" @click="setValid(row)">还原</i-button>
+                        <Poptip confirm transfer
+                                title="将被永久删除，您确定要删除此项吗？"
+                                @on-ok="deleteItem(row.id)">
+                            <i-button type="error" size="small">删除</i-button>
+                        </Poptip>
+                    </template>
+                </i-table>
+                <div class="search-panel">
+                    <div class="panel-right">
+                        <Page :total="table.page.total"
+                              show-sizer show-elevator show-total transfer
+                              @on-change="pageChange" @on-page-size-change="pageSizeChange"></Page>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </template>
+    <script type="text/javascript">
+        Vue.component('page-category-invalid', {
+            template: '#page-category-invalid',
+            data() {
+                return {
+                    queryParam: {
+                        pageIndex: 0,
+                        pageSize: 10,
+                        keywords: ''
+                    },
+                    table: {
+                        page: {
+                            total: 0,
+                            offset: 0
+                        },
+                        columns: [
+                            {
+                                title: '序号',
+                                type: 'index',
+                                width: 66,
+                                align: 'center',
+                                indexMethod: this.indexFormat
+                            }, {
+                                title: '名称',
+                                key: 'name'
+                            }, {
+                                title: '图标',
+                                slot: 'icon-action',
+                                key: 'icon'
+                            }, {
+                                title: '操作',
+                                slot: 'action',
+                                width: 160,
+                                align: 'center'
+                            }],
+                        datas: []
+                    }
+                }
+            },
+            methods: {
+                indexFormat(row) {
+                    return this.table.page.offset + row._index + 1;
+                },
+                initList() {
+                    this.$http.get(`/api/v1/category/page`, {params: this.queryParam})
+                        .then(res => {
+                            this.table.datas = res.data.content;
+                            this.table.page.total = res.data.totalElements;
+                            this.table.page.offset = res.data.pageable.offset;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        });
+                },
+                deleteItem(id) {
+                    this.$http.delete(`/api/v1/category/${id}`)
+                        .then(() => {
+                            this.$notice.suc('删除成功');
+                            this.initList();
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        });
+                },
+                setValid(row) {
+                    this.$http.patch(`/api/v1/category/${row.id}/valid/true`)
+                        .then(() => {
+                            this.$notice.suc('已还原');
+                            this.initList();
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        })
+                },
+                pageChange(pageIndex) {
+                    this.queryParam.pageIndex = pageIndex - 1;
+                    this.initList();
+                },
+                pageSizeChange(pageSize) {
+                    this.queryParam.pageSize = pageSize;
+                    this.initList();
+                }
+            }
+        })
+    </script>
+</div>
+</html>
