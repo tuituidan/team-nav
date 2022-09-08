@@ -1,5 +1,5 @@
 /*
- * @author zhujunhan
+ * @author tuituidan
  * @date 2020/12/11
  */
 new Vue({
@@ -11,7 +11,7 @@ new Vue({
             activeMenuName: sessionStorage.activeAdminMenuName || 'category',
             menus: [
                 {
-                    title: '分类列表',
+                    title: '分类管理',
                     name: 'category',
                     icon: 'ios-apps',
                     href: '/admin/category'
@@ -21,8 +21,7 @@ new Vue({
                     name: 'card',
                     icon: 'ios-list',
                     href: '/admin/card'
-                },
-                {
+                }, {
                     title: '系统设置',
                     name: 'settings',
                     icon: 'md-settings',
@@ -30,9 +29,6 @@ new Vue({
                 }
             ]
         }
-    },
-    mounted() {
-        // s
     },
     computed: {
         rotateIcon() {
@@ -68,7 +64,7 @@ new Vue({
                         }
                     })
                 }
-            })
+            });
             location.href = menu.href;
         },
         dropdownClick(name) {

@@ -33,7 +33,8 @@ build/
 
 ### VS Code ###
 .vscode/
-
+temp
+logs
 database
-team-nav-images
-team-nav-modules
+ext-resources
+application-local.yml

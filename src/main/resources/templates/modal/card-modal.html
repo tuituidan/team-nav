@@ -27,7 +27,11 @@
                     <i-input v-model.trim="editItem.title" placeholder="标题" @on-blur="getTextIcon"></i-input>
                 </form-item>
                 <form-item label="内容" prop="content">
-                    <i-input v-model.trim="editItem.content" placeholder="内容"></i-input>
+                    <i-input type="textarea"
+                             maxlength="200"
+                             :autosize="{minRows: 4,maxRows: 15}"
+                             show-word-limit
+                             v-model.trim="editItem.content" placeholder="内容"></i-input>
                 </form-item>
                 <form-item v-if="editItem.type==='1'" label="链接" prop="url">
                     <i-input v-model.trim="editItem.url" placeholder="链接" @on-blur="getFavicons"></i-input>
@@ -42,12 +46,18 @@
                 </form-item>
                 <form-item label="图标" prop="iconDto">
                     <div>
-                        <Upload ref="uploadCtl" action="/api/v1/upload"
-                                :show-upload-list="false"
-                                accept="image/x-icon,image/png,image/jpeg,image/jpg,image/gif,image/bmp"
-                                :on-success="uploadSuccess">
-                            <i-button icon="ios-cloud-upload-outline">上传</i-button>
-                        </Upload>
+                        <div style="overflow: hidden;">
+                            <Upload ref="uploadCtl" action="/api/v1/upload"
+                                    style="float: left;"
+                                    :show-upload-list="false"
+                                    accept="image/x-icon,image/png,image/jpeg,image/jpg,image/gif,image/bmp"
+                                    :on-success="uploadSuccess">
+                                <i-button icon="ios-cloud-upload-outline">上传</i-button>
+                            </Upload>
+                            <color-picker @on-change="colorChange" style="float: left; margin-left: 10px;"
+                                          v-model="color"
+                                          recommend></color-picker>
+                        </div>
                         <div style="margin-top: 10px">
                             <Badge style="margin-left: 10px;" v-for="item in icons" :key="item"
                                    @click.native="selectIcons(item)">
@@ -72,6 +82,7 @@
                     zipUploading: false,
                     newZip: false,
                     loading: true,
+                    color: '',
                     types: [
                         {
                             id: '1',
@@ -138,6 +149,7 @@
                             content: '',
                             url: ''
                         };
+                        this.zipFileList = [];
                     }
                 },
                 getCategory() {
@@ -147,7 +159,15 @@
                         })
                         .catch(err => {
                             console.error(err);
+                            this.$notice.err(err.response.data);
                         });
+                },
+                colorChange() {
+                    for (const icon of this.icons) {
+                        if (icon.color) {
+                            icon.color = this.color;
+                        }
+                    }
                 },
                 uploadSuccess(response) {
                     this.icons.push({src: response, checked: false});
@@ -157,7 +177,7 @@
                     this.editItem.zipDto = {
                         name: file.name,
                         path: response
-                    }
+                    };
                     this.zipFileList = [this.editItem.zipDto];
                 },
                 getFavicons() {
@@ -170,28 +190,28 @@
                         })
                         .catch(err => {
                             console.error(err);
+                            this.$notice.err(err.response.data);
                         });
                 },
                 getTextIcon() {
                     if (!this.editItem.title) {
                         return;
                     }
-                    this.$http.get('/api/v1/color')
-                        .then(res => {
-                            this.icons.push({
-                                text: this.editItem.title.substring(0, 2),
-                                color: res.data,
-                                checked: false
-                            });
-                            this.icons.push({
-                                text: this.editItem.title.substring(0, 1),
-                                color: res.data,
-                                checked: false
-                            });
-                        })
-                        .catch(err => {
-                            console.error(err);
-                        });
+                    const color = colorUtils.getColor();
+                    this.icons.push({
+                        text: this.editItem.title.substring(0, 2),
+                        color: color,
+                        checked: false
+                    });
+                    this.icons.push({
+                        text: this.editItem.title.substring(0, 1),
+                        color: color,
+                        checked: false
+                    });
+                    if (!this.color) {
+                        const firstColor = this.icons.find(icon => Boolean(icon.color));
+                        this.color = firstColor ? firstColor.color : '';
+                    }
                 },
                 selectIcons(item) {
                     this.icons.forEach(it => it.checked = false);
@@ -205,12 +225,15 @@
                     this.$refs.tableForm.validate(valid => {
                         if (valid) {
                             this.$http.post('/api/v1/card', {...this.editItem})
-                                .then(res => {
+                                .then(() => {
                                     this.$notice.suc('保存成功');
                                     this.show = false;
-                                    this.$emit('refresh')
+                                    this.$emit('refresh', this.editItem.category);
                                 })
                                 .catch(err => {
+                                    console.log(err);
+                                    this.zipUploading = false;
+                                    this.$notice.err(err.response && err.response.data || '保存失败');
                                     this.cancel();
                                 });
                         } else {
@@ -219,7 +242,7 @@
                     });
                 },
                 cancel() {
-                    this.loading = false
+                    this.loading = false;
                     this.$nextTick(() => {
                         this.loading = true
                     })

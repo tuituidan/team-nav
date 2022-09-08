@@ -5,7 +5,7 @@
     <template id="page-card">
         <div>
             <div class="search-panel">
-                <div class="panel-left">
+                <div class="panel-left" style="width: 300px">
                     <i-form ref="searchForm"
                             label-width="100" @submit.native.prevent>
                         <form-item label="所属分类">
@@ -21,16 +21,14 @@
                 </div>
             </div>
             <div class="table-panel">
-                <i-table border stripe :columns="table.columns" :data="table.datas">
+                <i-table border stripe :columns="table.columns" :data="table.datas"
+                         draggable
+                         @on-drag-drop="changeSort">
                     <template slot-scope="{ row, index }" slot="icon-action">
                         <div>
                             <Avatar size="large" v-if="row.iconDto.src" :src="row.iconDto.src"></Avatar>
                             <Avatar size="large" v-else :style="{background: row.iconDto.color}">{{row.iconDto.text}}</Avatar>
                         </div>
-                    </template>
-                    <template slot-scope="{ row, index }" slot="sort-action">
-                        <i-button type="primary" size="small" @click="changeSort(row, 'asc')">上移</i-button>
-                        <i-button type="primary" size="small" @click="changeSort(row, 'desc')">下移</i-button>
                     </template>
                     <template slot-scope="{ row, index }" slot="action">
                         <i-button type="primary" size="small" @click="openCardModal(row)">编辑</i-button>
@@ -79,11 +77,6 @@
                             key: 'url',
                             tooltip: true
                         }, {
-                            title: '调整顺序',
-                            slot: 'sort-action',
-                            width: 160,
-                            align: 'center'
-                        }, {
                             title: '操作',
                             slot: 'action',
                             width: 160,
@@ -97,13 +90,17 @@
                 this.getCategory();
             },
             methods: {
-                initList() {
-                    this.$http.get(`/api/v1/card`, {params: {category: this.category}})
+                initList(catId) {
+                    if (catId && catId !== this.category) {
+                        this.category = catId;
+                    }
+                    this.$http.get(`/api/v1/category/${this.category}/card`)
                         .then(res => {
                             this.table.datas = res.data;
                         })
                         .catch(err => {
                             console.error(err);
+                            this.$notice.err(err.response.data);
                         })
                 },
                 getCategory() {
@@ -117,6 +114,7 @@
                         })
                         .catch(err => {
                             console.error(err);
+                            this.$notice.err(err.response.data);
                         });
                 },
                 deleteItem(id) {
@@ -129,14 +127,15 @@
                             this.$notice.err(err.response.data);
                         });
                 },
-                changeSort(row, direction) {
-                    this.$http.patch(`/api/v1/card/${row.id}/${direction}`)
-                        .then(res => {
+                changeSort(before, after) {
+                    this.$http.patch(`/api/v1/category/${this.category}/card/actions/sort?before=${before}&after=${after}`)
+                        .then(() => {
                             this.initList();
                         })
                         .catch(err => {
                             console.error(err);
-                        })
+                            this.$notice.err(err.response.data);
+                        });
                 },
                 openCardModal(item) {
                     this.$refs.cardModal.open(this.category, item);

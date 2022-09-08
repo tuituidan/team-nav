@@ -1,30 +1,38 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="settings">
+    <style type="text/css">
+        .card-style {
+            width: 450px;
+            margin-left: 20px;
+            float: left;
+        }
+    </style>
     <template id="page-settings">
         <div>
-            <div style="position: absolute">
-                <div style="font-size: 20px;padding: 10px 0 20px;font-weight: bold;">已完成功能：</div>
-                <timeline>
-                    <timeline-item v-for="item in dones" :key="item" color="green">
-                        <Icon type="ios-hammer" slot="dot"></Icon>
-                        <span v-text="item"></span>
-                    </timeline-item>
-                </timeline>
-                <div style="font-size: 20px;padding: 10px 0 20px;font-weight: bold;">待完成功能：</div>
-                <timeline>
-                    <timeline-item v-for="item in undos" :key="item" color="blue">
-                        <Icon type="ios-hammer" slot="dot"></Icon>
-                        <span v-text="item"></span>
-                    </timeline-item>
-                </timeline>
-            </div>
-            <div style="text-align: center">
-                <img src="/assets/images/developing.jpg" alt="开发中">
-                <div style="font-size: 30px;font-weight: bold;margin-top: 20px;">
-                    正在努力开发中...
+            <Card class="card-style">
+                <p slot="title">
+                    <Icon type="ios-film-outline"></Icon>
+                    配置原型通过Nginx访问
+                </p>
+                <a href="#" slot="extra" @click="saveNginx()">
+                    <Icon type="ios-loop-strong"></Icon>
+                    保存
+                </a>
+                <Alert show-icon>
+                    提示
+                    <template slot="desc">可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址</template>
+                </Alert>
+                <div class="search-panel">
+                    <i-switch size="large" v-model="nginx.open" class="panel-left">
+                        <span slot="open">开启</span>
+                        <span slot="close">关闭</span>
+                    </i-switch>
+                    <i-input class="panel-left" style="margin-left:20px; width: 315px;"
+                             type="text"
+                             v-model="nginx.url" placeholder="请输入Nginx的地址"></i-input>
                 </div>
-            </div>
+            </Card>
         </div>
     </template>
     <script type="text/javascript">
@@ -32,22 +40,37 @@
             template: '#page-settings',
             data() {
                 return {
-                    dones: [
-                        '网址导航前端展示功能',
-                        '网址导航后台基本功能：分类和卡片的增删改查',
-                        '分类和卡片支持顺序调整',
-                        '封装分类图标下拉选择控件',
-                        '卡片图标支持根据标题文字生成、根据链接自动获取favicon、支持上传三种方式',
-                        '支持项目原型压缩包上传，并生成访问地址'
-                    ],
-                    undos: [
-                        '卡片图标支持字体图标选择，背景色支持自定义选择',
-                        '支持项目添加，显示项目发布倒计时和发布日程表',
-                        '定时检查卡片链接地址是否可用，不可用置灰',
-                        '卡片搜索支持全文检索',
-                        '显示【常用导航】分类，本地记录用户常用卡片',
-                        '后端管理加入登录鉴权，支持CC登录'
-                    ]
+                    datas: [],
+                    nginx: {
+                        open: false,
+                        url: ''
+                    }
+                }
+            },
+            mounted() {
+                this.loadSetting();
+            },
+            methods: {
+                loadSetting(){
+                    this.$http.get(`/api/v1/setting`)
+                        .then(res => {
+                            this.nginx.open = Boolean(res.data.nginxOpen);
+                            this.nginx.url = res.data.nginxUrl;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        });
+                },
+                saveNginx(){
+                    this.$http.put(`/api/v1/setting/nginx`, {...this.nginx})
+                        .then(() => {
+                            this.$notice.suc('保存成功');
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        })
                 }
             }
         })

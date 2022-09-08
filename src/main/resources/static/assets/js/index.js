@@ -1,5 +1,5 @@
 /*
- * @author zhujunhan
+ * @author tuituidan
  * @date 2020/12/11
  */
 new Vue({
@@ -8,7 +8,8 @@ new Vue({
         return {
             keywords: '',
             isCollapsed: false,
-            datas: []
+            datas: [],
+            users: []
         }
     },
     mounted() {
@@ -36,6 +37,7 @@ new Vue({
                 })
                 .catch(err => {
                     console.error(err);
+                    this.$notice.err(err.response.data);
                 })
         },
         gotoAdmin() {
@@ -46,7 +48,18 @@ new Vue({
             this.$refs.sidebar.toggleCollapse();
         },
         choosedMenu(id) {
-            document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'start'});
+            const rows = document.getElementById(id);
+            rows.scrollIntoView(
+                {behavior: 'smooth', block: 'start'});
+            setTimeout(()=>{
+                if (rows.getBoundingClientRect().top > 100) {
+                    rows.classList.add('blink-box');
+                    setTimeout(() => {
+                        rows.classList.remove('blink-box');
+                    }, 3200);
+                }
+            }, 500);
+
         },
         dropdownClick(id) {
             this.choosedMenu(id);
@@ -54,9 +67,7 @@ new Vue({
         cardClickHandler(item) {
             if (item.url) {
                 window.open(item.url);
-                return;
             }
-            this.$notice.info('点了个寂寞');
         }
     }
 });

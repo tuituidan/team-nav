@@ -1,5 +1,5 @@
 /*
- * @author zhujunhan
+ * @author tuituidan
  * @date 2020/12/11
  */
 
@@ -66,6 +66,9 @@
 
 .dd-menu .ddi-wapper .ddi-text {
     margin-left: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dd-menu .ivu-dropdown-menu {
@@ -111,7 +114,7 @@
 }
 
 .ivu-menu {
-    height: calc(100% - 60px);
+    height: calc(100% - 120px);
     overflow-y: auto;
 }
 
@@ -201,10 +204,9 @@
 }
 
 .admin-layout-container .layout .logo .logo-saiqu .logo-text {
-    margin-left: 15px;
+    margin-left: 6px;
     color: white;
-    font-size: 24px;
-    line-height: 108px;
+    font-size: 22px;
     text-align: left;
 }
 
@@ -302,6 +304,9 @@
     vertical-align: bottom;
     font-size: 16px;
     transition: width .2s ease .2s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
 }
 .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):after {
      background: #2c4056;
@@ -337,7 +342,11 @@
     height: calc(100% - 60px);
     position: relative;
     overflow: auto;
-    padding: 10px 10px 10px 20px;
+    padding: 10px
+}
+
+.admin-layout-container .main-content .ivu-row{
+    padding-left: 10px
 }
 
 .master-page-container {
@@ -427,10 +436,14 @@
 }
 .card-avatar{
     margin-top: 5px;
+    max-width: 100%;
 }
 .card-title{
     font-size: 16px;
     font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .card-content{
     color: #0366d6;
@@ -439,4 +452,19 @@
     overflow: hidden;
     margin-top: 5px;
     text-overflow: ellipsis;
+}
+
+.blink-box {
+    animation: glow 800ms ease-out infinite alternate;
+}
+
+@keyframes glow {
+    0% {
+        border-color: red;
+        box-shadow: 0 0 5px rgba(255, 0, 0, .2), inset 0 0 5px rgba(255, 0, 0, .1), 0 0 0 red;
+    }
+    100% {
+        border-color: red;
+        box-shadow: 0 0 20px rgba(255, 0, 0, .6), inset 0 0 10px rgba(255, 0, 0, .4), 0 0 0 red;
+    }
 }

@@ -1,104 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="category">
-    <div th:replace="modal/category-modal::category-modal"></div>
+    <div th:replace="pages/category/category-valid::category-valid"></div>
+    <div th:replace="pages/category/category-invalid::category-invalid"></div>
+    <style type="text/css">
+        .ivu-tabs-bar{
+            margin-bottom: 3px;
+        }
+    </style>
     <template id="page-category">
-        <div>
-            <div class="search-panel">
-                <div class="panel-right">
-                    <i-button type="success" icon="md-add" @click="openModal()">添加</i-button>
-                </div>
-            </div>
-            <div class="table-panel">
-                <i-table border stripe :columns="table.columns" :data="table.datas">
-                    <template slot-scope="{ row, index }" slot="icon-action">
-                        <Icon :title="row.icon" :type="row.icon" size="20"></Icon>
-                        <span v-text="row.icon"></span>
-                    </template>
-                    <template slot-scope="{ row, index }" slot="sort-action">
-                        <i-button type="primary" size="small" @click="changeSort(row, 'asc')">上移</i-button>
-                        <i-button type="primary" size="small" @click="changeSort(row, 'desc')">下移</i-button>
-                    </template>
-                    <template slot-scope="{ row, index }" slot="action">
-                        <i-button type="primary" size="small" @click="openModal(row)">编辑</i-button>
-                        <Poptip confirm transfer
-                                title="您确定要删除此项吗？"
-                                @on-ok="deleteItem(row.id)">
-                            <i-button type="error" size="small">删除</i-button>
-                        </Poptip>
-                    </template>
-                </i-table>
-            </div>
-            <category-modal ref="categoryModal" @refresh="initList"></category-modal>
-        </div>
+        <Tabs value="valid-tab" @on-click="tabChange">
+            <tab-pane label="分类列表" name="valid-tab">
+                <page-category-valid ref="validCategory"></page-category-valid>
+            </tab-pane>
+            <tab-pane label="历史分类" name="invalid-tab">
+                <page-category-invalid ref="invalidCategory"></page-category-invalid>
+            </tab-pane>
+        </Tabs>
     </template>
     <script type="text/javascript">
         Vue.component('page-category', {
             template: '#page-category',
-            data() {
-                return {
-                    table: {
-                        columns: [{
-                            title: '序号',
-                            type: 'index',
-                            width: 66,
-                            align: 'center'
-                        }, {
-                            title: '名称',
-                            key: 'name'
-                        }, {
-                            title: '图标',
-                            slot: 'icon-action',
-                            key: 'icon'
-                        }, {
-                            title: '调整顺序',
-                            slot: 'sort-action',
-                            width: 160,
-                            align: 'center'
-                        }, {
-                            title: '操作',
-                            slot: 'action',
-                            width: 160,
-                            align: 'center'
-                        }],
-                        datas: []
-                    }
-                }
-            },
-            mounted() {
-                this.initList();
-            },
             methods: {
-                initList() {
-                    this.$http.get(`/api/v1/category`)
-                        .then(res => {
-                            this.table.datas = res.data;
-                        })
-                        .catch(err => {
-                            console.error(err);
-                        })
-                },
-                changeSort(row, direction) {
-                    this.$http.patch(`/api/v1/category/${row.id}/${direction}`)
-                        .then(res => {
-                            this.initList();
-                        })
-                        .catch(err => {
-                            console.error(err);
-                        })
-                },
-                deleteItem(id) {
-                    this.$http.delete(`/api/v1/category/${id}`)
-                        .then(() => {
-                            this.$notice.suc('删除成功');
-                            this.initList();
-                        })
-                        .catch(err => {
-                            console.error(err);
-                        });
-                },
-                openModal(item) {
-                    this.$refs.categoryModal.open(item);
+                tabChange(tab){
+                    if(tab === 'valid-tab'){
+                        this.$refs.validCategory.initList();
+                    }else if(tab === 'invalid-tab'){
+                        this.$refs.invalidCategory.initList();
+                    }
                 }
             }
         })

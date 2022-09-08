@@ -61,7 +61,8 @@
                             this.datas = this.searchVals = res.data;
                         })
                         .catch(err => {
-                            console.log(err);
+                            console.error(err);
+                            this.$notice.err(err.response.data);
                         })
                 },
                 visibleChange(visible) {

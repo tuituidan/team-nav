@@ -1,5 +1,5 @@
 /*
- * @author zhujunhan
+ * @author tuituidan
  * @date 2020/12/11
  */
 
@@ -176,7 +176,7 @@
     cursor: pointer;
     border-bottom: 1px solid #363e4f;
     position: relative;
-    padding-left: 20px;
+    padding-left: 13px;
     background: #0d58ab;
 }
 
@@ -187,10 +187,14 @@
     position: relative;
 }
 
-.admin-layout-container .layout .logo .logo-saiqu .user-name {
+.admin-layout-container .layout .logo .ivu-avatar {
+    background-color: #0d58ab;
+}
+
+.admin-layout-container .layout .logo .logo-saiqu .logo-text {
     color: #fff;
     font-size: 16px;
-    margin-left: 15px;
+    margin-left: 7px;
 }
 
 .admin-layout-container .layout-header-bar {
@@ -228,11 +232,23 @@
     margin-right: 20px;
 }
 
+.admin-layout-container .layout-header-bar .header-wapper .header-right .ivu-dropdown {
+    padding-right: 10px;
+}
+
+.admin-layout-container .layout-header-bar .header-wapper .header-right .ivu-dropdown:hover {
+    background-color: #0d58ab;
+}
+
 .admin-layout-container .layout-header-bar .header-wapper .header-right .btn-blue {
     color: #fff;
     font-size: 16px;
 }
 
+.admin-layout-container .layout-header-bar .header-wapper .header-right .user-name {
+    margin: 0 10px;
+    font-size: 16px;
+}
 
 .admin-layout-container .layout-logo-left {
     width: 90%;

@@ -26,14 +26,14 @@ Vue.prototype.$notice = {
     err(msg) {
         Vue.prototype.$Notice.error({
             title: '错误',
-            duration: 3,
+            duration: 5,
             desc: msg
         });
     },
     warn(msg) {
         Vue.prototype.$Notice.warning({
             title: '警告',
-            duration: 2,
+            duration: 3,
             desc: msg
         });
     },
@@ -44,5 +44,4 @@ Vue.prototype.$notice = {
             desc: msg
         });
     }
-}
-
+};

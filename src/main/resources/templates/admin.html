@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <title>团队服务导航</title>
+    <title th:text="${navName}"></title>
     <link type="text/css" rel="stylesheet" th:href="@{/assets/lib/iview/iview.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/assets/css/common.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/assets/css/admin.css}">
@@ -14,15 +14,19 @@
             <Layout>
                 <Sider ref="sidebar" class="sidebar" hide-trigger collapsible width="230" :collapsed-width="78"
                        v-model.trim="isCollapsed">
-                    <div class="logo">
+                    <div class="logo" onclick="javascript:location.href = '/';">
                         <div class="xfind-line" v-if="!isCollapsed">
                             <div class="line-h"></div>
                         </div>
                         <div v-if="!isCollapsed" class="logo-saiqu">
-                            <Avatar icon="ios-person" size="large"  src="/assets/images/header.jpg"></Avatar>
-                            <span class="user-name">管理员</span>
+                            <Avatar shape="square"
+                                    icon="ios-paper-plane"
+                                    size="large" src="/assets/images/logo.png"></Avatar>
+                            <span class="logo-text" th:text="${navName}"></span>
                         </div>
-                        <Avatar icon="ios-person" size="large" v-else src="/assets/images/header.jpg"/>
+                        <Avatar shape="square"
+                                icon="ios-paper-plane"
+                                size="large" v-else src="/assets/images/logo.png"/>
                     </div>
                     <i-menu
                             ref="side_menu"
@@ -60,14 +64,14 @@
                                     </i-button>
                                     <dropdown-menu class="dd-menu" slot="list">
                                         <template v-for="(child, i) in menu.children">
-                                            <dropdown-menu :name="child.name" :key="i">
+                                            <dropdown-item :name="child.name" :key="i">
                                                 <div class="ddi-wapper">
                                                     <Icon :size="16" :type="child.icon"></Icon>
                                                     <span class="ddi-text">
                                                     {{ child.title }}
                                                 </span>
                                                 </div>
-                                            </dropdown-menu>
+                                            </dropdown-item>
                                         </template>
                                     </dropdown-menu>
                                 </Dropdown>
@@ -77,14 +81,14 @@
                                         <Icon :size="25" :type="menu.icon"></Icon>
                                     </i-button>
                                     <dropdown-menu class="dd-menu" slot="list">
-                                        <dropdown-menu :name="menu.name">
+                                        <dropdown-item :name="menu.name">
                                             <div class="ddi-wapper">
                                                 <Icon :size="16" :type="menu.icon"></Icon>
                                                 <span class="ddi-text">
                                                 {{ menu.title }}
                                             </span>
                                             </div>
-                                        </dropdown-menu>
+                                        </dropdown-item>
                                     </dropdown-menu>
                                 </Dropdown>
                             </template>
@@ -101,12 +105,35 @@
                                 <span class="header-title"></span>
                             </div>
                             <div class="header-right">
-                                <i-button type="text"
-                                          icon="md-exit"
-                                          class="btn-blue"
-                                          to="/"
-                                          size="large">退出系统
-                                </i-button>
+                                <Dropdown transfer transfer-class-name="user-dropdown">
+                                    <span class="user-name" th:text="${userInfo.nick}"></span>
+                                    <Avatar icon="ios-person" size="large" th:src="${userInfo.avatar}"></Avatar>
+                                    <Icon :size="18" type="md-arrow-dropdown"></Icon>
+                                    <dropdown-menu slot="list">
+                                        <dropdown-item>
+                                            <i-button type="text"
+                                                      icon="ios-home"
+                                                      class="btn-blue"
+                                                      to="/">返回首页
+                                            </i-button>
+                                        </dropdown-item>
+                                        <dropdown-item>
+                                            <i-button type="text"
+                                                      icon="logo-github"
+                                                      class="btn-blue"
+                                                      target="_blank"
+                                                      to="https://github.com/tuituidan/team-nav">源码地址
+                                            </i-button>
+                                        </dropdown-item>
+                                        <dropdown-item>
+                                            <i-button type="text"
+                                                      icon="md-exit"
+                                                      class="btn-blue"
+                                                      to="/logout">退出登录
+                                            </i-button>
+                                        </dropdown-item>
+                                    </dropdown-menu>
+                                </Dropdown>
                             </div>
                         </div>
                     </i-header>
@@ -124,6 +151,7 @@
 <script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/js/vue-utils.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/color.js}"></script>
 <div th:replace="'pages/'+${page}::${page}"></div>
 <script type="text/javascript" th:src="@{/assets/js/admin.js}"></script>
 </body>

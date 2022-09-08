@@ -1,11 +1,9 @@
-server:
-  port: 1114
 spring:
   profiles:
     active: local
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:./database/data
+    url: jdbc:h2:./database/data;AUTO_SERVER=TRUE
     username: sa
     password: 123456
   h2:
@@ -14,7 +12,7 @@ spring:
       settings:
         web-allow-others: true
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: update
     generate-ddl: true
@@ -24,6 +22,28 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 40MB
-      max-request-size: 400MB
-resource-exts: team-nav-images,team-nav-modules
+      max-file-size: 1GB
+      max-request-size: 5GB
+  security:
+    user:
+      name: admin
+      roles: admin
+      password: 123456
+
+# 日志相关的配置，还有些问题，后续要改成xml的方式来配置.
+logging:
+  file:
+    name: logs/team-nav.log
+  level:
+    root: info
+    org:
+      apache: error
+      springframework: error
+
+# 线程池配置
+thread-pool:
+  core-pool-num: 2
+  max-pool-num: 2
+
+# 服务名，用于页面logo显示
+nav-name: 团队服务导航
