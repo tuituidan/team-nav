@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,25 +27,15 @@ public class CommonController {
     private CommonService commonService;
 
     /**
-     * 上传图标
+     * 文件上传
      *
-     * @param file 图标文件
+     * @param file 文件
+     * @param type 文件类型
      * @return 保存路径
      */
-    @PostMapping("/upload")
-    public ResponseEntity<String> upload(MultipartFile file) {
-        return ResponseEntity.ok(commonService.upload(file));
-    }
-
-    /**
-     * 上传原型
-     *
-     * @param file 原型文件
-     * @return 保存路径
-     */
-    @PostMapping("/upload/zip")
-    public ResponseEntity<String> uploadZip(MultipartFile file) {
-        return ResponseEntity.ok(commonService.uploadZip(file));
+    @PostMapping("/upload/{type}")
+    public ResponseEntity<String> upload(@PathVariable("type") String type, MultipartFile file) {
+        return ResponseEntity.ok(commonService.upload(file, type));
     }
 
     /**

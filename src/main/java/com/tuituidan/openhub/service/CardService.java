@@ -14,6 +14,7 @@ import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.io.File;
 import java.time.LocalDate;
@@ -219,7 +220,7 @@ public class CardService {
             deletePaths.add(existZip.getPath());
             deletePaths.add(StringExtUtils.format("/ext-resources/modules/{}", card.getId()));
         }
-        commonService.deleteFiles(false, deletePaths);
+        FileExtUtils.deleteFiles(false, deletePaths);
     }
 
 }

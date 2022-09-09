@@ -6,12 +6,11 @@ import com.tuituidan.openhub.bean.dto.CardDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.consts.CardTypeEnum;
-import com.tuituidan.openhub.service.CommonService;
+import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import com.tuituidan.openhub.util.ZipUtils;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +24,6 @@ import org.springframework.stereotype.Service;
 @Service
 @CardType(CardTypeEnum.ZIP)
 public class CardTypeZipServiceImpl implements ICardTypeService {
-
-    @Resource
-    private CommonService commonService;
 
     @Override
     public void format(Card card, CardDto cardDto) {
@@ -44,7 +40,7 @@ public class CardTypeZipServiceImpl implements ICardTypeService {
             List<String> deletePaths = new ArrayList<>();
             deletePaths.add(existZip.getPath());
             deletePaths.add(StringExtUtils.format("/ext-resources/modules/{}", card.getId()));
-            commonService.deleteFiles(true, deletePaths);
+            FileExtUtils.deleteFiles(true, deletePaths);
         }
         ZipUtils.unzip(card.getId(), cardDto.getZipDto().getPath());
         card.setZip(JSON.toJSONString(cardDto.getZipDto()));

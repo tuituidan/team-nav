@@ -1,6 +1,15 @@
 package com.tuituidan.openhub.util;
 
+import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.util.thread.CompletableUtils;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 
 /**
  * FileExtUtils.
@@ -9,8 +18,9 @@ import lombok.experimental.UtilityClass;
  * @version 1.0
  * @date 2021/3/15
  */
+@Slf4j
 @UtilityClass
-public class FileTypeUtils {
+public class FileExtUtils {
 
     private static final String FILE_HEADER_HTML = "3C21444F";
 
@@ -48,5 +58,27 @@ public class FileTypeUtils {
             builder.append(hv);
         }
         return fileHeader.equals(builder.toString());
+    }
+
+    /**
+     * deleteFiles
+     *
+     * @param sync sync
+     * @param paths paths
+     */
+    public static void deleteFiles(boolean sync, List<String> paths) {
+        List<CompletableFuture<?>> futures = new ArrayList<>();
+        for (String path : paths) {
+            futures.add(CompletableUtils.runAsync(() -> {
+                try {
+                    FileUtils.forceDelete(new File(Consts.ROOT_DIR + path));
+                } catch (IOException ex) {
+                    log.error("删除原文件失败：【{}】", path, ex);
+                }
+            }));
+        }
+        if (sync) {
+            CompletableUtils.waitAll(futures);
+        }
     }
 }

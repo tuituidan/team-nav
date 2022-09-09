@@ -37,7 +37,7 @@
                     <i-input v-model.trim="editItem.url" placeholder="链接" @on-blur="getFavicons"></i-input>
                 </form-item>
                 <form-item v-else label="原型文件" prop="url">
-                    <Upload action="/api/v1/upload/zip"
+                    <Upload action="/api/v1/upload/modules"
                             accept="application/zip"
                             :default-file-list="zipFileList"
                             :on-success="uploadZipSuccess">
@@ -47,7 +47,7 @@
                 <form-item label="图标" prop="iconDto">
                     <div>
                         <div style="overflow: hidden;">
-                            <Upload ref="uploadCtl" action="/api/v1/upload"
+                            <Upload ref="uploadCtl" action="/api/v1/upload/images"
                                     style="float: left;"
                                     :show-upload-list="false"
                                     accept="image/x-icon,image/png,image/jpeg,image/jpg,image/gif,image/bmp"
@@ -181,7 +181,7 @@
                     this.zipFileList = [this.editItem.zipDto];
                 },
                 getFavicons() {
-                    if (!this.editItem.url) {
+                    if (!(this.editItem.url && this.editItem.url.startsWith('http'))) {
                         return;
                     }
                     this.$http.get('/api/v1/card/icons', {params: {url: this.editItem.url}})
@@ -219,11 +219,11 @@
                     this.editItem.iconDto = {...item};
                 },
                 save() {
-                    if (this.editItem.type === '2' && this.newZip) {
-                        this.zipUploading = true;
-                    }
                     this.$refs.tableForm.validate(valid => {
                         if (valid) {
+                            if (this.editItem.type === '2' && this.newZip) {
+                                this.zipUploading = true;
+                            }
                             this.$http.post('/api/v1/card', {...this.editItem})
                                 .then(() => {
                                     this.$notice.suc('保存成功');
