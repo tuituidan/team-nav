@@ -37,10 +37,6 @@
   - Jsoup：解析目标网址的favicon.ico
   - zip4j：对原型压缩包进行解压
 
-## 页面展示
-
-暂无
-
 ## 部署说明
 
 #### 方式一：手动部署
@@ -96,3 +92,33 @@ location /ext-resources/modules {
 ## license
 
 100%开源，MIT协议，可自由修改
+
+## 页面展示
+
+首页
+
+![](./docs/home.png)
+
+后台-分类管理
+
+![](./docs/admin-category.png)
+
+后台-历史分类
+
+![](./docs/admin-category-history.png)
+
+后台-分类添加
+
+![](./docs/admin-category-add.png)
+
+后台-卡片管理
+
+![](./docs/admin-card.png)
+
+后台-卡片编辑
+
+![](./docs/admin-card-edit.png)
+
+后台-系统设置
+
+![](./docs/admin-system.png)
