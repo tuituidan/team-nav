@@ -2,7 +2,7 @@ package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.Nginx;
 import com.tuituidan.openhub.bean.entity.Setting;
-import com.tuituidan.openhub.service.SettingService;
+import com.tuituidan.openhub.service.setting.SettingService;
 import javax.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

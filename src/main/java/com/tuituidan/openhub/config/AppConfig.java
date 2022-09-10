@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.config;
 
+import com.tuituidan.openhub.consts.Consts;
 import java.io.File;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -69,7 +70,7 @@ public class AppConfig {
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        String location = System.getProperty("user.dir") + "/temp";
+        String location = Consts.ROOT_DIR + "/temp";
         File tmpFile = new File(location);
         if (!tmpFile.exists()) {
             Assert.isTrue(tmpFile.mkdirs(), "临时上传路径创建失败");

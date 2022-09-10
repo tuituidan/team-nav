@@ -1,13 +1,15 @@
-package com.tuituidan.openhub.service;
+package com.tuituidan.openhub.service.setting;
 
 import com.tuituidan.openhub.bean.dto.Nginx;
 import com.tuituidan.openhub.bean.entity.Setting;
 import com.tuituidan.openhub.repository.SettingRepository;
+import com.tuituidan.openhub.util.thread.CompletableUtils;
+import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,17 +21,24 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @CacheConfig(cacheNames = "settings")
-public class SettingService {
+public class SettingService implements ApplicationRunner {
 
     @Resource
     private SettingRepository settingRepository;
+
+    @Resource
+    private List<ISettingListener> settingListeners;
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        this.settingChange(get());
+    }
 
     /**
      * get
      *
      * @return Setting
      */
-    @Cacheable(key = "'setting-id'")
     public Setting get() {
         return settingRepository.findAll().stream().findFirst().orElse(new Setting());
     }
@@ -38,15 +47,19 @@ public class SettingService {
      * save
      *
      * @param nginx nginx
-     * @return Setting
      */
-    @CachePut(key = "'setting-id'")
-    public Setting saveNginx(Nginx nginx) {
+    public void saveNginx(Nginx nginx) {
         Setting setting = new Setting().setId("setting-id");
         setting.setNginxOpen(nginx.getOpen());
         setting.setNginxUrl(StringUtils.stripEnd(nginx.getUrl(), "/"));
         settingRepository.save(setting);
-        return setting;
+        this.settingChange(setting);
+    }
+
+    private void settingChange(Setting setting) {
+        for (ISettingListener listener : settingListeners) {
+            CompletableUtils.runAsync(() -> listener.settingChange(setting));
+        }
     }
 
 }

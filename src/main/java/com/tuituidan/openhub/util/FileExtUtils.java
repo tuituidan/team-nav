@@ -66,7 +66,7 @@ public class FileExtUtils {
      * @param sync sync
      * @param paths paths
      */
-    public static void deleteFiles(boolean sync, List<String> paths) {
+    public static void deleteFiles(boolean sync, String... paths) {
         List<CompletableFuture<?>> futures = new ArrayList<>();
         for (String path : paths) {
             futures.add(CompletableUtils.runAsync(() -> {

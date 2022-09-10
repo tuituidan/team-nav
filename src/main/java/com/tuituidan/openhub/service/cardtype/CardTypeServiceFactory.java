@@ -1,8 +1,6 @@
 package com.tuituidan.openhub.service.cardtype;
 
 import com.tuituidan.openhub.annotation.CardType;
-import com.tuituidan.openhub.bean.dto.CardDto;
-import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.util.EnumMap;
@@ -44,17 +42,16 @@ public class CardTypeServiceFactory {
     }
 
     /**
-     * format
+     * getService
      *
-     * @param card card
-     * @param cardDto cardDto
+     * @param type type
+     * @return ICardTypeService
      */
-    public void format(Card card, CardDto cardDto) {
-        CardTypeEnum cardTypeEnum = CardTypeEnum.getEnum(card.getType());
+    public ICardTypeService getService(String type) {
+        CardTypeEnum cardTypeEnum = CardTypeEnum.getEnum(type);
         Assert.notNull(cardTypeEnum, "卡片类型参数无效");
-        Objects.requireNonNull(cardTypeServiceMap.get(cardTypeEnum),
-                        StringExtUtils.format("未能实现卡片类型【{}】", card.getType()))
-                .format(card, cardDto);
+        return Objects.requireNonNull(cardTypeServiceMap.get(cardTypeEnum),
+                        StringExtUtils.format("未能实现卡片类型【{}】", type));
     }
 
 }
