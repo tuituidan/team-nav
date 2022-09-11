@@ -36,7 +36,9 @@ public class CardTypeServiceFactory {
         for (ICardTypeService service : cardTypeServiceList) {
             CardType cardType = AnnotationUtils.findAnnotation(service.getClass(), CardType.class);
             if (cardType != null) {
-                cardTypeServiceMap.put(cardType.value(), service);
+                for (CardTypeEnum typeEnum : cardType.value()) {
+                    cardTypeServiceMap.put(typeEnum, service);
+                }
             }
         }
     }

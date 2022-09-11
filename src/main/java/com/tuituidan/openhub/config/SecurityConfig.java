@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .logoutUrl("/logout").logoutSuccessUrl("/admin/category")
                 .deleteCookies("JSESSIONID")
                 .and().authorizeRequests()
-                .antMatchers("/api/v1/card/tree").permitAll()
+                .antMatchers("/api/v1/card/tree", "/api/v1/qrcode").permitAll()
                 .and().authorizeRequests()
                 .antMatchers("/admin/**", "/api/v1/**").authenticated()
                 .anyRequest().permitAll()

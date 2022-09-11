@@ -342,11 +342,7 @@
     height: calc(100% - 60px);
     position: relative;
     overflow: auto;
-    padding: 10px
-}
-
-.admin-layout-container .main-content .ivu-row{
-    padding-left: 10px
+    padding: 10px 10px 10px 20px
 }
 
 .master-page-container {
@@ -436,7 +432,6 @@
 }
 .card-avatar{
     margin-top: 5px;
-    max-width: 100%;
 }
 .card-title{
     font-size: 16px;

@@ -115,10 +115,10 @@ public class CategoryService {
      * 设为是否私密
      *
      * @param id id
-     * @param type type
+     * @param privateCard privateCard
      */
-    public void updatePrivate(String id, String type) {
-        categoryRepository.updatePrivate(StringUtils.equals(type, "1"), id);
+    public void updatePrivate(String id, Boolean privateCard) {
+        categoryRepository.updatePrivate(privateCard, id);
     }
 
     /**

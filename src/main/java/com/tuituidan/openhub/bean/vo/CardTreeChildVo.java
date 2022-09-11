@@ -19,6 +19,8 @@ public class CardTreeChildVo {
 
     private String id;
 
+    private String type;
+
     private CardIconDto icon;
 
     private String title;

@@ -21,9 +21,9 @@
                         <span v-text="row.icon"></span>
                     </template>
                     <template slot-scope="{ row, index }" slot="private-action">
-                        <i-button v-if="row.privateCard" ghost type="info" size="small" @click="setPrivateCard(row, '2')">取消私密
+                        <i-button v-if="row.privateCard" ghost type="info" size="small" @click="setPrivateCard(row, false)">取消私密
                         </i-button>
-                        <i-button v-else type="warning" ghost size="small" @click="setPrivateCard(row, '1')">设为私密</i-button>
+                        <i-button v-else type="warning" ghost size="small" @click="setPrivateCard(row, true)">设为私密</i-button>
                     </template>
                     <template slot-scope="{ row, index }" slot="action">
                         <i-button type="primary" size="small" @click="openModal(row)">编辑</i-button>
@@ -118,7 +118,7 @@
                 setPrivateCard(row, type) {
                     this.$http.patch(`/api/v1/category/${row.id}/private/${type}`)
                         .then(() => {
-                            this.$notice.suc(type === '1' ? '已设为私密' : '已取消私密');
+                            this.$notice.suc(type ? '已设为私密' : '已取消私密');
                             this.initList();
                         })
                         .catch(err => {

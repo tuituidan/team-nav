@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="card-modal">
+    <div th:replace="components/card-icon-select::card-icon-select"></div>
     <template id="card-modal">
         <Modal v-model="show"
                :width="520"
@@ -33,10 +34,14 @@
                              show-word-limit
                              v-model.trim="editItem.content" placeholder="内容"></i-input>
                 </form-item>
-                <form-item v-if="editItem.type==='1'" label="链接" prop="url">
+                <form-item v-if="editItem.type!=='zip'"
+                           label="链接"
+                           :rules="[{required:urlRequired(editItem.type), message:'链接不能为空', trigger:'change' }]"
+                           prop="url">
                     <i-input v-model.trim="editItem.url" placeholder="链接" @on-blur="getFavicons"></i-input>
                 </form-item>
-                <form-item v-else label="原型文件" prop="url">
+                <form-item v-else label="原型文件"
+                           prop="zipDto">
                     <Upload action="/api/v1/upload/modules"
                             accept="application/zip"
                             :default-file-list="zipFileList"
@@ -54,7 +59,11 @@
                                     :on-success="uploadSuccess">
                                 <i-button icon="ios-cloud-upload-outline">上传</i-button>
                             </Upload>
-                            <color-picker @on-change="colorChange" style="float: left; margin-left: 10px;"
+                            <card-icon-select style="float: left; margin-left: 10px;"
+                                              @select="iconSelect"></card-icon-select>
+                            <color-picker @on-change="colorChange"
+                                          style="float: left;
+                                          margin-left: 10px;"
                                           v-model="color"
                                           recommend></color-picker>
                         </div>
@@ -66,6 +75,7 @@
                                 <Icon type="md-checkmark-circle" slot="count" v-if="item.checked" color="#19be6b"
                                       size="16"/>
                             </Badge>
+                            <div v-if="iconErrTip" class="ivu-form-item-error-tip">图标不能为空，请点击选择一个图标</div>
                         </div>
                     </div>
                 </form-item>
@@ -82,22 +92,27 @@
                     zipUploading: false,
                     newZip: false,
                     loading: true,
+                    iconErrTip: false,
                     color: '',
                     types: [
                         {
-                            id: '1',
+                            id: 'default',
                             name: '普通'
                         },
                         {
-                            id: '2',
+                            id: 'zip',
                             name: '原型'
+                        },
+                        {
+                            id: 'qrcode',
+                            name: '二维码'
                         }
                     ],
                     categorys: [],
                     icons: [],
                     zipFileList: [],
                     editItem: {
-                        type: '1',
+                        type: 'default',
                         category: '',
                         iconDto: null,
                         zipDto: null,
@@ -115,10 +130,15 @@
                         content: [
                             {required: true, message: '内容不能为空'}
                         ],
-                        iconDto: [
-                            {required: true, message: '图标不能为空，请点击选择一个图标'}
+                        zipDto: [
+                            {required: true, message: '必须上传原型文件'}
                         ]
                     }
+                }
+            },
+            computed: {
+                urlRequired(){
+                    return val=> val === 'qrcode';
                 }
             },
             mounted() {
@@ -128,6 +148,7 @@
                 open(category, item) {
                     this.icons = [];
                     this.zipUploading = false;
+                    this.iconErrTip = false;
                     this.newZip = false;
                     this.$refs.tableForm.resetFields();
                     this.$refs.uploadCtl.clearFiles();
@@ -141,7 +162,7 @@
                         this.zipFileList = [item.zipDto];
                     } else {
                         this.editItem = {
-                            type: '1',
+                            type: 'default',
                             category: category,
                             iconDto: null,
                             zipDto: null,
@@ -172,6 +193,9 @@
                 uploadSuccess(response) {
                     this.icons.push({src: response, checked: false});
                 },
+                iconSelect(src) {
+                    this.icons.push({src: src, checked: false});
+                },
                 uploadZipSuccess(response, file) {
                     this.newZip = true;
                     this.editItem.zipDto = {
@@ -184,7 +208,7 @@
                     if (!(this.editItem.url && this.editItem.url.startsWith('http'))) {
                         return;
                     }
-                    this.$http.get('/api/v1/card/icons', {params: {url: this.editItem.url}})
+                    this.$http.get('/api/v1/card/icon', {params: {url: this.editItem.url}})
                         .then(res => {
                             res.data.forEach(path => this.icons.push({src: path, checked: false}));
                         })
@@ -217,11 +241,17 @@
                     this.icons.forEach(it => it.checked = false);
                     item.checked = true;
                     this.editItem.iconDto = {...item};
+                    this.iconErrTip = false;
                 },
                 save() {
+                    setTimeout(() => {
+                        if (!this.editItem.iconDto) {
+                            this.iconErrTip = true;
+                        }
+                    }, 1);
                     this.$refs.tableForm.validate(valid => {
-                        if (valid) {
-                            if (this.editItem.type === '2' && this.newZip) {
+                        if (valid && this.editItem.iconDto) {
+                            if (this.editItem.type === 'zip' && this.newZip) {
                                 this.zipUploading = true;
                             }
                             this.$http.post('/api/v1/card', {...this.editItem})

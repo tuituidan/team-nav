@@ -86,13 +86,13 @@ public class CategoryController {
      * update private
      *
      * @param id id
-     * @param type type
+     * @param privateCard privateCard
      * @return Void
      */
     @PatchMapping("/{id}/private/{type}")
     public ResponseEntity<Void> updatePrivate(@PathVariable("id") String id,
-            @PathVariable("type") String type) {
-        categoryService.updatePrivate(id, type);
+            @PathVariable("type") Boolean privateCard) {
+        categoryService.updatePrivate(id, privateCard);
         return ResponseEntity.noContent().build();
     }
 

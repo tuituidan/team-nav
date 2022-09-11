@@ -82,12 +82,12 @@
                         <Row v-for="item in datas" :id="item.id">
                             <i-col span="24" class="card-cat" icon="ios-home" v-text="item.name"></i-col>
                             <i-col span="6" v-for="child in item.children">
-                                <Tooltip :content="child.tip"
-                                         max-width="320"
+                                <Tooltip max-width="320"
+                                         :content="child.tip"
                                          style="width:calc(100% - 10px)">
                                     <Card class="nav-card" @click.native="cardClickHandler(child)">
                                         <Row>
-                                            <i-col span="4">
+                                            <i-col style="width: 40px;">
                                                 <Avatar v-if="child.icon.src"
                                                         class="card-avatar"
                                                         size="large"
@@ -98,12 +98,18 @@
                                                         :style="{background: child.icon.color}">{{child.icon.text}}
                                                 </Avatar>
                                             </i-col>
-                                            <i-col span="20">
+                                            <i-col style="width: calc(100% - 43px);margin-left: 3px">
                                                 <div class="card-title" v-text="child.title"></div>
                                                 <div class="card-content" v-text="child.content"></div>
                                             </i-col>
                                         </Row>
                                     </Card>
+                                    <div v-if="child.type==='qrcode'" slot="content">
+                                        <div v-text="child.tip"></div>
+                                        <div style="text-align: center">
+                                            <img :src="'/api/v1/qrcode?url='+child.url">
+                                        </div>
+                                    </div>
                                 </Tooltip>
                             </i-col>
                         </Row>

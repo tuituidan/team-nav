@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="card-icon-select">
+    <style type="text/css">
+        .card-icon-select .icon-select-panel {
+            height: 200px;
+            overflow-y: scroll;
+        }
+
+        .card-icon-select .icon-select-panel .ivu-avatar {
+            cursor: pointer;
+            margin: 3px;
+        }
+
+        .card-icon-select .icon-select-search-panel {
+            padding: 5px;
+        }
+    </style>
+    <template id="card-icon-select">
+        <Dropdown class="card-icon-select" trigger="click" v-if="datas.length">
+            <i-button>
+                图标选择
+                <Icon type="ios-arrow-down"></Icon>
+            </i-button>
+            <DropdownMenu slot="list">
+                <div class="icon-select-search-panel">
+                    <i-input placeholder="搜索..." v-model="searchVal" search @on-change="searchHandler"></i-input>
+                </div>
+                <div class="icon-select-panel">
+                    <Avatar :title="icon"
+                            v-for="icon in searchVals"
+                            size="large"
+                            @click.native="selectIcon(icon)"
+                            :src="'/ext-resources/images/default/'+icon+'.png'"></Avatar>
+                </div>
+            </DropdownMenu>
+        </Dropdown>
+    </template>
+    <script type="text/javascript">
+        Vue.component('card-icon-select', {
+            template: '#card-icon-select',
+            data() {
+                return {
+                    searchVal: '',
+                    datas: [],
+                    searchVals: []
+                }
+            },
+            mounted() {
+                this.init();
+            },
+            methods: {
+                init() {
+                    this.$http.get('/api/v1/card/icons')
+                        .then(res => {
+                            this.datas = this.searchVals = res.data;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        })
+                },
+                selectIcon(val) {
+                    this.$emit('select', '/ext-resources/images/default/'+val+'.png');
+                },
+                searchHandler() {
+                    if (this.searchVal === '') {
+                        this.searchVals = this.datas;
+                    }
+                    this.searchVals = this.datas.filter(item => item.includes(this.searchVal));
+                }
+            }
+        })
+    </script>
+</div>
+</html>

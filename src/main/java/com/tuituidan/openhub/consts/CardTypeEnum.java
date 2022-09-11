@@ -20,11 +20,15 @@ public enum CardTypeEnum {
     /**
      * 默认
      */
-    DEFAULT("1"),
+    DEFAULT("default"),
     /**
-     * zip
+     * 原型
      */
-    ZIP("2");
+    ZIP("zip"),
+    /**
+     * 二维码
+     */
+    QRCODE("qrcode");
 
     private String type;
 

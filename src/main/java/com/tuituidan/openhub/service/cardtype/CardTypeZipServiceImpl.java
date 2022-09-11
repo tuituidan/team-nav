@@ -63,7 +63,8 @@ public class CardTypeZipServiceImpl implements ICardTypeService, ISettingListene
     public void supplyDelete(Card card) {
         CardIconDto cardIconDto = JSON.parseObject(card.getIcon(), CardIconDto.class);
         List<String> deletePaths = new ArrayList<>();
-        if (StringUtils.isNotBlank(cardIconDto.getSrc())) {
+        if (StringUtils.isNotBlank(cardIconDto.getSrc())
+                && StringUtils.contains(cardIconDto.getSrc(), "default")) {
             deletePaths.add(cardIconDto.getSrc());
         }
         CardZipDto existZip = JSON.parseObject(card.getZip(), CardZipDto.class);

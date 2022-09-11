@@ -65,7 +65,7 @@ new Vue({
             this.choosedMenu(id);
         },
         cardClickHandler(item) {
-            if (item.url) {
+            if (item.url && item.type === 'default') {
                 window.open(item.url);
             }
         }

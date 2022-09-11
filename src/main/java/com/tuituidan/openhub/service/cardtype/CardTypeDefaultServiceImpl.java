@@ -19,12 +19,12 @@ import org.springframework.stereotype.Service;
  * @date 2022/9/7
  */
 @Service
-@CardType(CardTypeEnum.DEFAULT)
+@CardType({CardTypeEnum.DEFAULT, CardTypeEnum.QRCODE})
 public class CardTypeDefaultServiceImpl implements ICardTypeService {
 
     @Override
     public void formatCardVo(CardTreeChildVo cardVo) {
-        // 无特殊处理
+        // 默认的不用实现
     }
 
     @Override
@@ -35,7 +35,8 @@ public class CardTypeDefaultServiceImpl implements ICardTypeService {
     @Override
     public void supplyDelete(Card card) {
         CardIconDto cardIconDto = JSON.parseObject(card.getIcon(), CardIconDto.class);
-        if (StringUtils.isNotBlank(cardIconDto.getSrc())) {
+        if (StringUtils.isNotBlank(cardIconDto.getSrc())
+                && StringUtils.contains(cardIconDto.getSrc(), "default")) {
             FileExtUtils.deleteFiles(false, cardIconDto.getSrc());
         }
     }

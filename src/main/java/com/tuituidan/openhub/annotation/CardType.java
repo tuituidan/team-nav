@@ -20,10 +20,10 @@ import java.lang.annotation.Target;
 public @interface CardType {
 
     /**
-     * value
+     * 数组，允许多个类型使用同一个实现
      *
      * @return CardTypeEnum
      */
-    CardTypeEnum value();
+    CardTypeEnum[] value();
 
 }

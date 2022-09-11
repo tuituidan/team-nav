@@ -49,14 +49,34 @@ public class CommonController {
     }
 
     /**
+     * 获取分类的图标
+     *
+     * @return List
+     */
+    @GetMapping("/card/icons")
+    public ResponseEntity<List<String>> cardIcons() {
+        return ResponseEntity.ok(commonService.cardIcons());
+    }
+
+    /**
      * 获取卡片对应链接的 favicon.ico 用于icon
      *
      * @param url url
      * @return List
      */
-    @GetMapping("/card/icons")
+    @GetMapping("/card/icon")
     public ResponseEntity<List<String>> cardIcons(String url) {
         return ResponseEntity.ok(commonService.cardIcons(url));
+    }
+
+    /**
+     * generateQrCode
+     *
+     * @param url url
+     */
+    @GetMapping("/qrcode")
+    public void generateQrCode(String url) {
+        commonService.generateQrCode(url);
     }
 
 }

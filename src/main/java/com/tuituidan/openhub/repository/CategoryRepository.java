@@ -24,7 +24,7 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     @Modifying
     @Transactional(rollbackFor = Exception.class)
     @Query("update Category set privateCard = ?1 where id = ?2")
-    void updatePrivate(boolean privateCard, String id);
+    void updatePrivate(Boolean privateCard, String id);
 
     /**
      * getMaxSort

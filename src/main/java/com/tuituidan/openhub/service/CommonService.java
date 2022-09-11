@@ -4,7 +4,10 @@ import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.exception.ResourceReadException;
 import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.util.FileExtUtils;
+import com.tuituidan.openhub.util.QrCodeUtils;
+import com.tuituidan.openhub.util.RequestUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -29,6 +32,8 @@ import org.dom4j.io.SAXReader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,32 +49,62 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 @Slf4j
-public class CommonService {
+public class CommonService implements ApplicationRunner {
 
     private static final String ICON_SVG_PATH = "static/assets/lib/iview/fonts/ionicons.svg";
 
-    private static final List<String> ICONS = new ArrayList<>();
+    private static final List<String> CATEGORY_ICONS = new ArrayList<>();
+
+    private static final List<String> CARD_ICONS = new ArrayList<>();
+
+    private static final String CARD_ICON_PATH = Consts.ROOT_DIR + "/ext-resources/images/default";
 
     @Resource
     private RestTemplate restTemplate;
 
     /**
+     * 初始化
+     */
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        loadCategoryIcons();
+        loadCardIcons();
+    }
+
+    /**
      * 解析出iview的所有字体图标名称，用于前端选择图标的控件
      */
-    @PostConstruct
-    private void init() {
+    private void loadCategoryIcons() {
         org.dom4j.Document document;
         try (InputStream inputStream = new ClassPathResource(ICON_SVG_PATH).getInputStream()) {
             document = SAXReader.createDefault().read(inputStream);
         } catch (Exception ex) {
             throw new ResourceReadException("icon-xml读取失败", ex);
         }
-        ICONS.addAll(document.getRootElement().element("defs").element("font").elements("glyph")
+        CATEGORY_ICONS.addAll(document.getRootElement().element("defs").element("font").elements("glyph")
                 .stream()
                 .map(element -> element.attribute("glyph-name"))
                 .filter(Objects::nonNull)
                 .map(Attribute::getValue)
                 .collect(Collectors.toList()));
+    }
+
+    /**
+     * 解析出iview的所有字体图标名称，用于前端选择图标的控件
+     */
+    public void loadCardIcons() {
+        CARD_ICONS.clear();
+        File root = new File(CARD_ICON_PATH);
+        if (!root.exists()) {
+            return;
+        }
+        File[] files = root.listFiles();
+        if (files == null || files.length <= 0) {
+            return;
+        }
+        for (File file : files) {
+            CARD_ICONS.add(FilenameUtils.getBaseName(file.getName()));
+        }
     }
 
     /**
@@ -106,7 +141,16 @@ public class CommonService {
      * @return List
      */
     public List<String> categoryIcons() {
-        return ICONS;
+        return CATEGORY_ICONS;
+    }
+
+    /**
+     * 获取卡片的图标
+     *
+     * @return List
+     */
+    public List<String> cardIcons() {
+        return CARD_ICONS;
     }
 
     /**
@@ -200,4 +244,19 @@ public class CommonService {
         }
         return "";
     }
+
+    /**
+     * generateQrCode
+     *
+     * @param url url
+     */
+    public void generateQrCode(String url) {
+        try (OutputStream outputStream = RequestUtils.getResponse().getOutputStream()) {
+            BufferedImage image = QrCodeUtils.generate(url, 200, 200);
+            ImageIO.write(image, "png", outputStream);
+        } catch (Exception ex) {
+            throw new ResourceWriteException("二维码写入失败");
+        }
+    }
+
 }
