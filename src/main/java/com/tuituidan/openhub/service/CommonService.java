@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -35,9 +34,7 @@ import org.jsoup.select.Elements;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -58,9 +55,6 @@ public class CommonService implements ApplicationRunner {
     private static final List<String> CARD_ICONS = new ArrayList<>();
 
     private static final String CARD_ICON_PATH = Consts.ROOT_DIR + "/ext-resources/images/default";
-
-    @Resource
-    private RestTemplate restTemplate;
 
     /**
      * 初始化
@@ -233,8 +227,7 @@ public class CommonService implements ApplicationRunner {
 
     private String requestFavicon(String url) {
         try {
-            ResponseEntity<byte[]> forEntity = restTemplate.getForEntity(url, byte[].class);
-            byte[] body = forEntity.getBody();
+            byte[] body = IOUtils.toByteArray(new URL(url));
             // 要能实际获取到favicon的数据，如果返回是一个html文件，往往是鉴权导致重定向了
             if (body != null && !FileExtUtils.isHtml(body)) {
                 return url;

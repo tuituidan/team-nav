@@ -1,5 +1,7 @@
 package com.tuituidan.openhub.bean.entity;
 
+import com.tuituidan.openhub.bean.dto.CardIconDto;
+import com.tuituidan.openhub.bean.dto.CardZipDto;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,7 +42,7 @@ public class Card implements Serializable {
     private String category;
 
     @Column(name = "C_ICON", length = 400)
-    private String icon;
+    private CardIconDto icon;
 
     @Column(name = "C_TITLE", length = 200)
     private String title;
@@ -52,7 +54,7 @@ public class Card implements Serializable {
     private String url;
 
     @Column(name = "C_ZIP", length = 400)
-    private String zip;
+    private CardZipDto zip;
 
     @Column(name = "N_SORT")
     private Integer sort;

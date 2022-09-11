@@ -26,9 +26,7 @@ public class CardVo {
 
     private String categoryName;
 
-    private String icon;
-
-    private CardIconDto iconDto;
+    private CardIconDto icon;
 
     private String title;
 
@@ -36,9 +34,7 @@ public class CardVo {
 
     private String url;
 
-    private String zip;
-
-    private CardZipDto zipDto;
+    private CardZipDto zip;
 
     private Integer sort;
 }

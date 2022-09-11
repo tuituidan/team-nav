@@ -41,7 +41,7 @@
                     <i-input v-model.trim="editItem.url" placeholder="链接" @on-blur="getFavicons"></i-input>
                 </form-item>
                 <form-item v-else label="原型文件"
-                           prop="zipDto">
+                           prop="zip">
                     <Upload action="/api/v1/upload/modules"
                             accept="application/zip"
                             :default-file-list="zipFileList"
@@ -49,7 +49,7 @@
                         <i-button icon="ios-cloud-upload-outline">上传</i-button>
                     </Upload>
                 </form-item>
-                <form-item label="图标" prop="iconDto">
+                <form-item label="图标" prop="icon">
                     <div>
                         <div style="overflow: hidden;">
                             <Upload ref="uploadCtl" action="/api/v1/upload/images"
@@ -114,8 +114,8 @@
                     editItem: {
                         type: 'default',
                         category: '',
-                        iconDto: null,
-                        zipDto: null,
+                        icon: null,
+                        zip: null,
                         title: '',
                         content: '',
                         url: ''
@@ -130,7 +130,7 @@
                         content: [
                             {required: true, message: '内容不能为空'}
                         ],
-                        zipDto: [
+                        zip: [
                             {required: true, message: '必须上传原型文件'}
                         ]
                     }
@@ -156,16 +156,16 @@
                     this.edit = Boolean(item);
                     if (this.edit) {
                         this.editItem = {...item};
-                        this.editItem.iconDto.checked = true;
-                        this.icons.push(this.editItem.iconDto);
+                        this.editItem.icon.checked = true;
+                        this.icons.push(this.editItem.icon);
                         this.getTextIcon();
-                        this.zipFileList = [item.zipDto];
+                        this.zipFileList = [item.zip];
                     } else {
                         this.editItem = {
                             type: 'default',
                             category: category,
-                            iconDto: null,
-                            zipDto: null,
+                            icon: null,
+                            zip: null,
                             title: '',
                             content: '',
                             url: ''
@@ -198,11 +198,11 @@
                 },
                 uploadZipSuccess(response, file) {
                     this.newZip = true;
-                    this.editItem.zipDto = {
+                    this.editItem.zip = {
                         name: file.name,
                         path: response
                     };
-                    this.zipFileList = [this.editItem.zipDto];
+                    this.zipFileList = [this.editItem.zip];
                 },
                 getFavicons() {
                     if (!(this.editItem.url && this.editItem.url.startsWith('http'))) {
@@ -240,17 +240,17 @@
                 selectIcons(item) {
                     this.icons.forEach(it => it.checked = false);
                     item.checked = true;
-                    this.editItem.iconDto = {...item};
+                    this.editItem.icon = {...item};
                     this.iconErrTip = false;
                 },
                 save() {
                     setTimeout(() => {
-                        if (!this.editItem.iconDto) {
+                        if (!this.editItem.icon) {
                             this.iconErrTip = true;
                         }
                     }, 1);
                     this.$refs.tableForm.validate(valid => {
-                        if (valid && this.editItem.iconDto) {
+                        if (valid && this.editItem.icon) {
                             if (this.editItem.type === 'zip' && this.newZip) {
                                 this.zipUploading = true;
                             }

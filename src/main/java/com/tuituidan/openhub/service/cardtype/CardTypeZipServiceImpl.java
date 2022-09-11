@@ -1,10 +1,7 @@
 package com.tuituidan.openhub.service.cardtype;
 
-import com.alibaba.fastjson.JSON;
 import com.tuituidan.openhub.annotation.CardType;
-import com.tuituidan.openhub.bean.dto.CardDto;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
-import com.tuituidan.openhub.bean.dto.CardZipDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Setting;
 import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
@@ -40,35 +37,21 @@ public class CardTypeZipServiceImpl implements ICardTypeService, ISettingListene
     }
 
     @Override
-    public void supplySave(Card card, CardDto cardDto) {
-        if (StringUtils.isNotBlank(card.getZip())) {
-            CardZipDto existZip = JSON.parseObject(card.getZip(), CardZipDto.class);
-            if (StringUtils.equals(existZip.getPath(), cardDto.getZipDto().getPath())) {
-                if (StringUtils.equals(existZip.getName(), cardDto.getZipDto().getName())) {
-                    return;
-                }
-                existZip.setName(cardDto.getZipDto().getName());
-                card.setZip(JSON.toJSONString(existZip));
-                return;
-            }
-            FileExtUtils.deleteFiles(true, existZip.getPath(),
-                    "/ext-resources/modules/" + card.getId());
-        }
-        ZipUtils.unzip(card.getId(), cardDto.getZipDto().getPath());
-        card.setZip(JSON.toJSONString(cardDto.getZipDto()));
+    public void supplySave(Card card) {
+        FileExtUtils.deleteFiles(true, "/ext-resources/modules/" + card.getId());
+        ZipUtils.unzip(card.getId(), card.getZip().getPath());
         card.setUrl(StringExtUtils.format("/ext-resources/modules/{}/index.html", card.getId()));
     }
 
     @Override
     public void supplyDelete(Card card) {
-        CardIconDto cardIconDto = JSON.parseObject(card.getIcon(), CardIconDto.class);
+        CardIconDto cardIconDto = card.getIcon();
         List<String> deletePaths = new ArrayList<>();
         if (StringUtils.isNotBlank(cardIconDto.getSrc())
                 && StringUtils.contains(cardIconDto.getSrc(), "default")) {
             deletePaths.add(cardIconDto.getSrc());
         }
-        CardZipDto existZip = JSON.parseObject(card.getZip(), CardZipDto.class);
-        deletePaths.add(existZip.getPath());
+        deletePaths.add(card.getZip().getPath());
         deletePaths.add("/ext-resources/modules/" + card.getId());
         FileExtUtils.deleteFiles(false, deletePaths.toArray(new String[0]));
     }

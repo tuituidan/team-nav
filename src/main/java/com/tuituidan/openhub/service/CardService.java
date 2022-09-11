@@ -1,9 +1,7 @@
 package com.tuituidan.openhub.service;
 
-import com.alibaba.fastjson.JSON;
 import com.tuituidan.openhub.bean.dto.CardDto;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
-import com.tuituidan.openhub.bean.dto.CardZipDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
@@ -14,7 +12,9 @@ import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
-import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,13 +29,10 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * CardService.
@@ -53,9 +50,6 @@ public class CardService {
 
     @Resource
     private CategoryService categoryService;
-
-    @Resource
-    private RestTemplate restTemplate;
 
     @Resource
     private CardTypeServiceFactory cardTypeServiceFactory;
@@ -91,7 +85,6 @@ public class CardService {
         List<CardTreeChildVo> result = new ArrayList<>();
         for (Card card : cardList) {
             CardTreeChildVo vo = BeanExtUtils.convert(card, CardTreeChildVo::new);
-            vo.setIcon(JSON.parseObject(card.getIcon(), CardIconDto.class));
             cardTypeServiceFactory.getService(card.getType()).formatCardVo(vo);
             vo.setTip(Stream.of(vo.getTitle(), vo.getContent(), vo.getUrl())
                     .filter(StringUtils::isNotBlank).distinct()
@@ -113,10 +106,6 @@ public class CardService {
         return list.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new);
             vo.setCategoryName(categoryService.get(item.getCategory()).getName());
-            vo.setIconDto(JSON.parseObject(item.getIcon(), CardIconDto.class));
-            if (StringUtils.isNotBlank(item.getZip())) {
-                vo.setZipDto(JSON.parseObject(item.getZip(), CardZipDto.class));
-            }
             return vo;
         }).collect(Collectors.toList());
     }
@@ -127,36 +116,31 @@ public class CardService {
      * @param cardDto cardDto
      */
     public void save(CardDto cardDto) {
+        this.saveIcon(cardDto.getIcon());
         Card card = BeanExtUtils.convert(cardDto, Card::new);
-        card.setIcon(saveIcon(cardDto.getIconDto()));
         if (StringUtils.isBlank(card.getId())) {
             card.setId(StringExtUtils.getUuid());
         }
-        cardTypeServiceFactory.getService(card.getType()).supplySave(card, cardDto);
+        cardTypeServiceFactory.getService(card.getType()).supplySave(card);
         if (card.getSort() == null) {
             card.setSort(cardRepository.getMaxSort(card.getCategory()) + 1);
         }
         cardRepository.save(card);
     }
 
-    private String saveIcon(CardIconDto cardIconDto) {
-        if (StringUtils.isBlank(cardIconDto.getSrc())
-                || StringUtils.startsWith(cardIconDto.getSrc(), "/ext-resources")) {
-            return JSON.toJSONString(cardIconDto);
+    private void saveIcon(CardIconDto cardIconDto) {
+        if (!StringUtils.startsWith(cardIconDto.getSrc(), "http")) {
+            return;
         }
-        try {
-            ResponseEntity<byte[]> forEntity = restTemplate.getForEntity(cardIconDto.getSrc(), byte[].class);
-            String url = StringExtUtils.format("/ext-resources/images/{}/{}.{}",
-                    DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()),
-                    StringExtUtils.getUuid(), FilenameUtils.getExtension(cardIconDto.getSrc()));
-            Assert.notNull(forEntity.getBody(), "获取数据失败");
-            FileUtils.writeByteArrayToFile(new File(Consts.ROOT_DIR + url),
-                    forEntity.getBody());
-            cardIconDto.setSrc(url);
+        String path = StringExtUtils.format("/ext-resources/images/{}/{}.{}",
+                DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()),
+                StringExtUtils.getUuid(), FilenameUtils.getExtension(cardIconDto.getSrc()));
+        try (OutputStream outputStream = new FileOutputStream(Consts.ROOT_DIR + path)) {
+            IOUtils.copy(new URL(cardIconDto.getSrc()), outputStream);
+            cardIconDto.setSrc(path);
         } catch (Exception ex) {
             log.error("card icon 保存失败", ex);
         }
-        return JSON.toJSONString(cardIconDto);
     }
 
     /**

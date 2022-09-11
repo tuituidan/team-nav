@@ -1,7 +1,9 @@
 package com.tuituidan.openhub.bean.dto;
 
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * CardZipDto.
@@ -12,7 +14,10 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class CardZipDto {
+@Accessors(chain = true)
+public class CardZipDto implements Serializable {
+
+    private static final long serialVersionUID = 2042720476082054433L;
 
     private String name;
 

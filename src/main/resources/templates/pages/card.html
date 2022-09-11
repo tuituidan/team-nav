@@ -26,8 +26,8 @@
                          @on-drag-drop="changeSort">
                     <template slot-scope="{ row, index }" slot="icon-action">
                         <div>
-                            <Avatar size="large" v-if="row.iconDto.src" :src="row.iconDto.src"></Avatar>
-                            <Avatar size="large" v-else :style="{background: row.iconDto.color}">{{row.iconDto.text}}</Avatar>
+                            <Avatar size="large" v-if="row.icon.src" :src="row.icon.src"></Avatar>
+                            <Avatar size="large" v-else :style="{background: row.icon.color}">{{row.icon.text}}</Avatar>
                         </div>
                     </template>
                     <template slot-scope="{ row, index }" slot="action">
@@ -62,7 +62,7 @@
                             tooltip: true
                         }, {
                             title: '图标',
-                            key: 'iconDto',
+                            key: 'icon',
                             slot: 'icon-action'
                         }, {
                             title: '标题',

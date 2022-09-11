@@ -1,6 +1,5 @@
 package com.tuituidan.openhub.service.cardtype;
 
-import com.tuituidan.openhub.bean.dto.CardDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
 
@@ -24,9 +23,8 @@ public interface ICardTypeService {
      * supplySave
      *
      * @param card card
-     * @param cardDto cardDto
      */
-    void supplySave(Card card, CardDto cardDto);
+    void supplySave(Card card);
 
     /**
      * supplyDelete

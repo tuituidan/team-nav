@@ -30,14 +30,9 @@ public class CardDto {
     private String category;
 
     /**
-     * icon
-     */
-    private String icon;
-
-    /**
      * 结构化数据的icon
      */
-    private CardIconDto iconDto;
+    private CardIconDto icon;
 
     private String title;
 
@@ -45,9 +40,7 @@ public class CardDto {
 
     private String url;
 
-    private String zip;
-
-    private CardZipDto zipDto;
+    private CardZipDto zip;
 
     private Integer sort;
 

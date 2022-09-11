@@ -1,8 +1,6 @@
 package com.tuituidan.openhub.service.cardtype;
 
-import com.alibaba.fastjson.JSON;
 import com.tuituidan.openhub.annotation.CardType;
-import com.tuituidan.openhub.bean.dto.CardDto;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
@@ -28,13 +26,13 @@ public class CardTypeDefaultServiceImpl implements ICardTypeService {
     }
 
     @Override
-    public void supplySave(Card card, CardDto cardDto) {
+    public void supplySave(Card card) {
         // 默认的不用实现
     }
 
     @Override
     public void supplyDelete(Card card) {
-        CardIconDto cardIconDto = JSON.parseObject(card.getIcon(), CardIconDto.class);
+        CardIconDto cardIconDto = card.getIcon();
         if (StringUtils.isNotBlank(cardIconDto.getSrc())
                 && StringUtils.contains(cardIconDto.getSrc(), "default")) {
             FileExtUtils.deleteFiles(false, cardIconDto.getSrc());

@@ -65,7 +65,7 @@ new Vue({
             this.choosedMenu(id);
         },
         cardClickHandler(item) {
-            if (item.url && item.type === 'default') {
+            if (item.url && item.type !== 'qrcode') {
                 window.open(item.url);
             }
         }

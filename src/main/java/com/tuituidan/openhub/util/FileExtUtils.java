@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -69,16 +70,21 @@ public class FileExtUtils {
     public static void deleteFiles(boolean sync, String... paths) {
         List<CompletableFuture<?>> futures = new ArrayList<>();
         for (String path : paths) {
+            File file = new File(Consts.ROOT_DIR + path);
+            if (!file.exists()) {
+                continue;
+            }
             futures.add(CompletableUtils.runAsync(() -> {
                 try {
-                    FileUtils.forceDelete(new File(Consts.ROOT_DIR + path));
+                    FileUtils.forceDelete(file);
                 } catch (IOException ex) {
                     log.error("删除原文件失败：【{}】", path, ex);
                 }
             }));
         }
-        if (sync) {
+        if (sync && CollectionUtils.isNotEmpty(futures)) {
             CompletableUtils.waitAll(futures);
         }
     }
+
 }
