@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.config;
 
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +43,11 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
                 .and().headers().frameOptions().disable()
                 .and().csrf().disable()
-                .build();
+                .exceptionHandling()
+                .defaultAuthenticationEntryPointFor((request, response, ex) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED),
+                        request -> "XMLHttpRequest".equals(request.getHeader("X-Requested-With")))
+                .and().build();
     }
 
 }

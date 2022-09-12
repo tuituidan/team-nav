@@ -47,3 +47,8 @@ thread-pool:
 
 # 服务名，用于页面logo显示
 nav-name: 团队服务导航
+
+# 是否开启定时清没有使用的文件
+clear-useless-files:
+  enable: true
+  cron: 0 0 1 * * ?

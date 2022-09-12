@@ -5,16 +5,40 @@
 const http = axios.create({
     timeout: 800000
 });
-http.globalBefore = function () {
-    Vue.prototype.$Spin.show();
-};
-// 结束
-http.globalAfter = function () {
-    Vue.prototype.$Spin.hide();
-};
+
+http.interceptors.request.use(config => {
+    config.headers['X-Requested-With'] = 'XMLHttpRequest';
+    return config;
+});
+http.interceptors.response.use(res => {
+    return res;
+}, err => {
+    if (err.response && err.response.status === 401) {
+        location.href = '/login';
+        return Promise.reject(null);
+    }
+    return Promise.reject(err);
+});
+
 
 Vue.prototype.$http = http;
-
+Vue.prototype.$tools = {
+    showLoading(msg) {
+        Vue.prototype.$Spin.show({
+            render: (h) => {
+                return h('div', [
+                    h('Icon', {
+                        props: {
+                            type: 'ios-loading',
+                            size: 18
+                        }
+                    }),
+                    h('div', msg)
+                ])
+            }
+        });
+    }
+}
 Vue.prototype.$notice = {
     suc(msg) {
         Vue.prototype.$Notice.success({

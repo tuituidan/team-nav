@@ -8,11 +8,14 @@ import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
 import com.tuituidan.openhub.bean.vo.CardTreeVo;
 import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.time.LocalDate;
@@ -29,6 +32,7 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -135,7 +139,13 @@ public class CardService {
         String path = StringExtUtils.format("/ext-resources/images/{}/{}.{}",
                 DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()),
                 StringExtUtils.getUuid(), FilenameUtils.getExtension(cardIconDto.getSrc()));
-        try (OutputStream outputStream = new FileOutputStream(Consts.ROOT_DIR + path)) {
+        File saveFile = new File(Consts.ROOT_DIR + path);
+        try {
+            FileUtils.forceMkdirParent(saveFile);
+        } catch (IOException ex) {
+            throw new ResourceWriteException("父目录生成失败", ex);
+        }
+        try (OutputStream outputStream = new FileOutputStream(saveFile)) {
             IOUtils.copy(new URL(cardIconDto.getSrc()), outputStream);
             cardIconDto.setSrc(path);
         } catch (Exception ex) {

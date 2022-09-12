@@ -10,7 +10,6 @@
                :mask-closable="false"
                @on-ok="save">
             <i-form ref="tableForm" :model="editItem" label-width="100" :rules="editItemRules" @submit.native.prevent>
-                <Alert v-if="zipUploading" type="warning" show-icon>新上传的原型文件解压时间较长，请耐心等待...</Alert>
                 <form-item label="卡片类型" prop="type">
                     <radio-group v-model="editItem.type">
                         <Radio v-for="item in types" :disabled="edit&&editItem.type!==item.id" :label="item.id"
@@ -89,7 +88,6 @@
                 return {
                     show: false,
                     edit: false,
-                    zipUploading: false,
                     newZip: false,
                     loading: true,
                     iconErrTip: false,
@@ -137,8 +135,8 @@
                 }
             },
             computed: {
-                urlRequired(){
-                    return val=> val === 'qrcode';
+                urlRequired() {
+                    return val => val === 'qrcode';
                 }
             },
             mounted() {
@@ -147,7 +145,6 @@
             methods: {
                 open(category, item) {
                     this.icons = [];
-                    this.zipUploading = false;
                     this.iconErrTip = false;
                     this.newZip = false;
                     this.$refs.tableForm.resetFields();
@@ -208,6 +205,7 @@
                     if (!(this.editItem.url && this.editItem.url.startsWith('http'))) {
                         return;
                     }
+                    this.$tools.showLoading('正在尝试获取该地址的图标');
                     this.$http.get('/api/v1/card/icon', {params: {url: this.editItem.url}})
                         .then(res => {
                             res.data.forEach(path => this.icons.push({src: path, checked: false}));
@@ -215,6 +213,9 @@
                         .catch(err => {
                             console.error(err);
                             this.$notice.err(err.response.data);
+                        })
+                        .finally(() => {
+                            this.$Spin.hide();
                         });
                 },
                 getTextIcon() {
@@ -252,7 +253,7 @@
                     this.$refs.tableForm.validate(valid => {
                         if (valid && this.editItem.icon) {
                             if (this.editItem.type === 'zip' && this.newZip) {
-                                this.zipUploading = true;
+                                this.$tools.showLoading('原型文件解压时间较长，请耐心等待...');
                             }
                             this.$http.post('/api/v1/card', {...this.editItem})
                                 .then(() => {
@@ -262,9 +263,11 @@
                                 })
                                 .catch(err => {
                                     console.log(err);
-                                    this.zipUploading = false;
                                     this.$notice.err(err.response && err.response.data || '保存失败');
                                     this.cancel();
+                                })
+                                .finally(() => {
+                                    this.$Spin.hide();
                                 });
                         } else {
                             this.cancel();
