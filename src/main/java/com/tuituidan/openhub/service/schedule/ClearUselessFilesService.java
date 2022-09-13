@@ -56,10 +56,9 @@ public class ClearUselessFilesService {
         }
         for (File file : files) {
             // 只删除文件名是日期类型的 images下的default和modules下的已解压的原型文件都忽略
-            if (!(file.isDirectory() && file.getName().length() == 8)) {
-                continue;
+            if (file.isDirectory() && file.getName().length() == 8) {
+                deleteUselessFiles(file, existFileIds);
             }
-            deleteUselessFiles(file, existFileIds);
         }
     }
 
@@ -69,14 +68,14 @@ public class ClearUselessFilesService {
             forceDeleteFile(parentFile);
             return;
         }
-        int count = 0;
         for (File file : files) {
             if (!existFileIds.contains(FilenameUtils.getBaseName(file.getName()))) {
                 forceDeleteFile(file);
-                count++;
             }
         }
-        if (files.length == count) {
+        // 重新listFiles一次，避免前面删除的过程中有新的文件进入添加进parentFile，虽然可能性很小
+        File[] newFiles = parentFile.listFiles();
+        if (newFiles == null || newFiles.length <= 0) {
             forceDeleteFile(parentFile);
         }
     }

@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .exceptionHandling()
                 .defaultAuthenticationEntryPointFor((request, response, ex) ->
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED),
-                        request -> "XMLHttpRequest".equals(request.getHeader("X-Requested-With")))
+                        request -> "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With")))
                 .and().build();
     }
 
