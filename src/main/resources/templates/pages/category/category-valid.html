@@ -43,7 +43,8 @@
             <category-modal ref="categoryModal" @refresh="initList"></category-modal>
         </div>
     </template>
-    <script type="text/javascript">
+    <script type="text/javascript" th:inline="javascript">
+        const loginEnable = /*[[${loginEnable}]]*/ true;
         Vue.component('page-category-valid', {
             template: '#page-category-valid',
             data() {
@@ -63,11 +64,6 @@
                                 slot: 'icon-action',
                                 key: 'icon'
                             }, {
-                                title: '私密分类',
-                                slot: 'private-action',
-                                width: 120,
-                                align: 'center'
-                            }, {
                                 title: '操作',
                                 slot: 'action',
                                 width: 200,
@@ -79,6 +75,14 @@
             },
             mounted() {
                 this.initList();
+                if(loginEnable){
+                    this.table.columns.splice(3, 0, {
+                        title: '私密分类',
+                        slot: 'private-action',
+                        width: 120,
+                        align: 'center'
+                    });
+                }
             },
             methods: {
                 initList() {

@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.util.RequestUtils;
+import com.tuituidan.openhub.util.SecurityUtils;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +54,8 @@ public class ViewController {
     public String admin(HttpServletRequest request) {
         request.setAttribute("page", StringUtils.substringAfterLast(request.getServletPath(), "/"));
         request.setAttribute("navName", navName);
-        request.setAttribute("userInfo", RequestUtils.getUserInfo());
+        request.setAttribute("userInfo", SecurityUtils.getUserInfo());
+        request.setAttribute("loginEnable", SecurityUtils.isLoginEnable());
         return "admin";
     }
 

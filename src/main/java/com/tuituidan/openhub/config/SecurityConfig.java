@@ -2,6 +2,7 @@ package com.tuituidan.openhub.config;
 
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +21,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Value("${login.enable}")
+    private boolean loginEnable;
+
     /**
      * filterChain
      *
@@ -29,6 +33,11 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        if (!loginEnable) {
+            return http.authorizeRequests().anyRequest().permitAll()
+                    .and().headers().frameOptions().disable()
+                    .and().csrf().disable().build();
+        }
         return http
                 .formLogin()
                 .loginPage("/login")

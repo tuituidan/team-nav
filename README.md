@@ -69,7 +69,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.1
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.2
 
 ```
 
@@ -102,6 +102,12 @@ location /ext-resources/modules {
 
 ## 版本说明
 
+- 1.0.2
+
+  - 增加根据配置开启和关闭登录功能
+  
+    `yml`中`login.enable`可配置开启关闭登录功能，默认true开启，配置为false后进入后台将不再需要登录，也不再支持私密卡片功能。
+  
 - 1.0.1
 
   - 修复了一些bug

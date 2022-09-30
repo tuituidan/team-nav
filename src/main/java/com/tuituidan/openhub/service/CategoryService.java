@@ -3,7 +3,7 @@ package com.tuituidan.openhub.service;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.repository.CategoryRepository;
-import com.tuituidan.openhub.util.RequestUtils;
+import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -50,7 +50,7 @@ public class CategoryService {
      * @return List
      */
     public List<Category> select() {
-        boolean isLogin = RequestUtils.getUserInfo() != null;
+        boolean isLogin = SecurityUtils.getUserInfo() != null;
         return categoryRepository.findAll(Example.of(new Category().setValid(true)),
                         Sort.by("sort")).stream()
                 .filter(item -> isLogin || BooleanUtils.isNotTrue(item.getPrivateCard()))
