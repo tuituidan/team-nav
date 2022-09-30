@@ -50,7 +50,7 @@ nav-name: 团队服务导航
 
 # 是否开启登录功能
 login:
-  enable: false
+  enable: true
 # 是否开启定时清没有使用的文件
 clear-useless-files:
   enable: true
