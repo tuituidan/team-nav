@@ -1,10 +1,14 @@
 # 团队服务导航
 
-<img src="https://img.shields.io/badge/springboot-2.7.3-brightgreen" alt="springboot"/>   <img src="https://img.shields.io/badge/jdk-1.8-blue" alt="java"/> 
+<img src="https://img.shields.io/badge/springboot-2.7.3-brightgreen" alt="springboot"/>   <img src="https://img.shields.io/badge/jdk-1.8-blue" alt="java"/>  <img src="https://img.shields.io/badge/h2database-2.1.214-yellow" alt="java"/> 
 
 ## 简介
 
 前后端完整的网址导航服务，本系统定位于研发团队内部使用，提供多种的卡片图标生成方式，以保持页面美观，能将上传的原型压缩包自动生成可访问的地址。
+
+**Github:** https://github.com/tuituidan/team-nav
+
+**Gitee:** https://gitee.com/tuituidan/team-nav
 
 ## 功能说明
 
