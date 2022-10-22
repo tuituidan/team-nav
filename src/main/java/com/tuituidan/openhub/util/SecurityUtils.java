@@ -23,7 +23,7 @@ public class SecurityUtils implements ApplicationContextAware {
     private static boolean loginEnable = true;
 
     private static final UserInfoVo USER_INFO_VO = new UserInfoVo().setNick("管理员")
-            .setAvatar("/assets/images/header.jpg");
+            .setAvatar("/assets/images/header.png");
 
     /**
      * 是否开启了登录功能

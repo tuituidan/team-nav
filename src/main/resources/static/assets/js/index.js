@@ -41,7 +41,6 @@ new Vue({
                 })
         },
         gotoAdmin() {
-            sessionStorage.activeAdminMenuName = 'category';
             location.href = '/admin/category';
         },
         collapsedSider() {

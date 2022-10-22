@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.repository;
 
 import com.tuituidan.openhub.bean.entity.Category;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,8 +24,8 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
      */
     @Modifying
     @Transactional(rollbackFor = Exception.class)
-    @Query("update Category set privateCard = ?1 where id = ?2")
-    void updatePrivate(Boolean privateCard, String id);
+    @Query("update Category set privateCard = ?1 where id in (?2)")
+    void updatePrivate(Boolean privateCard, List<String> id);
 
     /**
      * getMaxSort

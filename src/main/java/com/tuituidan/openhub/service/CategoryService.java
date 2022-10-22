@@ -6,6 +6,7 @@ import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 /**
  * CategoryService.
@@ -118,7 +120,7 @@ public class CategoryService {
      * @param privateCard privateCard
      */
     public void updatePrivate(String id, Boolean privateCard) {
-        categoryRepository.updatePrivate(privateCard, id);
+        categoryRepository.updatePrivate(privateCard, Collections.singletonList(id));
     }
 
     /**
@@ -138,10 +140,6 @@ public class CategoryService {
             return;
         }
         list.add(after, list.remove(before));
-        changeSort(list);
-    }
-
-    private void changeSort(LinkedList<Category> list) {
         List<Category> updateList = new ArrayList<>();
         int index = 0;
         for (Category item : list) {
@@ -158,27 +156,23 @@ public class CategoryService {
     /**
      * 设置是否有效
      *
-     * @param id id
+     * @param ids ids
      * @param valid valid
      */
     @Transactional(rollbackFor = Exception.class)
-    public void setValid(String id, Boolean valid) {
-        List<Category> categories = categoryRepository.findAll(Example.of(new Category().setValid(valid)),
-                Sort.by("sort"));
-        int sort = 0;
-        if (CollectionUtils.isNotEmpty(categories)) {
-            Integer maxSort = categories.get(0).getSort();
-            if (maxSort == null) {
-                maxSort = categories.size();
-            }
-            sort = maxSort + 1;
+    public void setValid(List<String> ids, Boolean valid) {
+        Assert.isTrue(CollectionUtils.isNotEmpty(ids), "ids不能为空");
+        int sort = categoryRepository.getMaxSort(valid) + 1;
+        List<Category> categories = categoryRepository.findAllById(ids);
+        for (Category category : categories) {
+            category.setValid(valid).setSort(sort);
+            sort++;
         }
-        Category category = categoryRepository.findById(id).orElseThrow(NullPointerException::new);
-        category.setValid(valid).setSort(sort);
-        categories.add(category);
-        changeSort(new LinkedList<>(categories));
+        if (CollectionUtils.isNotEmpty(categories)) {
+            categoryRepository.saveAll(categories);
+        }
         if (BooleanUtils.isNotTrue(valid)) {
-            categoryRepository.updatePrivate(false, id);
+            categoryRepository.updatePrivate(false, ids);
         }
     }
 

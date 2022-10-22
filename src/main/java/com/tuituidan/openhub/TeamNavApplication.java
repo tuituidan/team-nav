@@ -2,6 +2,7 @@ package com.tuituidan.openhub;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * TeamNavApplication.
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author tuituidan
  */
 @SpringBootApplication
+@EnableCaching
 public class TeamNavApplication {
 
     /**

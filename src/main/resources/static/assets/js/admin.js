@@ -8,7 +8,6 @@ new Vue({
         return {
             isCollapsed: false,
             title: '首页',
-            activeMenuName: sessionStorage.activeAdminMenuName || 'category',
             menus: [
                 {
                     title: '分类管理',
@@ -42,6 +41,13 @@ new Vue({
                 'menu-item',
                 this.isCollapsed ? 'collapsed-menu' : ''
             ]
+        },
+        activeMenuName() {
+            const urlItem = this.menus.find(item => item.href === location.pathname);
+            if (urlItem) {
+                return urlItem.name;
+            }
+            return "category";
         }
     },
     methods: {
@@ -49,9 +55,6 @@ new Vue({
             this.$refs.sidebar.toggleCollapse();
         },
         choosedMenu(name) {
-            // 设置选中菜单name
-            sessionStorage.activeAdminMenuName = name;
-
             //根据name查找对应的菜单对象
             let menu = null;
             this.menus.forEach(_menu => {

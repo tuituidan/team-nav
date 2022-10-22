@@ -124,13 +124,13 @@ public class CategoryController {
     /**
      * setValid
      *
-     * @param id id
+     * @param ids ids
      * @param valid valid
      * @return Void
      */
-    @PatchMapping("/{id}/valid/{valid}")
-    public ResponseEntity<Void> setValid(@PathVariable String id, @PathVariable Boolean valid) {
-        categoryService.setValid(id, valid);
+    @PatchMapping("/valid/{valid}")
+    public ResponseEntity<Void> setValid(@RequestBody List<String> ids, @PathVariable Boolean valid) {
+        categoryService.setValid(ids, valid);
         return ResponseEntity.noContent().build();
     }
 

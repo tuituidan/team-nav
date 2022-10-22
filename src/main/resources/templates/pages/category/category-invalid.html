@@ -13,9 +13,19 @@
                              @on-search="initList"
                              placeholder="关键字搜索..."></i-input>
                 </div>
+                <div class="panel-right">
+                    <i-button type="info"
+                              icon="ios-undo"
+                              :disabled="!Boolean(selectedIds.length)"
+                              @click="batchSetValid(selectedIds)">批量还原</i-button>
+                </div>
             </div>
             <div class="table-panel">
-                <i-table border stripe :columns="table.columns" :data="table.datas">
+                <i-table border
+                         stripe
+                         :columns="table.columns"
+                         @on-selection-change="selectChange"
+                         :data="table.datas">
                     <template slot-scope="{ row, index }" slot="icon-action">
                         <Icon :title="row.icon" :type="row.icon" size="20"></Icon>
                         <span v-text="row.icon"></span>
@@ -46,6 +56,7 @@
             template: '#page-category-invalid',
             data() {
                 return {
+                    selectedIds: [],
                     queryParam: {
                         pageIndex: 0,
                         pageSize: 10,
@@ -58,6 +69,10 @@
                         },
                         columns: [
                             {
+                                type: 'selection',
+                                width: 66,
+                                align: 'center'
+                            }, {
                                 title: '序号',
                                 type: 'index',
                                 width: 66,
@@ -85,6 +100,7 @@
                     return this.table.page.offset + row._index + 1;
                 },
                 initList() {
+                    this.selectedIds = [];
                     this.$http.get(`/api/v1/category/page`, {params: this.queryParam})
                         .then(res => {
                             this.table.datas = res.data.content;
@@ -108,15 +124,7 @@
                         });
                 },
                 setValid(row) {
-                    this.$http.patch(`/api/v1/category/${row.id}/valid/true`)
-                        .then(() => {
-                            this.$notice.suc('已还原');
-                            this.initList();
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            this.$notice.err(err.response.data);
-                        })
+                    this.batchSetValid([row.id]);
                 },
                 pageChange(pageIndex) {
                     this.queryParam.pageIndex = pageIndex - 1;
@@ -125,6 +133,24 @@
                 pageSizeChange(pageSize) {
                     this.queryParam.pageSize = pageSize;
                     this.initList();
+                },
+                selectChange(items) {
+                    this.selectedIds = items.map(item => item.id);
+                },
+                batchSetValid(ids) {
+                    if(!ids.length){
+                        this.$notice.warn('请选择要还原的项');
+                        return;
+                    }
+                    this.$http.patch(`/api/v1/category/valid/true`, ids)
+                        .then(() => {
+                            this.$notice.suc('已还原');
+                            this.initList();
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        });
                 }
             }
         })
