@@ -106,7 +106,7 @@ location /ext-resources/modules {
 
 ## 版本说明
 
-- 103
+- 1.0.3
 
   - 解决因升级springboot导致缓存失效bug。
   - 解决管理页面手动输入地址，右侧菜单没有选中实际菜单的bug。
