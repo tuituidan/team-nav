@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -192,7 +193,7 @@ public class CommonService implements ApplicationRunner {
     private String getFromDocument(String domainUrl) {
         try {
             Document doc = Jsoup.connect(domainUrl)
-                    .timeout(60000).get();
+                    .timeout(Consts.FAVICON_TIMEOUT).get();
             Elements links = doc.head().children().select("link[rel~=icon]");
             if (links.isEmpty()) {
                 return "";
@@ -226,14 +227,22 @@ public class CommonService implements ApplicationRunner {
     }
 
     private String requestFavicon(String url) {
+        URLConnection conn = null;
         try {
-            byte[] body = IOUtils.toByteArray(new URL(url));
+            conn = new URL(url).openConnection();
+            conn.setConnectTimeout(Consts.FAVICON_TIMEOUT);
+            conn.setReadTimeout(Consts.FAVICON_TIMEOUT);
+            byte[] body = IOUtils.toByteArray(conn);
             // 要能实际获取到favicon的数据，如果返回是一个html文件，往往是鉴权导致重定向了
             if (body != null && !FileExtUtils.isHtml(body)) {
                 return url;
             }
         } catch (Exception ex) {
             // 拿不到就算了，不写日志
+        } finally {
+            if (conn != null) {
+                IOUtils.close(conn);
+            }
         }
         return "";
     }

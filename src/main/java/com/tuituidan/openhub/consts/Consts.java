@@ -25,4 +25,9 @@ public class Consts {
     public static final String ROOT_DIR = "/".equals(System.getProperty("user.dir")) ? ""
             : System.getProperty("user.dir");
 
+    /**
+     * 获取favicon超时时间
+     */
+    public static final int FAVICON_TIMEOUT = 5000;
+
 }

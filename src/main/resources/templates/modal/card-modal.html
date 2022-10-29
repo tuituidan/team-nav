@@ -48,6 +48,9 @@
                         <i-button icon="ios-cloud-upload-outline">上传</i-button>
                     </Upload>
                 </form-item>
+                <form-item v-if="showFaviconLoading" style="margin-top: -24px;margin-bottom: 0;">
+                    <i-button loading type="text">正在尝试获取该地址的图标</i-button>
+                </form-item>
                 <form-item label="图标" prop="icon">
                     <div>
                         <div style="overflow: hidden;">
@@ -90,6 +93,7 @@
                     edit: false,
                     newZip: false,
                     loading: true,
+                    showFaviconLoading: false,
                     iconErrTip: false,
                     color: '',
                     types: [
@@ -205,7 +209,7 @@
                     if (!(this.editItem.url && this.editItem.url.startsWith('http'))) {
                         return;
                     }
-                    this.$tools.showLoading('正在尝试获取该地址的图标');
+                    this.showFaviconLoading = true;
                     this.$http.get('/api/v1/card/icon', {params: {url: this.editItem.url}})
                         .then(res => {
                             res.data.forEach(path => this.icons.push({src: path, checked: false}));
@@ -215,7 +219,7 @@
                             this.$notice.err(err.response.data);
                         })
                         .finally(() => {
-                            this.$Spin.hide();
+                            this.showFaviconLoading = false;
                         });
                 },
                 getTextIcon() {
