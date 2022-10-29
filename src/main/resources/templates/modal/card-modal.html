@@ -1,6 +1,37 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="card-modal">
+    <style type="text/css">
+        .form-icon-loading {
+            margin-top: -24px;
+            margin-bottom: 0;
+        }
+        .form-icon-select-panel {
+            display: flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .form-icon-select-show .ivu-badge{
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+        .form-icon-text-panel {
+            display: flex;
+        }
+        .form-icon-text-input {
+            width: 120px;
+            bottom: -1px;
+        }
+        .form-icon-text-input input{
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: none;
+        }
+        .form-icon-text-color-pick .ivu-color-picker-input{
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    </style>
     <div th:replace="components/card-icon-select::card-icon-select"></div>
     <template id="card-modal">
         <Modal v-model="show"
@@ -24,7 +55,7 @@
                     </i-select>
                 </form-item>
                 <form-item label="标题" prop="title">
-                    <i-input v-model.trim="editItem.title" placeholder="标题" @on-blur="getTextIcon"></i-input>
+                    <i-input v-model.trim="editItem.title" placeholder="标题"></i-input>
                 </form-item>
                 <form-item label="内容" prop="content">
                     <i-input type="textarea"
@@ -48,29 +79,33 @@
                         <i-button icon="ios-cloud-upload-outline">上传</i-button>
                     </Upload>
                 </form-item>
-                <form-item v-if="showFaviconLoading" style="margin-top: -24px;margin-bottom: 0;">
+                <form-item v-if="showFaviconLoading" class="form-icon-loading">
                     <i-button loading type="text">正在尝试获取该地址的图标</i-button>
                 </form-item>
                 <form-item label="图标" prop="icon">
                     <div>
-                        <div style="overflow: hidden;">
+                        <div class="form-icon-select-panel">
                             <Upload ref="uploadCtl" action="/api/v1/upload/images"
-                                    style="float: left;"
                                     :show-upload-list="false"
                                     accept="image/x-icon,image/png,image/jpeg,image/jpg,image/gif,image/bmp"
                                     :on-success="uploadSuccess">
                                 <i-button icon="ios-cloud-upload-outline">上传</i-button>
                             </Upload>
-                            <card-icon-select style="float: left; margin-left: 10px;"
-                                              @select="iconSelect"></card-icon-select>
-                            <color-picker @on-change="colorChange"
-                                          style="float: left;
-                                          margin-left: 10px;"
-                                          v-model="color"
-                                          recommend></color-picker>
+                            <card-icon-select @select="iconSelect"></card-icon-select>
+                            <div class="form-icon-text-panel">
+                                <i-input class="form-icon-text-input"
+                                         v-model.trim="textIcon.text"
+                                         @on-change="setTextIcon"
+                                         maxlength="8"
+                                         placeholder="图标文字"></i-input>
+                                <color-picker @on-change="textIconColorChange"
+                                              class="form-icon-text-color-pick"
+                                              v-model="textIcon.color"
+                                              recommend></color-picker>
+                            </div>
                         </div>
-                        <div style="margin-top: 10px">
-                            <Badge style="margin-left: 10px;" v-for="item in icons" :key="item"
+                        <div class="form-icon-select-show">
+                            <Badge v-for="item in icons" :key="item"
                                    @click.native="selectIcons(item)">
                                 <Avatar size="large" v-if="item.src" :src="item.src"></Avatar>
                                 <Avatar size="large" v-else :style="{background: item.color}">{{item.text}}</Avatar>
@@ -95,7 +130,10 @@
                     loading: true,
                     showFaviconLoading: false,
                     iconErrTip: false,
-                    color: '',
+                    textIcon: {
+                        color: '',
+                        text: ''
+                    },
                     types: [
                         {
                             id: 'default',
@@ -156,10 +194,17 @@
                     this.show = true;
                     this.edit = Boolean(item);
                     if (this.edit) {
-                        this.editItem = {...item};
+                        this.editItem = JSON.parse(JSON.stringify(item));
                         this.editItem.icon.checked = true;
                         this.icons.push(this.editItem.icon);
-                        this.getTextIcon();
+                        if(this.editItem.icon.text){
+                            this.textIcon = {...this.editItem.icon};
+                        } else {
+                            this.textIcon = {
+                                color: colorUtils.getColor(),
+                                text: ''
+                            };
+                        }
                         this.zipFileList = [item.zip];
                     } else {
                         this.editItem = {
@@ -170,6 +215,10 @@
                             title: '',
                             content: '',
                             url: ''
+                        };
+                        this.textIcon = {
+                            color: colorUtils.getColor(),
+                            text: ''
                         };
                         this.zipFileList = [];
                     }
@@ -184,11 +233,10 @@
                             this.$notice.err(err.response.data);
                         });
                 },
-                colorChange() {
-                    for (const icon of this.icons) {
-                        if (icon.color) {
-                            icon.color = this.color;
-                        }
+                textIconColorChange() {
+                    let curIcon = this.icons.find(icon => Boolean(icon.color));
+                    if(curIcon) {
+                        curIcon.color = this.textIcon.color;
                     }
                 },
                 uploadSuccess(response) {
@@ -222,25 +270,20 @@
                             this.showFaviconLoading = false;
                         });
                 },
-                getTextIcon() {
-                    if (!this.editItem.title) {
+                setTextIcon() {
+                    if (!this.textIcon.text) {
+                        this.icons = this.icons.filter(icon => !Boolean(icon.text));
                         return;
                     }
-                    const color = colorUtils.getColor();
-                    this.icons.push({
-                        text: this.editItem.title.substring(0, 2),
-                        color: color,
-                        checked: false
-                    });
-                    this.icons.push({
-                        text: this.editItem.title.substring(0, 1),
-                        color: color,
-                        checked: false
-                    });
-                    if (!this.color) {
-                        const firstColor = this.icons.find(icon => Boolean(icon.color));
-                        this.color = firstColor ? firstColor.color : '';
+                    let curIcon = this.icons.find(icon => Boolean(icon.text));
+                    if(curIcon) {
+                        curIcon.text = this.textIcon.text;
+                        return;
                     }
+                    this.icons.push({
+                        ...this.textIcon,
+                        checked: false
+                    });
                 },
                 selectIcons(item) {
                     this.icons.forEach(it => it.checked = false);
