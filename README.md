@@ -142,34 +142,34 @@ location /ext-resources/modules {
 
 #### 首页图
 
-![](./docs/home.png)
+![home](https://user-images.githubusercontent.com/20398244/198856571-2a46ccdf-1de1-47c2-8f13-28658e09d21d.png)
 
 #### 后台-分类管理图
 
-![](./docs/admin-category.png)
+![admin-category](https://user-images.githubusercontent.com/20398244/198856552-72d92b6d-2ce0-4ca6-85cc-e9ef8e629e4b.png)
 
-![](./docs/admin-category-add.png)
+![admin-category-add](https://user-images.githubusercontent.com/20398244/198856526-634589b5-fba7-4257-aa4e-82cafc7ada7e.png)
 
 #### 后台-历史分类图
 
-![](./docs/admin-category-history.png)
+![admin-category-history](https://user-images.githubusercontent.com/20398244/198856543-f5a95337-5d29-44fd-8cf4-d2d6628304ca.png)
 
 #### 后台-卡片列表图
 
-![](./docs/admin-card.png)
+![admin-card](https://user-images.githubusercontent.com/20398244/198856511-33ee844a-3a73-460b-9066-7f0c70ece663.png)
 
 #### 后台-卡片编辑图
 
-![](./docs/admin-card-edit.png)
+![admin-card-edit](https://user-images.githubusercontent.com/20398244/198856445-e5228888-ca1e-4c94-9133-3b58329a2d88.png)
 
 #### 卡片图标选择图
 
-![](./docs/admin-card-icon.png)
+![admin-card-icon](https://user-images.githubusercontent.com/20398244/198856491-cb756529-8a1e-4d05-8367-a8184192eb4f.png)
 
 #### 二维码展示图
 
-![](./docs/qrcode.png)
+![qrcode](https://user-images.githubusercontent.com/20398244/198856580-a7748b13-3310-44e7-9562-8419e20bc3b9.png)
 
 #### 后台-系统设置图
 
-![](./docs/admin-system.png)
+![admin-system](https://user-images.githubusercontent.com/20398244/198856565-6d100f7d-5b8a-4577-8879-09e048604cf7.png)

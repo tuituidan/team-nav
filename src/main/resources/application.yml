@@ -55,3 +55,6 @@ login:
 clear-useless-files:
   enable: true
   cron: 0 0 1 * * ?
+
+project:
+  version: @project.version@
