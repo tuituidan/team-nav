@@ -6,7 +6,7 @@ new Vue({
     el: '#app',
     data() {
         return {
-            isCollapsed: localStorage.AdminCollapsed?JSON.parse(localStorage.AdminCollapsed):false,
+            isCollapsed: localStorage.AdminCollapsed === 'true',
             title: '首页',
             menus: [
                 {

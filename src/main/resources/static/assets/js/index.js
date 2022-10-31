@@ -7,7 +7,7 @@ new Vue({
     data() {
         return {
             keywords: '',
-            isCollapsed: localStorage.IndexCollapsed?JSON.parse(localStorage.IndexCollapsed):false,
+            isCollapsed: localStorage.IndexCollapsed === 'true',
             datas: [],
             users: []
         }
