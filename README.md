@@ -73,7 +73,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.3
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.4
 
 ```
 
@@ -106,12 +106,21 @@ location /ext-resources/modules {
 
 ## 版本说明
 
+- 1.0.4
+
+  - 获取链接的favicon.ico添加超时去掉遮罩，避免因失败导致阻断表单提交。
+  - 二维码卡片也支持点击跳转（忘了之前为什么弄成不跳转）。
+  - 文字图标不再截取标题前两个字符，直接给出单独的输入框。
+  - 首页搜索不区分大小写。
+  - IE下搜索中文报错解决（只有首页支持了IE访问，建议尽量不使用IE）。
+  - 左侧菜单收起和展示记到localStorage中。
+  
 - 1.0.3
 
   - 解决因升级springboot导致缓存失效bug。
   - 解决管理页面手动输入地址，右侧菜单没有选中实际菜单的bug。
   - 增加批量移除和批量还原功能。
-  
+
 - 1.0.2
 
   - 增加根据配置开启和关闭登录功能
