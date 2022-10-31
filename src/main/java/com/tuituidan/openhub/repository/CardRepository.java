@@ -27,11 +27,12 @@ public interface CardRepository extends JpaRepository<Card, String> {
     /**
      * findByTitleLikeOrContentLike.
      *
-     * @param keyword1 keyword1
-     * @param keyword2 keyword2
+     * @param keyword keyword
      * @return List
      */
-    List<Card> findByTitleContainsOrContentContains(String keyword1, String keyword2);
+    @Query("select u from Card u "
+            + "where lower(u.title) like %?1% or lower(u.content) like %?1%")
+    List<Card> findByKeywords(String keyword);
 
     /**
      * getMaxSort

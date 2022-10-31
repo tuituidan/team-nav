@@ -70,7 +70,7 @@ public class CardService {
             return Collections.emptyList();
         }
         List<Card> cards = StringUtils.isBlank(keywords)
-                ? cardRepository.findAll() : cardRepository.findByTitleContainsOrContentContains(keywords, keywords);
+                ? cardRepository.findAll() : cardRepository.findByKeywords(keywords.toLowerCase());
         if (CollectionUtils.isEmpty(cards)) {
             return Collections.emptyList();
         }

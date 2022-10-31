@@ -14,7 +14,7 @@
         <div class="layout">
             <Layout>
                 <Sider ref="sidebar" class="sidebar" hide-trigger collapsible width="260" :collapsed-width="80"
-                       v-model.trim="isCollapsed">
+                       v-model="isCollapsed">
                     <div class="logo">
                         <div v-if="!isCollapsed" class="logo-saiqu">
                             <Avatar class="logo-avatar"
@@ -70,7 +70,7 @@
                                          search
                                          placeholder="搜索..."
                                          v-model="keywords"
-                                         @on-change="loadTree"></i-input>
+                                         @on-search="loadTree"></i-input>
                             </div>
                             <div class="header-right">
                                 <i-button icon="md-exit" @click="gotoAdmin" class="btn-blue" size="large">管理

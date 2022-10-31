@@ -6,7 +6,7 @@ new Vue({
     el: '#app',
     data() {
         return {
-            isCollapsed: false,
+            isCollapsed: localStorage.AdminCollapsed?JSON.parse(localStorage.AdminCollapsed):false,
             title: '首页',
             menus: [
                 {
@@ -53,6 +53,7 @@ new Vue({
     methods: {
         collapsedSider() {
             this.$refs.sidebar.toggleCollapse();
+            localStorage.AdminCollapsed = this.isCollapsed;
         },
         choosedMenu(name) {
             //根据name查找对应的菜单对象

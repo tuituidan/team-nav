@@ -7,7 +7,7 @@ new Vue({
     data() {
         return {
             keywords: '',
-            isCollapsed: false,
+            isCollapsed: localStorage.IndexCollapsed?JSON.parse(localStorage.IndexCollapsed):false,
             datas: [],
             users: []
         }
@@ -31,7 +31,7 @@ new Vue({
     },
     methods: {
         loadTree() {
-            this.$http.get(`/api/v1/card/tree?keywords=${this.keywords}`)
+            this.$http.get(`/api/v1/card/tree?keywords=${encodeURIComponent(this.keywords)}`)
                 .then(res => {
                     this.datas = res.data;
                 })
@@ -45,6 +45,7 @@ new Vue({
         },
         collapsedSider() {
             this.$refs.sidebar.toggleCollapse();
+            localStorage.IndexCollapsed = this.isCollapsed;
         },
         choosedMenu(id) {
             const rows = document.getElementById(id);
