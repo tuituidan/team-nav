@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -35,6 +36,7 @@ import org.jsoup.select.Elements;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -253,7 +255,9 @@ public class CommonService implements ApplicationRunner {
      * @param url url
      */
     public void generateQrCode(String url) {
-        try (OutputStream outputStream = RequestUtils.getResponse().getOutputStream()) {
+        HttpServletResponse response = RequestUtils.getResponse();
+        response.setContentType(MediaType.IMAGE_PNG_VALUE);
+        try (OutputStream outputStream = response.getOutputStream()) {
             BufferedImage image = QrCodeUtils.generate(url, 200, 200);
             ImageIO.write(image, "png", outputStream);
         } catch (Exception ex) {
