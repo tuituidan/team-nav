@@ -1,39 +1,49 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>页面丢失</title>
-  <style type="text/css">
-    [v-cloak] {
-      display: none;
-    }
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>页面丢失</title>
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
 
-    .picture {
-      width: 450px;
-      background-color: #2b85e4;
-      color: white;
-      text-align: center;
-      line-height: 250px;
-      font-size: 20px;
-      margin: 20px auto;
-    }
-    #app{
-      width: 480px;
-      text-align: center;
-      margin: 20px auto;
-      font-size: 24px;
-    }
-  </style>
-  <script src="../assets/lib/vue.min.js"></script>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        #app {
+            width: 480px;
+            text-align: center;
+            margin: 20px auto;
+            font-size: 22px;
+        }
+
+        .nodata-text {
+            text-align: center;
+            font-size: 72px;
+            font-weight: bolder;
+            color: white;
+            text-shadow: 8px 5px 5px #ccc;
+        }
+
+        .picture {
+            text-align: center;
+        }
+    </style>
+    <script src="../assets/lib/vue.min.js"></script>
 </head>
 <body>
+<div class="nodata-text">
+    404
+</div>
 <div class="picture">
-  这里放了一张有趣的404图片，好像也找不到了
+    <img src="/assets/images/no-data.jpg"/>
 </div>
 <div id="app" v-cloak>
-  页面丢失，{{times}}秒后跳转到首页
-  <a href="/">立即跳转</a>
+    页面丢失，{{times}}秒后跳转到首页
+    <a href="/">立即跳转</a>
 </div>
 <script>
     new Vue({

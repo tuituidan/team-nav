@@ -87,7 +87,7 @@ public class CommonService implements ApplicationRunner {
     }
 
     /**
-     * 解析出iview的所有字体图标名称，用于前端选择图标的控件
+     * 加载放置在/ext-resources/images/default路径下的图片图标用于卡片图标选择
      */
     public void loadCardIcons() {
         CARD_ICONS.clear();

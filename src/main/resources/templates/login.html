@@ -7,75 +7,70 @@
     <link type="text/css" rel="stylesheet" th:href="@{/assets/lib/iview/iview.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/assets/css/common.css}">
     <style type="text/css">
-        .login-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: calc(100%);
+        body {
+            background: #dfe0e2 center url(/assets/images/pattern.jpg) repeat;
         }
 
-        .login-container .bg-wrap {
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            position: relative;
-            background: #dfe0e2 center url(/assets/images/pattern.jpg) repeat;;
-        }
-
-        .login-container .card-wrap {
-            width: 300px;
+        .card-wrap {
+            width: 350px;
             margin: 100px auto;
-            box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.12);
-            border-bottom: 1px solid rgba(50, 50, 50, 0.33);
         }
 
-        .login-container .icon-cls {
+        .card-wrap .icon-cls {
             font-weight: bold;
             width: 20px;
             font-size: 18px;
         }
 
-        .login-container .divider-tip {
-            font-size: 14px;
-            color: #515a6e;
+        .remember-me-panel {
+            margin-top: -10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 <div v-cloak id="app">
-    <section class="login-container">
-        <div class="bg-wrap">
-            <div class="card-wrap">
-                <Card style="width:350px" :dis-hover="true">
-                    <p slot="title">
-                        <Icon type="md-cafe" size="20" color="green"></Icon>
-                        欢迎登录
-                    </p>
-                    <i-form ref="userForm"
-                            :model="userForm"
-                            :rules="ruleCustom">
-                        <form-item prop="username">
-                            <i-input name="username" v-model.trim="userForm.username" placeholder="请输入" size="large">
-                                <Icon type="ios-person-outline" slot="prepend" class="icon-cls"></Icon>
-                            </i-input>
-                        </form-item>
-                        <form-item prop="password">
-                            <i-input name="password" type="password" v-model.trim="userForm.password"
-                                     placeholder="请输入密码" size="large">
-                                <Icon type="ios-lock-outline" slot="prepend" class="icon-cls"></Icon>
-                            </i-input>
-                        </form-item>
-                        <form-item>
-                            <i-button type="primary" @click="btn_login()" long
-                                      :loading="login_loading">登录
-                            </i-button>
-                        </form-item>
-                    </i-form>
-                </Card>
-            </div>
-        </div>
-    </section>
+    <Card class="card-wrap" shadow>
+        <p slot="title">
+            <Icon type="md-cafe" size="20" color="green"></Icon>
+            欢迎登录
+        </p>
+        <i-form ref="userForm"
+                :model="userForm"
+                action="/api/v1/login"
+                method="post"
+                @keyup.enter.native="loginHandler()"
+                @submit.native.prevent
+                :rules="ruleCustom">
+            <form-item prop="username">
+                <i-input name="username"
+                         ref="username"
+                         v-model.trim="userForm.username"
+                         placeholder="请输入" size="large">
+                    <Icon type="ios-person-outline" slot="prepend" class="icon-cls"></Icon>
+                </i-input>
+            </form-item>
+            <form-item prop="password">
+                <i-input name="password"
+                         type="password"
+                         v-model.trim="userForm.password"
+                         placeholder="请输入密码" size="large">
+                    <Icon type="ios-lock-outline" slot="prepend" class="icon-cls"></Icon>
+                </i-input>
+            </form-item>
+            <form-item class="remember-me-panel">
+                <Checkbox v-model="rememberMe">记住密码</Checkbox>
+            </form-item>
+            <form-item>
+                <i-button type="primary" @click="loginHandler()" long
+                          :loading="login_loading">登录
+                </i-button>
+            </form-item>
+            <form-item th:if="${errorMsg}">
+                <Alert type="error" show-icon th:text="${errorMsg}"></Alert>
+            </form-item>
+        </i-form>
+    </Card>
 </div>
 <script type="text/javascript" th:src="@{/assets/lib/vue.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
@@ -87,6 +82,7 @@
         data() {
             return {
                 login_loading: false,
+                rememberMe: false,
                 userForm: {
                     username: '',
                     password: ''
@@ -102,36 +98,33 @@
             }
         },
         mounted() {
-            this.enterLogin();
+            if (localStorage.rememberMe === 'true') {
+                this.userForm.username = localStorage.username;
+                this.userForm.password = localStorage.password;
+                this.rememberMe = true;
+            }
+            this.$refs.username.focus({cursor: 'end'});
         },
         methods: {
-            btn_login() {
+            loginHandler() {
                 this.login_loading = true;
                 this.$refs.userForm.validate(valid => {
                     if (!valid) {
                         this.login_loading = false;
                         return;
                     }
-                    this.$http.post('/api/v1/login',
-                        `username=${this.userForm.username}&password=${this.userForm.password}`)
-                        .then(() => {
-                            location.href = '/admin/category';
-                        })
-                        .catch(err => {
-                            this.login_loading = false;
-                            this.$notice.err('帐号或者密码错误！');
-                        });
+                    if (this.rememberMe) {
+                        localStorage.username = this.userForm.username;
+                        localStorage.password = this.userForm.password;
+                        localStorage.rememberMe = this.rememberMe;
+                    } else {
+                        delete localStorage.username;
+                        delete localStorage.password;
+                        delete localStorage.rememberMe;
+                    }
+                    this.$refs.userForm.$el.submit();
                 });
 
-            },
-            enterLogin() {
-                document.onkeydown = (e) => {
-                    let theEvent = window.event || e;
-                    let code = theEvent.keyCode || theEvent.which || theEvent.charCode;
-                    if (code === 13) {
-                        this.btn_login();
-                    }
-                }
             }
         }
     });
