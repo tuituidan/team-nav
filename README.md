@@ -73,7 +73,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.4
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.5
 
 ```
 
@@ -106,6 +106,12 @@ location /ext-resources/modules {
 
 ## 版本说明
 
+- 1.0.5
+
+  - 优化了一些页面样式。
+  - 解决登录页面未能读取错误信息问题。
+  - 登录页面添加记住密码功能。
+  
 - 1.0.4
 
   - 获取链接的favicon.ico添加超时去掉遮罩，避免因失败导致阻断表单提交。
@@ -114,7 +120,7 @@ location /ext-resources/modules {
   - 首页搜索不区分大小写，且不再实时搜索，需要按回车或者点击搜索框中的icon。
   - 解决IE下搜索中文报错，二维码无法显示问题（只有首页支持了IE访问，建议尽量不使用IE）。
   - 左侧菜单收起和展示记到localStorage中。
-  
+
 - 1.0.3
 
   - 解决因升级springboot导致缓存失效bug。
