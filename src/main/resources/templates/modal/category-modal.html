@@ -11,7 +11,10 @@
                @on-ok="save">
             <i-form ref="tableForm" :model="editItem" label-width="100" :rules="editItemRules" @submit.native.prevent>
                 <form-item label="分类名称" prop="name">
-                    <i-input v-model="editItem.name" placeholder="名称"></i-input>
+                    <i-input v-model.trim="editItem.name"
+                             clearable
+                             maxlength="20"
+                             placeholder="名称"></i-input>
                 </form-item>
                 <form-item label="图标" prop="icon">
                     <com-icon-select v-model="editItem.icon"></com-icon-select>

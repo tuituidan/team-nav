@@ -43,6 +43,7 @@
                     <div class="panel-right">
                         <Page :total="table.page.total"
                               show-sizer show-elevator show-total transfer
+                              :current="queryParam.pageIndex+1"
                               @on-change="pageChange" @on-page-size-change="pageSizeChange"></Page>
                     </div>
 
@@ -116,6 +117,7 @@
                     this.$http.delete(`/api/v1/category/${id}`)
                         .then(() => {
                             this.$notice.suc('删除成功');
+                            this.queryParam.pageIndex = 0;
                             this.initList();
                         })
                         .catch(err => {
@@ -132,6 +134,7 @@
                 },
                 pageSizeChange(pageSize) {
                     this.queryParam.pageSize = pageSize;
+                    this.queryParam.pageIndex = 0;
                     this.initList();
                 },
                 selectChange(items) {
@@ -145,6 +148,7 @@
                     this.$http.patch(`/api/v1/category/valid/true`, ids)
                         .then(() => {
                             this.$notice.suc('已还原');
+                            this.queryParam.pageIndex = 0;
                             this.initList();
                         })
                         .catch(err => {

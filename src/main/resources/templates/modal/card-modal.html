@@ -55,7 +55,10 @@
                     </i-select>
                 </form-item>
                 <form-item label="标题" prop="title">
-                    <i-input v-model.trim="editItem.title" placeholder="标题"></i-input>
+                    <i-input v-model.trim="editItem.title"
+                             clearable
+                             maxlength="100"
+                             placeholder="标题"></i-input>
                 </form-item>
                 <form-item label="内容" prop="content">
                     <i-input type="textarea"
@@ -68,7 +71,11 @@
                            label="链接"
                            :rules="[{required:urlRequired(editItem.type), message:'链接不能为空', trigger:'change' }]"
                            prop="url">
-                    <i-input v-model.trim="editItem.url" placeholder="链接" @on-blur="getFavicons"></i-input>
+                    <i-input v-model.trim="editItem.url"
+                             clearable
+                             maxlength="200"
+                             placeholder="链接"
+                             @on-blur="getFavicons"></i-input>
                 </form-item>
                 <form-item v-else label="原型文件"
                            prop="zip">
@@ -309,7 +316,7 @@
                                     this.$emit('refresh', this.editItem.category);
                                 })
                                 .catch(err => {
-                                    console.log(err);
+                                    console.error(err);
                                     this.$notice.err(err.response && err.response.data || '保存失败');
                                     this.cancel();
                                 })

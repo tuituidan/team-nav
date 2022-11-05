@@ -30,7 +30,10 @@
                     </i-switch>
                     <i-input class="panel-left" style="margin-left:20px; width: 315px;"
                              type="text"
-                             v-model="nginx.url" placeholder="请输入Nginx的地址"></i-input>
+                             maxlength="100"
+                             clearable
+                             v-model.trim="nginx.url"
+                             placeholder="请输入Nginx的地址"></i-input>
                 </div>
             </Card>
         </div>

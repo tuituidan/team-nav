@@ -372,4 +372,8 @@
 .page-panel{
     margin-top: 10px;
 }
+/*分页table没有数据显示滚动条问题*/
+.ivu-table-tip {
+    overflow-x:hidden!important;
+}
 /* 列表页面通用 end */

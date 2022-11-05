@@ -6,7 +6,7 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone
 
 # 拷贝程序
-ADD team-nav.jar app.jar
+ADD target/team-nav.jar app.jar
 
 # 暴露端口
 EXPOSE 8080

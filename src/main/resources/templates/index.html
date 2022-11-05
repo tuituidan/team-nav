@@ -69,7 +69,7 @@
                                 <i-input class="header-search"
                                          search
                                          placeholder="搜索..."
-                                         v-model="keywords"
+                                         v-model.trim="keywords"
                                          @on-search="loadTree"></i-input>
                             </div>
                             <div class="header-right">
@@ -98,7 +98,7 @@
                                                         :style="{background: child.icon.color}">{{child.icon.text}}
                                                 </Avatar>
                                             </i-col>
-                                            <i-col style="width: calc(100% - 43px);margin-left: 3px">
+                                            <i-col style="width: calc(100% - 46px);margin-left: 6px">
                                                 <div class="card-title" v-text="child.title"></div>
                                                 <div class="card-content" v-text="child.content"></div>
                                             </i-col>
