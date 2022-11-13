@@ -83,6 +83,7 @@
                             <i-col span="24" class="card-cat" icon="ios-home" v-text="item.name"></i-col>
                             <i-col span="6" v-for="child in item.children">
                                 <Tooltip max-width="320"
+                                         th:transfer="${isIe}"
                                          :content="child.tip"
                                          style="width:calc(100% - 10px)">
                                     <Card class="nav-card" @click.native="cardClickHandler(child)">
