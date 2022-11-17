@@ -187,4 +187,4 @@ location /ext-resources/modules {
 
 #### 后台-系统设置图
 
-![admin-system](https://user-images.githubusercontent.com/20398244/198856565-6d100f7d-5b8a-4577-8879-09e048604cf7.png)
+![admin-system](https://user-images.githubusercontent.com/20398244/202465155-6c1ea9cf-2cb8-4a31-91c0-f12b0854a192.png)

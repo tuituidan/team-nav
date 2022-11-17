@@ -1,5 +1,7 @@
 package com.tuituidan.openhub.config;
 
+import com.tuituidan.openhub.service.UserService;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -24,6 +28,9 @@ public class SecurityConfig {
     @Value("${login.enable}")
     private boolean loginEnable;
 
+    @Resource
+    private UserService userService;
+
     /**
      * filterChain
      *
@@ -33,30 +40,31 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.headers().frameOptions().disable();
+        http.csrf().disable();
         if (!loginEnable) {
-            return http.authorizeRequests().anyRequest().permitAll()
-                    .and().headers().frameOptions().disable()
-                    .and().csrf().disable().build();
+            return http.authorizeRequests().anyRequest().permitAll().and().build();
         }
-        return http
-                .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/api/v1/login")
-                .and().logout()
-                .logoutUrl("/logout").logoutSuccessUrl("/admin/category")
-                .deleteCookies("JSESSIONID")
-                .and().authorizeRequests()
-                .antMatchers("/api/v1/card/tree", "/api/v1/qrcode").permitAll()
-                .and().authorizeRequests()
-                .antMatchers("/admin/**", "/api/v1/**").authenticated()
-                .anyRequest().permitAll()
-                .and().headers().frameOptions().disable()
-                .and().csrf().disable()
-                .exceptionHandling()
-                .defaultAuthenticationEntryPointFor((request, response, ex) ->
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED),
-                        request -> "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With")))
-                .and().build();
+        http.userDetailsService(userService);
+        http.formLogin().loginPage("/login").loginProcessingUrl("/api/v1/login");
+        http.logout().logoutUrl("/logout").logoutSuccessUrl("/admin/category").deleteCookies("JSESSIONID");
+        http.authorizeRequests().antMatchers("/api/v1/card/tree", "/api/v1/qrcode").permitAll();
+        http.authorizeRequests().antMatchers("/admin/**", "/api/v1/**")
+                .authenticated().anyRequest().permitAll();
+        http.exceptionHandling().defaultAuthenticationEntryPointFor((request, response, ex) ->
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED),
+                request -> "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With")));
+        return http.build();
+    }
+
+    /**
+     * bCryptPasswordEncoder
+     *
+     * @return BCryptPasswordEncoder
+     */
+    @Bean
+    public PasswordEncoder cryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

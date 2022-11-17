@@ -106,21 +106,19 @@
                             </div>
                             <div class="header-right">
                                 <Dropdown transfer transfer-class-name="user-dropdown">
-                                    <span class="user-name" th:text="${userInfo.nick}"></span>
+                                    <span class="user-name" th:text="${userInfo.nickname}"></span>
                                     <Avatar icon="ios-person" size="large" th:src="${userInfo.avatar}"></Avatar>
                                     <Icon :size="18" type="md-arrow-dropdown"></Icon>
                                     <dropdown-menu slot="list">
                                         <dropdown-item>
                                             <i-button type="text"
                                                       icon="ios-home"
-                                                      class="btn-blue"
                                                       to="/">返回首页
                                             </i-button>
                                         </dropdown-item>
                                         <dropdown-item>
                                             <i-button type="text"
                                                       icon="logo-github"
-                                                      class="btn-blue"
                                                       target="_blank"
                                                       to="https://github.com/tuituidan/team-nav">源码地址
                                             </i-button>
@@ -128,7 +126,6 @@
                                         <dropdown-item th:if="${loginEnable}">
                                             <i-button type="text"
                                                       icon="md-exit"
-                                                      class="btn-blue"
                                                       to="/logout">退出登录
                                             </i-button>
                                         </dropdown-item>

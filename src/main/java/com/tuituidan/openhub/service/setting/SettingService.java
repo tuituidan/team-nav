@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
  * @date 2021/9/27 0027
  */
 @Service
-@CacheConfig(cacheNames = "settings")
 public class SettingService implements ApplicationRunner {
 
     @Resource
