@@ -1,7 +1,9 @@
 package com.tuituidan.openhub.controller;
 
+import com.tuituidan.openhub.service.SettingService;
 import com.tuituidan.openhub.util.RequestUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +21,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ViewController {
 
-    @Value("${nav-name}")
-    private String navName;
+    @Resource
+    private SettingService settingService;
 
     @Value("${change-password.enable}")
     private Boolean changePwdEnable;
+
+    @Value("${project.version}")
+    private String projectVersion;
 
     /**
      * 首页访问
@@ -33,7 +38,7 @@ public class ViewController {
      */
     @GetMapping({"/", "index.html"})
     public String index(HttpServletRequest request) {
-        request.setAttribute("navName", navName);
+        request.setAttribute("navName", settingService.getNavName());
         request.setAttribute("isIe", RequestUtils.isIe());
         return "index";
     }
@@ -64,10 +69,11 @@ public class ViewController {
     @GetMapping("/admin/**")
     public String admin(HttpServletRequest request) {
         request.setAttribute("page", StringUtils.substringAfterLast(request.getServletPath(), "/"));
-        request.setAttribute("navName", navName);
+        request.setAttribute("navName", settingService.getNavName());
         request.setAttribute("userInfo", SecurityUtils.getUserInfo());
         request.setAttribute("loginEnable", SecurityUtils.isLoginEnable());
         request.setAttribute("changePwdEnable", changePwdEnable);
+        request.setAttribute("projectVersion", projectVersion);
         return "admin";
     }
 

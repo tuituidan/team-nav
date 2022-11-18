@@ -12,9 +12,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Nginx {
+public class SettingDto {
 
-    private Boolean open;
+    private Boolean nginxOpen;
 
-    private String url;
+    private String nginxUrl;
+
+    private String navName;
 }

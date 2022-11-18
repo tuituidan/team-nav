@@ -9,45 +9,55 @@
         }
         .card-style {
             width: 450px;
-            height: 275px;
             margin: 5px;
         }
-        .nginx-setting-panel {
-            display: flex;
-            padding-top: 10px;
-            align-items: center;
-        }
-        .nginx-setting-panel .ivu-input-wrapper{
-            flex: 1;
+        .nginx-setting-tip {
+            vertical-align: -0.3em;
+            margin-left: 15px;
         }
     </style>
     <template id="page-settings">
         <div class="setting-panel">
             <Card class="card-style">
                 <p slot="title">
-                    <Icon type="ios-film-outline"></Icon>
-                    配置原型通过Nginx访问
+                    <Icon type="ios-settings-outline"></Icon>
+                    基础配置
                 </p>
-                <a href="#" slot="extra" @click="saveNginx()">
+                <a href="#" slot="extra" @click="saveSetting()">
                     <Icon type="ios-loop-strong"></Icon>
                     保存
                 </a>
-                <Alert show-icon>
-                    提示
-                    <template slot="desc">可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址</template>
-                </Alert>
-                <div class="nginx-setting-panel">
-                    <i-switch size="large" v-model="nginx.open">
-                        <span slot="open">开启</span>
-                        <span slot="close">关闭</span>
-                    </i-switch>
-                    <i-input style="margin-left:10px;"
-                             type="text"
-                             maxlength="100"
-                             clearable
-                             v-model.trim="nginx.url"
-                             placeholder="请输入Nginx的地址"></i-input>
-                </div>
+                <i-form ref="settingForm"
+                        :model="settingItem"
+                        label-width="120"
+                        :rules="settingItemRules" @submit.native.prevent>
+                    <form-item label="服务名称" prop="navName">
+                        <i-input v-model.trim="settingItem.navName"
+                                 type="text"
+                                 clearable
+                                 maxlength="50"
+                                 placeholder="服务名称"></i-input>
+                    </form-item>
+                    <form-item label="Nginx访问原型" prop="nginxOpen">
+                        <i-switch size="large" v-model="settingItem.nginxOpen">
+                            <span slot="open">开启</span>
+                            <span slot="close">关闭</span>
+                        </i-switch>
+
+                        <Tooltip max-width="320" content="可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址">
+                            <Icon class="nginx-setting-tip"
+                                  type="ios-information-circle-outline"
+                                  color="#2d8cf0" size="25" />
+                        </Tooltip>
+                    </form-item>
+                    <form-item label="Nginx地址" prop="nginxUrl">
+                        <i-input type="text"
+                                 maxlength="100"
+                                 clearable
+                                 v-model.trim="settingItem.nginxUrl"
+                                 placeholder="Nginx地址"></i-input>
+                    </form-item>
+                </i-form>
             </Card>
             <Card class="card-style" th:if="${changePwdEnable}">
                 <p slot="title">
@@ -93,14 +103,20 @@
             data() {
                 return {
                     datas: [],
-                    nginx: {
-                        open: false,
-                        url: ''
+                    settingItem: {
+                        navName: '',
+                        nginxOpen: false,
+                        nginxUrl: ''
                     },
                     pwdItem: {
                         oldPassword: '',
                         newPassword: '',
                         confirmPassword: ''
+                    },
+                    settingItemRules: {
+                        navName: [
+                            {required: true, message: '服务名称不能为空'}
+                        ]
                     },
                     pwdItemRules: {
                         oldPassword: [
@@ -140,23 +156,27 @@
                 loadSetting(){
                     this.$http.get(`/api/v1/setting`)
                         .then(res => {
-                            this.nginx.open = Boolean(res.data.nginxOpen);
-                            this.nginx.url = res.data.nginxUrl;
+                            this.settingItem = res.data;
+                            this.settingItem.nginxOpen = Boolean(res.data.nginxOpen);
                         })
                         .catch(err => {
                             console.error(err);
                             this.$notice.err(err.response.data);
                         });
                 },
-                saveNginx(){
-                    this.$http.patch(`/api/v1/setting/nginx`, {...this.nginx})
-                        .then(() => {
-                            this.$notice.suc('保存成功');
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            this.$notice.err(err.response.data);
-                        });
+                saveSetting(){
+                    this.$refs.settingForm.validate(valid => {
+                        if (valid) {
+                            this.$http.patch(`/api/v1/setting`, {...this.settingItem})
+                                .then(() => {
+                                    this.$notice.suc('保存成功');
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    this.$notice.err(err.response.data);
+                                });
+                        }
+                    });
                 },
                 savePassword() {
                     this.$refs.pwdForm.validate(valid => {

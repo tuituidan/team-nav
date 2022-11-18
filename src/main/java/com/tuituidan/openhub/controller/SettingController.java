@@ -1,10 +1,10 @@
 package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.ChangePassword;
-import com.tuituidan.openhub.bean.dto.Nginx;
+import com.tuituidan.openhub.bean.dto.SettingDto;
 import com.tuituidan.openhub.bean.entity.Setting;
+import com.tuituidan.openhub.service.SettingService;
 import com.tuituidan.openhub.service.UserService;
-import com.tuituidan.openhub.service.setting.SettingService;
 import javax.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,14 +42,14 @@ public class SettingController {
     }
 
     /**
-     * 保存Nginx配置
+     * 保存配置
      *
-     * @param nginx nginx
+     * @param settingDto settingDto
      * @return Void
      */
-    @PatchMapping("/setting/nginx")
-    public ResponseEntity<Void> saveNginx(@RequestBody Nginx nginx) {
-        settingService.saveNginx(nginx);
+    @PatchMapping("/setting")
+    public ResponseEntity<Void> saveSetting(@RequestBody SettingDto settingDto) {
+        settingService.saveSetting(settingDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

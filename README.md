@@ -73,7 +73,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.5
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.6
 
 ```
 
@@ -82,7 +82,7 @@ registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.5
 - logs、database、ext-resources分别将日志，数据库文件，额外资源（自定义图标和原型文件等）挂载出来。
 - nav-name：导航服务的名字，可不传，默认"团队导航服务"。
 
-其他参数参考config/application.yml。
+其他参数参考config/application.yml，可以将此文件挂载出来修改配置，也可通过`docker`的`-e`参数替换`application.yml`中的配置。
 
 #### nginx部署（非必须）
 
@@ -106,12 +106,27 @@ location /ext-resources/modules {
 
 ## 版本说明
 
+- 1.0.6
+
+  - 优化调整了一些页面样式。
+  
+  - 解决IE下因tooltip导致首页面抖动问题。
+  
+  - 系统设置页面新增密码修改功能([系统设置图](#后台-系统设置图))，默认关闭，页面不显示密码修改框，需要通过`yml`配置中的`change-password.enable`开启。
+  
+    - 该配置关闭时，密码修改还是老方式，通过修改yml中的spring.security.user.password配置来修改密码。
+    - 该配置开启时，系统设置页面才会出现密码修改框，密码将存入数据库，修改配置中的密码将不会生效，但首次启动密码读取的仍然是配置文件中的密码。
+  
+    > 如果并不希望密码随便就能被其他成员修改，请谨慎开启，毕竟是大家共用一个用户。
+  
+  - 系统设置页面新增`服务名称`修改，首次启动会读取`yml`中的`nav-name`配置值。
+  
 - 1.0.5
 
   - 优化了一些页面样式。
   - 解决登录页面未能读取错误信息问题。
   - 登录页面添加记住密码功能。
-  
+
 - 1.0.4
 
   - 获取链接的favicon.ico添加超时去掉遮罩，避免因失败导致阻断表单提交。
@@ -187,4 +202,4 @@ location /ext-resources/modules {
 
 #### 后台-系统设置图
 
-![admin-system](https://user-images.githubusercontent.com/20398244/202465155-6c1ea9cf-2cb8-4a31-91c0-f12b0854a192.png)
+![admin-system](https://user-images.githubusercontent.com/20398244/202721041-7a1aae70-b729-4cfc-b07f-707848a2a429.png)

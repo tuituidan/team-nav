@@ -38,4 +38,7 @@ public class Setting implements Serializable {
 
     @Column(name = "C_NGINX_URL", length = 200)
     private String nginxUrl;
+
+    @Column(name = "C_NAV_NAME", length = 200)
+    private String navName;
 }
