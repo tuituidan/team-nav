@@ -11,7 +11,7 @@ login:
 
 # 是否开启页面上进行密码修改，用户只有一个，请谨慎开启
 change-password:
-  enable: true
+  enable: false
 
 # 账号密码
 spring:
