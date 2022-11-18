@@ -389,6 +389,14 @@
 .header-search{
     width: 350px;
 }
+
+.no-data {
+    text-align: center;
+    padding-top: 100px
+}
+.no-data-text {
+    font-size: 20px
+}
 /* 首页 end*/
 
 /* 列表页面通用 begin */

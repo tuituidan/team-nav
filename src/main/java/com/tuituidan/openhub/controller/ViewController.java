@@ -22,6 +22,9 @@ public class ViewController {
     @Value("${nav-name}")
     private String navName;
 
+    @Value("${change-password.enable}")
+    private Boolean changePwdEnable;
+
     /**
      * 首页访问
      *
@@ -64,6 +67,7 @@ public class ViewController {
         request.setAttribute("navName", navName);
         request.setAttribute("userInfo", SecurityUtils.getUserInfo());
         request.setAttribute("loginEnable", SecurityUtils.isLoginEnable());
+        request.setAttribute("changePwdEnable", changePwdEnable);
         return "admin";
     }
 

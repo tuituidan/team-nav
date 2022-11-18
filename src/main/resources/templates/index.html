@@ -44,7 +44,7 @@
                             <template v-for="item in datas" :key="item.id">
                                 <Dropdown transfer placement="right-start"
                                           @on-click="choosedMenu(item.id)">
-                                    <i-button class="dd-btn" type="text">
+                                    <i-button class="dd-btn" type="text" @click="choosedMenu(item.id)">
                                         <Icon :size="28" :type="item.icon"></Icon>
                                     </i-button>
                                     <dropdown-menu class="dd-menu" slot="list">
@@ -114,11 +114,11 @@
                                 </Tooltip>
                             </i-col>
                         </Row>
-                        <div v-if="datas.length<=0" style="text-align: center;padding-top: 100px">
+                        <div v-if="datas.length<=0" class="no-data">
                             <div>
                                 <Icon type="ios-folder-open-outline" size="170" />
                             </div>
-                            <div style="font-size: 20px">没有任何数据</div>
+                            <div class="no-data-text">没有任何数据</div>
                         </div>
                     </i-content>
                 </Layout>

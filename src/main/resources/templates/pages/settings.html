@@ -49,7 +49,7 @@
                              placeholder="请输入Nginx的地址"></i-input>
                 </div>
             </Card>
-            <Card class="card-style">
+            <Card class="card-style" th:if="${changePwdEnable}">
                 <p slot="title">
                     <Icon type="ios-lock-outline"></Icon>
                     密码修改
@@ -108,7 +108,15 @@
                         ],
                         newPassword: [
                             {required: true, message: '新密码不能为空'},
-                            { type: 'string', min: 6, message: '密码不能少于6个字符'}
+                            { type: 'string', min: 6, message: '密码不能少于6个字符'},
+                            {
+                                validator: (rule, value, callback) => {
+                                    if (this.pwdItem.confirmPassword !== '') {
+                                        this.$refs.pwdForm.validateField('confirmPassword');
+                                    }
+                                    callback();
+                                }
+                            }
                         ],
                         confirmPassword: [
                             {required: true, message: '密码确认不能为空'},

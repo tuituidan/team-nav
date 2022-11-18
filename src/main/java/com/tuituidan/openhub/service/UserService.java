@@ -5,6 +5,7 @@ import com.tuituidan.openhub.bean.entity.User;
 import com.tuituidan.openhub.repository.UserRepository;
 import com.tuituidan.openhub.util.SecurityUtils;
 import javax.annotation.Resource;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -35,10 +36,14 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     @Value("${spring.security.user.password}")
     private String password;
 
+    @Value("${change-password.enable}")
+    private Boolean changePwdEnable;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         User user = get();
-        if (StringUtils.isBlank(user.getUsername())
+        // 不支持在线修改密码，则每次都会读取配置，使得通过配置修改密码生效
+        if (BooleanUtils.isNotTrue(changePwdEnable)
                 || StringUtils.isBlank(user.getPassword())) {
             // 加载默认配置，兼容老版本
             user.setNickname(SecurityUtils.DEFAULT_USER.getNickname());
