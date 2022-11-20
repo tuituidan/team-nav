@@ -65,7 +65,7 @@ public class SettingService implements ApplicationRunner {
      * @return Setting
      */
     public Setting get() {
-        return settingRepository.findAll().stream().findFirst().orElse(new Setting());
+        return settingRepository.findAll().stream().findFirst().orElse(new Setting().setId("setting-id"));
     }
 
     /**
