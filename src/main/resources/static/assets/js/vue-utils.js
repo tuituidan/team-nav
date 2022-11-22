@@ -19,6 +19,7 @@ http.interceptors.response.use(res => {
     }
     return Promise.reject(err);
 });
+http.save = (url, data) => data.id ? http.patch(`${url}/${data.id}`, data) : http.post(url, data);
 
 const CustomPlugin = {};
 CustomPlugin.install = Vue => {

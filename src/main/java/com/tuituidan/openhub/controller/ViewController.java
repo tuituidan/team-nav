@@ -40,6 +40,7 @@ public class ViewController {
     public String index(HttpServletRequest request) {
         request.setAttribute("navName", settingService.getNavName());
         request.setAttribute("isIe", RequestUtils.isIe());
+        request.setAttribute("countdown", settingService.getCountdown());
         return "index";
     }
 
@@ -74,6 +75,7 @@ public class ViewController {
         request.setAttribute("loginEnable", SecurityUtils.isLoginEnable());
         request.setAttribute("changePwdEnable", changePwdEnable);
         request.setAttribute("projectVersion", projectVersion);
+        request.setAttribute("countdown", settingService.getCountdown());
         return "admin";
     }
 

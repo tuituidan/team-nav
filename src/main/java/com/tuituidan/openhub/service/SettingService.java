@@ -30,6 +30,8 @@ public class SettingService implements ApplicationRunner {
     @Value("${nav-name}")
     private String navName;
 
+    private boolean countdown;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Setting setting = get();
@@ -39,6 +41,15 @@ public class SettingService implements ApplicationRunner {
             settingRepository.save(setting);
         }
         this.settingChange(setting);
+    }
+
+    /**
+     * getCountdown
+     *
+     * @return String
+     */
+    public boolean getCountdown() {
+        return countdown;
     }
 
     /**
@@ -85,6 +96,7 @@ public class SettingService implements ApplicationRunner {
                 && StringUtils.isNotBlank(setting.getNginxUrl())
                 ? setting.getNginxUrl() : StringUtils.EMPTY;
         this.navName = setting.getNavName();
+        this.countdown = BooleanUtils.isTrue(setting.getCountdown());
     }
 
 }

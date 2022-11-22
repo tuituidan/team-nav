@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="countdown">
+    <div th:replace="modal/countdown-modal::countdown-modal"></div>
+    <template id="page-countdown">
+        <div>
+            <div class="search-panel">
+                <div class="panel-right">
+                    <i-button type="success"
+                              icon="md-add"
+                              @click="openModal()">添加</i-button>
+                </div>
+            </div>
+            <div class="table-panel">
+                <i-table border
+                         stripe
+                         :columns="table.columns"
+                         :data="table.datas"
+                         @on-selection-change="selectChange">
+                    <template slot-scope="{ row, index }" slot="status-action">
+                        <Tag v-if="row.status" color="green">启用中</Tag>
+                        <Tag v-else color="red">已停止</Tag>
+                    </template>
+                    <template slot-scope="{ row, index }" slot="action">
+                        <i-button type="primary" size="small" @click="openModal(row)">编辑</i-button>
+                        <Poptip confirm transfer
+                                title="您确定要删除此项吗？"
+                                @on-ok="deleteItem(row.id)">
+                            <i-button type="error" size="small">删除</i-button>
+                        </Poptip>
+                    </template>
+                </i-table>
+            </div>
+            <countdown-modal ref="countdownModal" @refresh="initList"></countdown-modal>
+        </div>
+    </template>
+    <script type="text/javascript" th:inline="javascript">
+        Vue.component('page-countdown', {
+            template: '#page-countdown',
+            data() {
+                return {
+                    selectedIds: [],
+                    table: {
+                        columns: [
+                            {
+                                title: '序号',
+                                type: 'index',
+                                width: 66,
+                                align: 'center'
+                            }, {
+                                title: '前置文本',
+                                key: 'prefixText',
+                                tooltip: true
+                            }, {
+                                title: '结束时间',
+                                key: 'endTime'
+                            }, {
+                                title: '状态',
+                                slot: 'status-action',
+                                key: 'status'
+                            }, {
+                                title: '操作',
+                                slot: 'action',
+                                width: 200,
+                                align: 'center'
+                            }],
+                        datas: []
+                    }
+                }
+            },
+            mounted() {
+                this.initList();
+            },
+            methods: {
+                initList() {
+                    this.selectedIds = [];
+                    this.$http.get(`/api/v1/countdown`)
+                        .then(res => {
+                            this.table.datas = res.data;
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        });
+                },
+                deleteItem(id) {
+                    this.$http.delete(`/api/v1/countdown/${id}`)
+                        .then(() => {
+                            this.$notice.suc('删除成功');
+                            this.initList();
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        });
+                },
+                openModal(item) {
+                    this.$refs.countdownModal.open(item);
+                },
+                selectChange(items) {
+                    this.selectedIds = items.map(item => item.id);
+                }
+            }
+        })
+    </script>
+</div>
+</html>

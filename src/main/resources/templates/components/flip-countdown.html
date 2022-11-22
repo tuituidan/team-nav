@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="flip-countdown">
+    <style type="text/css">
+        .flip-countdown li {
+            color: red;
+            display: inline-block;
+            margin: 0 3px;
+            text-align: center;
+            position: relative;
+            line-height: 22px;
+            font-size: 22px;
+        }
+    </style>
+    <template id="flip-countdown">
+        <ul class="flip-countdown">
+            <li v-if="days > 0">{{ days }}天</li>
+            <li>{{ hours }}小时</li>
+            <li>{{ minutes }}分钟</li>
+            <li>{{ seconds }}秒</li>
+        </ul>
+    </template>
+    <script type="text/javascript">
+        Vue.component('flip-countdown', {
+            template: '#flip-countdown',
+            props: {
+                deadline: {
+                    type: String
+                }
+            },
+            data() {
+                return {
+                    interval: null,
+                    endTime: null,
+                    diff: 0
+                }
+            },
+            created() {
+                if (!this.deadline) {
+                    throw new Error("Missing props 'deadline'");
+                }
+                this.endTime = Math.trunc(Date.parse(this.deadline) / 1000);
+                if (!this.endTime) {
+                    throw new Error("Invalid props value, correct the 'deadline'");
+                }
+                this.calcDiff();
+                this.interval = setInterval(() => {
+                    this.calcDiff();
+                }, 1000);
+            },
+            computed: {
+                seconds() {
+                    return this.twoDigits(Math.trunc(this.diff) % 60);
+                },
+                minutes() {
+                    return this.twoDigits(Math.trunc(this.diff / 60) % 60);
+                },
+                hours() {
+                    return this.twoDigits(Math.trunc(this.diff / 60 / 60) % 24);
+                },
+                days() {
+                    return this.twoDigits(Math.trunc(this.diff / 60 / 60 / 24));
+                }
+            },
+            methods: {
+                twoDigits(value) {
+                    if ( value.toString().length <= 1 ) {
+                        return '0'+value.toString()
+                    }
+                    return value.toString()
+                },
+                calcDiff() {
+                    this.diff = this.endTime - (Math.trunc(new Date().getTime() / 1000));
+                    if(this.diff > 0){
+                        return;
+                    }
+                    this.diff = 0;
+                    if(this.interval){
+                        clearInterval(this.interval);
+                        this.interval = null;
+                    }
+                }
+            },
+            destroyed() {
+                clearInterval(this.interval);
+            }
+        })
+    </script>
+</div>
+</html>

@@ -29,6 +29,16 @@ new Vue({
             ]
         }
     },
+    created() {
+        if(countdown){
+            this.menus.splice(2, 0, {
+                title: '发布倒计时',
+                name: 'countdown',
+                icon: 'md-alarm',
+                href: '/admin/countdown'
+            });
+        }
+    },
     computed: {
         rotateIcon() {
             return [

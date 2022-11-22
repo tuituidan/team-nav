@@ -5,13 +5,16 @@
         .setting-panel {
             display: flex;
             flex-wrap: wrap;
-            align-items: center;
         }
         .card-style {
             width: 450px;
             margin: 5px;
         }
-        .nginx-setting-tip {
+        .card-style .btn-save{
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        .setting-item-tip {
             vertical-align: -0.3em;
             margin-left: 15px;
         }
@@ -23,10 +26,7 @@
                     <Icon type="ios-settings-outline"></Icon>
                     基础配置
                 </p>
-                <a href="#" slot="extra" @click="saveSetting()">
-                    <Icon type="ios-loop-strong"></Icon>
-                    保存
-                </a>
+                <a href="javascript:void(0)" slot="extra" class="btn-save" @click="saveSetting()">保存</a>
                 <i-form ref="settingForm"
                         :model="settingItem"
                         label-width="120"
@@ -38,6 +38,12 @@
                                  maxlength="50"
                                  placeholder="服务名称"></i-input>
                     </form-item>
+                    <form-item label="发布倒计时" prop="countdown">
+                        <i-switch size="large" v-model="settingItem.countdown">
+                            <span slot="open">开启</span>
+                            <span slot="close">关闭</span>
+                        </i-switch>
+                    </form-item>
                     <form-item label="Nginx访问原型" prop="nginxOpen">
                         <i-switch size="large" v-model="settingItem.nginxOpen">
                             <span slot="open">开启</span>
@@ -45,7 +51,7 @@
                         </i-switch>
 
                         <Tooltip max-width="320" content="可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址">
-                            <Icon class="nginx-setting-tip"
+                            <Icon class="setting-item-tip"
                                   type="ios-information-circle-outline"
                                   color="#2d8cf0" size="25" />
                         </Tooltip>
@@ -64,10 +70,7 @@
                     <Icon type="ios-lock-outline"></Icon>
                     密码修改
                 </p>
-                <a href="#" slot="extra" @click="savePassword()">
-                    <Icon type="ios-loop-strong"></Icon>
-                    保存
-                </a>
+                <a href="javascript:void(0)" slot="extra" class="btn-save" @click="savePassword()">保存</a>
                 <i-form ref="pwdForm"
                         :model="pwdItem"
                         label-width="100"
@@ -105,6 +108,7 @@
                     datas: [],
                     settingItem: {
                         navName: '',
+                        countdown: false,
                         nginxOpen: false,
                         nginxUrl: ''
                     },
@@ -157,6 +161,7 @@
                     this.$http.get(`/api/v1/setting`)
                         .then(res => {
                             this.settingItem = res.data;
+                            this.settingItem.countdown = Boolean(res.data.countdown);
                             this.settingItem.nginxOpen = Boolean(res.data.nginxOpen);
                         })
                         .catch(err => {
@@ -170,6 +175,9 @@
                             this.$http.patch(`/api/v1/setting`, {...this.settingItem})
                                 .then(() => {
                                     this.$notice.suc('保存成功');
+                                    setTimeout(()=>{
+                                        location.reload();
+                                    }, 1000);
                                 })
                                 .catch(err => {
                                     console.error(err);

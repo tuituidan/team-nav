@@ -68,9 +68,10 @@
                                       size="28"></Icon>
                                 <i-input class="header-search"
                                          search
-                                         placeholder="搜索..."
+                                         placeholder="输入关键字回车搜索..."
                                          v-model.trim="keywords"
                                          @on-search="loadTree"></i-input>
+                                <carousel-flip-countdown></carousel-flip-countdown>
                             </div>
                             <div class="header-right">
                                 <i-button icon="md-exit" @click="gotoAdmin" class="btn-blue" size="large">管理
@@ -132,6 +133,7 @@
 <script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
+<div th:replace="components/carousel-flip-countdown::carousel-flip-countdown"></div>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/index.js}"></script>
 </body>
 </html>

@@ -48,7 +48,7 @@ public class SecurityConfig {
         http.userDetailsService(userService);
         http.formLogin().loginPage("/login").loginProcessingUrl("/api/v1/login");
         http.logout().logoutUrl("/logout").logoutSuccessUrl("/admin/category").deleteCookies("JSESSIONID");
-        http.authorizeRequests().antMatchers("/api/v1/card/tree", "/api/v1/qrcode").permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/card/tree", "/api/v1/countdown", "/api/v1/qrcode").permitAll();
         http.authorizeRequests().antMatchers("/admin/**", "/api/v1/**")
                 .authenticated().anyRequest().permitAll();
         http.exceptionHandling().defaultAuthenticationEntryPointFor((request, response, ex) ->

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="carousel-flip-countdown">
+  <div th:replace="components/flip-countdown::flip-countdown"></div>
+  <style type="text/css">
+    .carousel-panel {
+      width: 520px;
+    }
+    .carousel-panel .ivu-carousel-arrow{
+      line-height: 36px;
+      background: none;
+    }
+    .carousel-panel .ivu-carousel-arrow i{
+      font-size: 40px;
+      color: #05264c;
+      line-height: 36px;
+    }
+  </style>
+  <template id="carousel-flip-countdown">
+    <Carousel v-model="carousel"
+              autoplay
+              class="carousel-panel"
+              autoplay-speed="5000"
+              :arrow="arrow"
+              dots="none">
+      <carousel-item v-for="item in datas" :key="item.id">
+        <div style="display: flex;justify-content: center;">
+          <div v-text="item.prefixText"></div>
+          <flip-countdown :deadline="item.endTime"></flip-countdown>
+        </div>
+      </carousel-item>
+    </Carousel>
+  </template>
+  <script type="text/javascript">
+    Vue.component('carousel-flip-countdown', {
+      template: '#carousel-flip-countdown',
+      data() {
+        return {
+          carousel: 0,
+          arrow: 'hover',
+          datas: []
+        }
+      },
+      mounted() {
+        this.init();
+      },
+      methods: {
+        init() {
+          this.$http.get(`/api/v1/countdown`, {params: {status: true}})
+                  .then(res => {
+                    if(Array.isArray(res.data)){
+                      this.datas = res.data;
+                      this.arrow = this.datas.length > 1 ? 'hover': 'never'
+                    }
+                  })
+                  .catch(err => {
+                    console.error(err);
+                    this.$notice.err(err.response.data);
+                  });
+        }
+      }
+    })
+  </script>
+</div>
+</html>

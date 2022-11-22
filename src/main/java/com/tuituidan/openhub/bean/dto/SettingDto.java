@@ -19,4 +19,6 @@ public class SettingDto {
     private String nginxUrl;
 
     private String navName;
+
+    private Boolean countdown;
 }

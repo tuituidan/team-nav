@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="countdown-modal">
+    <template id="countdown-modal">
+        <Modal v-model="show"
+               :width="400"
+               :title="edit?'编辑':'添加'"
+               :loading="loading"
+               :mask-closable="false"
+               @on-ok="save">
+            <i-form ref="tableForm" :model="editItem"
+                    label-width="100"
+                    :rules="editItemRules"
+                    @submit.native.prevent>
+                <form-item label="前置文本" prop="prefixText">
+                    <i-input v-model.trim="editItem.prefixText"
+                             clearable
+                             maxlength="15"
+                             placeholder="前置文本"></i-input>
+                </form-item>
+                <form-item label="结束时间" prop="endTime">
+                    <date-picker type="datetime"
+                                 clearable
+                                 v-model.trim="editItem.endTime"
+                                 format="yyyy-MM-dd HH:mm"
+                                 style="width: 100%"
+                                 placeholder="结束时间"></date-picker>
+                </form-item>
+            </i-form>
+        </Modal>
+    </template>
+    <script type="text/javascript">
+        Vue.component('countdown-modal', {
+            template: '#countdown-modal',
+            data() {
+                return {
+                    show: false,
+                    edit: false,
+                    loading: true,
+                    editItem: {
+                        endTime: '',
+                        prefixText: ''
+                    },
+                    editItemRules: {
+                        prefixText: [
+                            {required: true, message: '前置文本不能为空'}
+                        ],
+                        endTime: [
+                            {required: true, message: '结束时间不能为空'}
+                        ]
+                    }
+                }
+            },
+            methods: {
+                open(item) {
+                    this.$refs.tableForm.resetFields();
+                    this.show = true;
+                    this.edit = Boolean(item);
+                    if (this.edit) {
+                        this.editItem = {...item};
+                    } else {
+                        this.editItem.id = '';
+                    }
+                },
+                save() {
+                    this.$refs.tableForm.validate(valid => {
+                        if (valid) {
+                            this.$http.save('/api/v1/countdown', {...this.editItem})
+                                .then(res => {
+                                    this.$notice.suc('保存成功');
+                                    this.show = false;
+                                    this.$emit('refresh');
+                                })
+                                .catch(err => {
+                                    this.cancel();
+                                });
+                        } else {
+                            this.cancel();
+                        }
+                    });
+                },
+                cancel() {
+                    this.loading = false;
+                    this.$nextTick(() => {
+                        this.loading = true;
+                    })
+                }
+            }
+        })
+    </script>
+</div>
+</html>
