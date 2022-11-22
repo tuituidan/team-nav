@@ -1,8 +1,10 @@
 package com.tuituidan.openhub.service;
 
+import com.tuituidan.openhub.bean.dto.CategoryDto;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.repository.CategoryRepository;
+import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.util.ArrayList;
@@ -88,15 +90,19 @@ public class CategoryService {
     /**
      * 保存
      *
-     * @param category category
+     * @param id id
+     * @param dto dto
      * @return category
      */
     @CachePut(key = "#result.id")
-    public Category save(Category category) {
-        if (StringUtils.isBlank(category.getId())) {
+    public Category save(String id, CategoryDto dto) {
+        Category category = BeanExtUtils.convert(dto, Category::new);
+        if (StringUtils.isBlank(id)) {
             category.setId(StringExtUtils.getUuid());
             category.setValid(true);
             category.setSort(categoryRepository.getMaxSort(true) + 1);
+        } else {
+            category.setId(id);
         }
         categoryRepository.save(category);
         return category;

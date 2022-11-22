@@ -15,11 +15,6 @@ import lombok.Setter;
 public class CardDto {
 
     /**
-     * id 有值为编辑，无值为新增
-     */
-    private String id;
-
-    /**
      * 判断是原型还是普通
      */
     private String type;

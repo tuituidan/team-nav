@@ -117,14 +117,13 @@ public class CardService {
     /**
      * 保存卡片
      *
+     * @param id id
      * @param cardDto cardDto
      */
-    public void save(CardDto cardDto) {
+    public void save(String id, CardDto cardDto) {
         this.saveIcon(cardDto.getIcon());
         Card card = BeanExtUtils.convert(cardDto, Card::new);
-        if (StringUtils.isBlank(card.getId())) {
-            card.setId(StringExtUtils.getUuid());
-        }
+        card.setId(StringUtils.isBlank(id) ? StringExtUtils.getUuid() : id);
         cardTypeServiceFactory.getService(card.getType()).supplySave(card);
         if (card.getSort() == null) {
             card.setSort(cardRepository.getMaxSort(card.getCategory()) + 1);

@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.controller;
 
+import com.tuituidan.openhub.bean.dto.CategoryDto;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CategoryService;
@@ -63,8 +64,8 @@ public class CategoryController {
      * @return Void
      */
     @PostMapping
-    public ResponseEntity<Void> add(@RequestBody Category category) {
-        categoryService.save(category);
+    public ResponseEntity<Void> add(@RequestBody CategoryDto category) {
+        categoryService.save(null, category);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -76,9 +77,8 @@ public class CategoryController {
      * @return Void
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody Category category) {
-        category.setId(id);
-        categoryService.save(category);
+    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody CategoryDto category) {
+        categoryService.save(id, category);
         return ResponseEntity.noContent().build();
     }
 

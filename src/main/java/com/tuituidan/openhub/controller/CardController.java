@@ -63,7 +63,7 @@ public class CardController {
      */
     @PostMapping("/card")
     public ResponseEntity<Void> add(@RequestBody CardDto cardDto) {
-        cardService.save(cardDto);
+        cardService.save(null, cardDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -76,8 +76,7 @@ public class CardController {
      */
     @PatchMapping("/card/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody CardDto cardDto) {
-        cardDto.setId(id);
-        cardService.save(cardDto);
+        cardService.save(id, cardDto);
         return ResponseEntity.noContent().build();
     }
 

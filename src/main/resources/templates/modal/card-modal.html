@@ -309,7 +309,7 @@
                             if (this.editItem.type === 'zip' && this.newZip) {
                                 this.$tools.showLoading('原型文件解压时间较长，请耐心等待...');
                             }
-                            this.$http.post('/api/v1/card', {...this.editItem})
+                            this.$http.save('/api/v1/card', {...this.editItem})
                                 .then(() => {
                                     this.$notice.suc('保存成功');
                                     this.show = false;

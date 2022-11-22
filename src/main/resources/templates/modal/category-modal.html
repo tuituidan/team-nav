@@ -55,7 +55,7 @@
                 save() {
                     this.$refs.tableForm.validate(valid => {
                         if (valid) {
-                            this.$http.post('/api/v1/category', {...this.editItem})
+                            this.$http.save('/api/v1/category', {...this.editItem})
                                 .then(res => {
                                     this.$notice.suc('保存成功');
                                     this.show = false;

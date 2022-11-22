@@ -34,7 +34,7 @@ public class CardTypeDefaultServiceImpl implements ICardTypeService {
     public void supplyDelete(Card card) {
         CardIconDto cardIconDto = card.getIcon();
         if (StringUtils.isNotBlank(cardIconDto.getSrc())
-                && StringUtils.contains(cardIconDto.getSrc(), "default")) {
+                && !StringUtils.contains(cardIconDto.getSrc(), "default")) {
             FileExtUtils.deleteFiles(false, cardIconDto.getSrc());
         }
     }
