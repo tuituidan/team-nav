@@ -20,7 +20,7 @@
     <Carousel v-model="carousel"
               autoplay
               class="carousel-panel"
-              autoplay-speed="10000"
+              th:autoplay-speed="${cutOverSpeed}"
               :arrow="arrow"
               dots="none">
       <carousel-item v-for="item in datas" :key="item.id">

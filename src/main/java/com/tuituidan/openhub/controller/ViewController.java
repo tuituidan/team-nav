@@ -41,6 +41,7 @@ public class ViewController {
         request.setAttribute("navName", settingService.getNavName());
         request.setAttribute("isIe", RequestUtils.isIe());
         request.setAttribute("countdown", settingService.getCountdown());
+        request.setAttribute("cutOverSpeed", settingService.getCutOverSpeed());
         return "index";
     }
 

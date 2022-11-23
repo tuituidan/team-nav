@@ -19,7 +19,6 @@ spring:
     database: h2
   thymeleaf:
     cache: false
-
   servlet:
     multipart:
       max-file-size: 1GB
@@ -29,6 +28,9 @@ spring:
       name: admin
       roles: admin
       password: 123456
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
 
 # 日志相关的配置，还有些问题，后续要改成xml的方式来配置.
 logging:

@@ -48,7 +48,7 @@ public class CardTypeZipServiceImpl implements ICardTypeService {
         CardIconDto cardIconDto = card.getIcon();
         List<String> deletePaths = new ArrayList<>();
         if (StringUtils.isNotBlank(cardIconDto.getSrc())
-                && StringUtils.contains(cardIconDto.getSrc(), "default")) {
+                && !StringUtils.contains(cardIconDto.getSrc(), "default")) {
             deletePaths.add(cardIconDto.getSrc());
         }
         deletePaths.add(card.getZip().getPath());

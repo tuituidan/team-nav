@@ -7,12 +7,24 @@
             flex-wrap: wrap;
         }
         .card-style {
-            width: 450px;
             margin: 5px;
+        }
+        .base-setting-panel{
+            width: 500px;
+        }
+        .pwd-setting-panel{
+            width: 400px;
         }
         .card-style .btn-save{
             cursor: pointer;
             padding: 5px 10px;
+        }
+        .multi-form-item {
+            display:flex;
+            align-items: center;
+        }
+        .multi-form-item .multi-form-item-input {
+            margin-left: 15px;
         }
         .setting-item-tip {
             vertical-align: -0.3em;
@@ -21,7 +33,7 @@
     </style>
     <template id="page-settings">
         <div class="setting-panel">
-            <Card class="card-style">
+            <Card class="card-style base-setting-panel">
                 <p slot="title">
                     <Icon type="ios-settings-outline"></Icon>
                     基础配置
@@ -39,33 +51,55 @@
                                  placeholder="服务名称"></i-input>
                     </form-item>
                     <form-item label="发布倒计时" prop="countdown">
-                        <i-switch size="large" v-model="settingItem.countdown">
-                            <span slot="open">开启</span>
-                            <span slot="close">关闭</span>
-                        </i-switch>
+                        <div class="multi-form-item">
+                            <div>
+                                <i-switch size="large" v-model="settingItem.countdown">
+                                    <span slot="open">开启</span>
+                                    <span slot="close">关闭</span>
+                                </i-switch>
+                            </div>
+                            <input-number :max="200"
+                                          :min="10"
+                                          v-model="settingItem.cutOverSpeed"
+                                          class="multi-form-item-input"
+                                          :editable="false"
+                                          controls-outside></input-number>
+                            <div>&nbsp;秒</div>
+                            <Tooltip transfer
+                                     max-width="320"
+                                     content="配置是否开启发布倒计时功能，可配置多个进行中的发布数据显示时的自动切换时间">
+                                <Icon class="setting-item-tip"
+                                      type="ios-information-circle-outline"
+                                      color="#2d8cf0" size="25" />
+                            </Tooltip>
+                        </div>
                     </form-item>
                     <form-item label="Nginx访问原型" prop="nginxOpen">
-                        <i-switch size="large" v-model="settingItem.nginxOpen">
-                            <span slot="open">开启</span>
-                            <span slot="close">关闭</span>
-                        </i-switch>
-
-                        <Tooltip max-width="320" content="可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址">
-                            <Icon class="setting-item-tip"
-                                  type="ios-information-circle-outline"
-                                  color="#2d8cf0" size="25" />
-                        </Tooltip>
-                    </form-item>
-                    <form-item label="Nginx地址" prop="nginxUrl">
-                        <i-input type="text"
-                                 maxlength="100"
-                                 clearable
-                                 v-model.trim="settingItem.nginxUrl"
-                                 placeholder="Nginx地址"></i-input>
+                        <div class="multi-form-item">
+                            <div>
+                                <i-switch size="large" v-model="settingItem.nginxOpen">
+                                    <span slot="open">开启</span>
+                                    <span slot="close">关闭</span>
+                                </i-switch>
+                            </div>
+                            <i-input type="text"
+                                     maxlength="100"
+                                     clearable
+                                     class="multi-form-item-input"
+                                     v-model.trim="settingItem.nginxUrl"
+                                     placeholder="Nginx地址"></i-input>
+                            <Tooltip transfer
+                                     max-width="320"
+                                     content="可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址">
+                                <Icon class="setting-item-tip"
+                                      type="ios-information-circle-outline"
+                                      color="#2d8cf0" size="25" />
+                            </Tooltip>
+                        </div>
                     </form-item>
                 </i-form>
             </Card>
-            <Card class="card-style" th:if="${changePwdEnable}">
+            <Card class="card-style pwd-setting-panel" th:if="${changePwdEnable}">
                 <p slot="title">
                     <Icon type="ios-lock-outline"></Icon>
                     密码修改
@@ -109,6 +143,7 @@
                     settingItem: {
                         navName: '',
                         countdown: false,
+                        cutOverSpeed: 10,
                         nginxOpen: false,
                         nginxUrl: ''
                     },
@@ -161,6 +196,7 @@
                     this.$http.get(`/api/v1/setting`)
                         .then(res => {
                             this.settingItem = res.data;
+                            this.settingItem.cutOverSpeed = res.data.cutOverSpeed || 10;
                             this.settingItem.countdown = Boolean(res.data.countdown);
                             this.settingItem.nginxOpen = Boolean(res.data.nginxOpen);
                         })

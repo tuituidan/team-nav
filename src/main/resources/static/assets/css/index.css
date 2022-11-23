@@ -387,7 +387,7 @@
     padding-top: 10px
 }
 .header-search{
-    width: 350px;
+    flex: 1;
 }
 
 .no-data {

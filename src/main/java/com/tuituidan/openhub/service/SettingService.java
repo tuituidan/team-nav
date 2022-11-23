@@ -32,6 +32,8 @@ public class SettingService implements ApplicationRunner {
 
     private boolean countdown;
 
+    private Integer cutOverSpeed;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Setting setting = get();
@@ -59,6 +61,15 @@ public class SettingService implements ApplicationRunner {
      */
     public String getNginxUrl() {
         return nginxUrl;
+    }
+
+    /**
+     * getCutOverSpeed
+     *
+     * @return Integer
+     */
+    public Integer getCutOverSpeed() {
+        return (cutOverSpeed == null ? 10 : cutOverSpeed) * 1000;
     }
 
     /**
@@ -97,6 +108,7 @@ public class SettingService implements ApplicationRunner {
                 ? setting.getNginxUrl() : StringUtils.EMPTY;
         this.navName = setting.getNavName();
         this.countdown = BooleanUtils.isTrue(setting.getCountdown());
+        this.cutOverSpeed = setting.getCutOverSpeed();
     }
 
 }

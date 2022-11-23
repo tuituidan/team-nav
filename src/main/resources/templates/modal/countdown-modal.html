@@ -65,13 +65,16 @@
                 save() {
                     this.$refs.tableForm.validate(valid => {
                         if (valid) {
+                            this.editItem.endTime = this.editItem.endTime.toLocaleString().replaceAll('/','-').replace(' ','T')
                             this.$http.save('/api/v1/countdown', {...this.editItem})
-                                .then(res => {
+                                .then(() => {
                                     this.$notice.suc('保存成功');
                                     this.show = false;
                                     this.$emit('refresh');
                                 })
                                 .catch(err => {
+                                    console.error(err);
+                                    this.$notice.err(err && err.response && err.response.data);
                                     this.cancel();
                                 });
                         } else {

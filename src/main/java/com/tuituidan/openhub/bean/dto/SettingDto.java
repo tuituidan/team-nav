@@ -21,4 +21,6 @@ public class SettingDto {
     private String navName;
 
     private Boolean countdown;
+
+    private Integer cutOverSpeed;
 }

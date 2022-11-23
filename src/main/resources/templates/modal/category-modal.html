@@ -56,12 +56,14 @@
                     this.$refs.tableForm.validate(valid => {
                         if (valid) {
                             this.$http.save('/api/v1/category', {...this.editItem})
-                                .then(res => {
+                                .then(() => {
                                     this.$notice.suc('保存成功');
                                     this.show = false;
                                     this.$emit('refresh');
                                 })
                                 .catch(err => {
+                                    console.error(err);
+                                    this.$notice.err(err && err.response && err.response.data);
                                     this.cancel();
                                 });
                         } else {
