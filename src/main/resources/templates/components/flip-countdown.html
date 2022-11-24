@@ -20,7 +20,7 @@
             <li>{{ seconds }}秒</li>
         </ul>
     </template>
-    <script type="text/javascript">
+    <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8">
         Vue.component('flip-countdown', {
             template: '#flip-countdown',
             props: {
@@ -39,7 +39,7 @@
                 if (!this.deadline) {
                     throw new Error("Missing props 'deadline'");
                 }
-                this.endTime = Math.trunc(Date.parse(this.deadline) / 1000);
+                this.endTime = Math.trunc(Date.parse(this.deadline.replace(/-/g, '/')) / 1000);
                 if (!this.endTime) {
                     throw new Error("Invalid props value, correct the 'deadline'");
                 }

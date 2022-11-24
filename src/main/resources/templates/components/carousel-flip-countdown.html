@@ -31,7 +31,7 @@
       </carousel-item>
     </Carousel>
   </template>
-  <script type="text/javascript">
+  <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8">
     Vue.component('carousel-flip-countdown', {
       template: '#carousel-flip-countdown',
       data() {
