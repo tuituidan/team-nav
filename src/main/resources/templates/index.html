@@ -79,49 +79,7 @@
                             </div>
                         </div>
                     </i-header>
-                    <i-content class="main-content">
-                        <Row v-for="item in datas" :id="item.id">
-                            <i-col span="24" class="card-cat" icon="ios-home" v-text="item.name"></i-col>
-                            <i-col span="6" v-for="child in item.children">
-                                <Tooltip max-width="320"
-                                         th:transfer="${isIe}"
-                                         :content="child.tip"
-                                         style="width:calc(100% - 10px)">
-                                    <Card class="nav-card" @click.native="cardClickHandler(child)">
-                                        <Row>
-                                            <i-col style="width: 40px;">
-                                                <Avatar v-if="child.icon.src"
-                                                        class="card-avatar"
-                                                        size="large"
-                                                        :src="child.icon.src"></Avatar>
-                                                <Avatar v-else
-                                                        class="card-avatar"
-                                                        size="large"
-                                                        :style="{background: child.icon.color}">{{child.icon.text}}
-                                                </Avatar>
-                                            </i-col>
-                                            <i-col style="width: calc(100% - 46px);margin-left: 6px">
-                                                <div class="card-title" v-text="child.title"></div>
-                                                <div class="card-content" v-text="child.content"></div>
-                                            </i-col>
-                                        </Row>
-                                    </Card>
-                                    <div v-if="child.type==='qrcode'" slot="content">
-                                        <div v-text="child.tip"></div>
-                                        <div style="text-align: center">
-                                            <img :src="'/api/v1/qrcode?url='+child.url">
-                                        </div>
-                                    </div>
-                                </Tooltip>
-                            </i-col>
-                        </Row>
-                        <div v-if="datas.length<=0" class="no-data">
-                            <div>
-                                <Icon type="ios-folder-open-outline" size="170" />
-                            </div>
-                            <div class="no-data-text">没有任何数据</div>
-                        </div>
-                    </i-content>
+                    <home-card-list :datas="datas"></home-card-list>
                 </Layout>
             </Layout>
         </div>
@@ -134,6 +92,7 @@
 <script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
 <div th:replace="components/carousel-flip-countdown::carousel-flip-countdown"></div>
+<div th:replace="components/home-card-list::home-card-list"></div>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/index.js}"></script>
 </body>
 </html>
