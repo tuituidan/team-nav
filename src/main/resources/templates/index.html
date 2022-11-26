@@ -71,7 +71,7 @@
                                          placeholder="输入关键字回车搜索..."
                                          v-model.trim="keywords"
                                          @on-search="loadTree"></i-input>
-                                <carousel-flip-countdown></carousel-flip-countdown>
+                                <carousel-flip-countdown th:if="${countdown}"></carousel-flip-countdown>
                             </div>
                             <div class="header-right">
                                 <i-button icon="md-exit" @click="gotoAdmin" class="btn-blue" size="large">管理
