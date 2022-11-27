@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="settings">
+    <div th:replace="components/settings/base-setting::base-setting"></div>
+    <div th:replace="components/settings/change-password::change-password"></div>
     <style type="text/css">
         .setting-panel {
             display: flex;
@@ -15,231 +17,23 @@
         .pwd-setting-panel{
             width: 400px;
         }
+        .backup-setting-panel {
+            width: 250px;
+        }
         .card-style .btn-save{
             cursor: pointer;
             padding: 5px 10px;
         }
-        .multi-form-item {
-            display:flex;
-            align-items: center;
-        }
-        .multi-form-item .multi-form-item-input {
-            margin-left: 15px;
-        }
-        .setting-item-tip {
-            vertical-align: -0.3em;
-            margin-left: 15px;
-        }
     </style>
     <template id="page-settings">
         <div class="setting-panel">
-            <Card class="card-style base-setting-panel">
-                <p slot="title">
-                    <Icon type="ios-settings-outline"></Icon>
-                    基础配置
-                </p>
-                <a href="javascript:void(0)" slot="extra" class="btn-save" @click="saveSetting()">保存</a>
-                <i-form ref="settingForm"
-                        :model="settingItem"
-                        label-width="120"
-                        :rules="settingItemRules" @submit.native.prevent>
-                    <form-item label="服务名称" prop="navName">
-                        <i-input v-model.trim="settingItem.navName"
-                                 type="text"
-                                 clearable
-                                 maxlength="50"
-                                 placeholder="服务名称"></i-input>
-                    </form-item>
-                    <form-item label="发布倒计时" prop="countdown">
-                        <div class="multi-form-item">
-                            <div>
-                                <i-switch size="large" v-model="settingItem.countdown">
-                                    <span slot="open">开启</span>
-                                    <span slot="close">关闭</span>
-                                </i-switch>
-                            </div>
-                            <input-number :max="200"
-                                          :min="10"
-                                          v-model="settingItem.cutOverSpeed"
-                                          class="multi-form-item-input"
-                                          :editable="false"
-                                          controls-outside></input-number>
-                            <div>&nbsp;秒</div>
-                            <Tooltip transfer
-                                     max-width="320"
-                                     content="配置是否开启发布倒计时功能，可配置多个进行中的发布数据显示时的自动切换时间">
-                                <Icon class="setting-item-tip"
-                                      type="ios-information-circle-outline"
-                                      color="#2d8cf0" size="25" />
-                            </Tooltip>
-                        </div>
-                    </form-item>
-                    <form-item label="Nginx访问原型" prop="nginxOpen">
-                        <div class="multi-form-item">
-                            <div>
-                                <i-switch size="large" v-model="settingItem.nginxOpen">
-                                    <span slot="open">开启</span>
-                                    <span slot="close">关闭</span>
-                                </i-switch>
-                            </div>
-                            <i-input type="text"
-                                     maxlength="100"
-                                     clearable
-                                     class="multi-form-item-input"
-                                     v-model.trim="settingItem.nginxUrl"
-                                     placeholder="Nginx地址"></i-input>
-                            <Tooltip transfer
-                                     max-width="320"
-                                     content="可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址">
-                                <Icon class="setting-item-tip"
-                                      type="ios-information-circle-outline"
-                                      color="#2d8cf0" size="25" />
-                            </Tooltip>
-                        </div>
-                    </form-item>
-                </i-form>
-            </Card>
-            <Card class="card-style pwd-setting-panel" th:if="${changePwdEnable}">
-                <p slot="title">
-                    <Icon type="ios-lock-outline"></Icon>
-                    密码修改
-                </p>
-                <a href="javascript:void(0)" slot="extra" class="btn-save" @click="savePassword()">保存</a>
-                <i-form ref="pwdForm"
-                        :model="pwdItem"
-                        label-width="100"
-                        :rules="pwdItemRules" @submit.native.prevent>
-                    <form-item label="原密码" prop="oldPassword">
-                        <i-input v-model.trim="pwdItem.oldPassword"
-                                 type="password"
-                                 clearable
-                                 maxlength="50"
-                                 placeholder="原密码"></i-input>
-                    </form-item>
-                    <form-item label="新密码" prop="newPassword">
-                        <i-input v-model.trim="pwdItem.newPassword"
-                                 type="password"
-                                 clearable
-                                 maxlength="50"
-                                 placeholder="新密码"></i-input>
-                    </form-item>
-                    <form-item label="密码确认" prop="confirmPassword">
-                        <i-input v-model.trim="pwdItem.confirmPassword"
-                                 type="password"
-                                 clearable
-                                 maxlength="50"
-                                 placeholder="密码确认"></i-input>
-                    </form-item>
-                </i-form>
-            </Card>
+            <base-setting class="card-style base-setting-panel"></base-setting>
+            <change-password class="card-style pwd-setting-panel" th:if="${loginEnable&&changePwdEnable}"></change-password>
         </div>
     </template>
     <script type="text/javascript">
         Vue.component('page-settings', {
-            template: '#page-settings',
-            data() {
-                return {
-                    datas: [],
-                    settingItem: {
-                        navName: '',
-                        countdown: false,
-                        cutOverSpeed: 10,
-                        nginxOpen: false,
-                        nginxUrl: ''
-                    },
-                    pwdItem: {
-                        oldPassword: '',
-                        newPassword: '',
-                        confirmPassword: ''
-                    },
-                    settingItemRules: {
-                        navName: [
-                            {required: true, message: '服务名称不能为空'}
-                        ]
-                    },
-                    pwdItemRules: {
-                        oldPassword: [
-                            {required: true, message: '原密码不能为空'}
-                        ],
-                        newPassword: [
-                            {required: true, message: '新密码不能为空'},
-                            { type: 'string', min: 6, message: '密码不能少于6个字符'},
-                            {
-                                validator: (rule, value, callback) => {
-                                    if (this.pwdItem.confirmPassword !== '') {
-                                        this.$refs.pwdForm.validateField('confirmPassword');
-                                    }
-                                    callback();
-                                }
-                            }
-                        ],
-                        confirmPassword: [
-                            {required: true, message: '密码确认不能为空'},
-                            {
-                                validator: (rule, value, callback) => {
-                                    if (value !== this.pwdItem.newPassword) {
-                                        callback(new Error('两次输入的密码不一致'));
-                                        return;
-                                    }
-                                    callback();
-                                }
-                            }
-                        ]
-                    }
-                }
-            },
-            mounted() {
-                this.loadSetting();
-            },
-            methods: {
-                loadSetting(){
-                    this.$http.get(`/api/v1/setting`)
-                        .then(res => {
-                            this.settingItem = res.data;
-                            this.settingItem.cutOverSpeed = res.data.cutOverSpeed || 10;
-                            this.settingItem.countdown = Boolean(res.data.countdown);
-                            this.settingItem.nginxOpen = Boolean(res.data.nginxOpen);
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            this.$notice.err(err.response.data);
-                        });
-                },
-                saveSetting(){
-                    this.$refs.settingForm.validate(valid => {
-                        if (valid) {
-                            this.$http.patch(`/api/v1/setting`, {...this.settingItem})
-                                .then(() => {
-                                    this.$notice.suc('保存成功');
-                                    setTimeout(()=>{
-                                        location.reload();
-                                    }, 1000);
-                                })
-                                .catch(err => {
-                                    console.error(err);
-                                    this.$notice.err(err.response.data);
-                                });
-                        }
-                    });
-                },
-                savePassword() {
-                    this.$refs.pwdForm.validate(valid => {
-                        if (valid) {
-                            this.$http.patch(`/api/v1/user/password`, {...this.pwdItem})
-                                .then(() => {
-                                    this.$notice.suc('密码修改成功，请重新登录');
-                                    setTimeout(()=>{
-                                        location.href = '/logout';
-                                    }, 2000);
-                                })
-                                .catch(err => {
-                                    console.error(err);
-                                    this.$notice.err(err.response.data);
-                                });
-                        }
-                    });
-                }
-            }
+            template: '#page-settings'
         })
     </script>
 </div>
