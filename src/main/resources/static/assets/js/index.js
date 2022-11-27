@@ -14,6 +14,9 @@ new Vue({
     },
     mounted() {
         this.loadTree();
+        // iview的backtop组件要求高度固定，只能重写逻辑
+        document.querySelector('.main-content')
+            .addEventListener('scroll', this.handleScroll)
     },
     computed: {
         rotateIcon() {
@@ -30,6 +33,14 @@ new Vue({
         }
     },
     methods: {
+        handleScroll(e) {
+            document.querySelector('.ivu-back-top').style.display
+                = e.target.scrollTop > 400 ? 'block' : 'none';
+        },
+        scrollToTop() {
+            document.querySelector('.main-content div').scrollIntoView(
+                {behavior: 'smooth', block: 'start'})
+        },
         loadTree() {
             this.$http.get(`/api/v1/card/tree?keywords=${encodeURIComponent(this.keywords)}`)
                 .then(res => {
