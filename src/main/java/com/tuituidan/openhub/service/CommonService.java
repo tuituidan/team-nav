@@ -100,7 +100,7 @@ public class CommonService implements ApplicationRunner {
             return;
         }
         for (File file : files) {
-            CARD_ICONS.add(FilenameUtils.getBaseName(file.getName()));
+            CARD_ICONS.add(file.getName());
         }
     }
 
