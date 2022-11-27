@@ -439,11 +439,9 @@
     font-size: 17px;
     padding: 8px;
 }
-.card-avatar{
-    margin-top: 5px;
-}
+
 .card-title{
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
@@ -454,7 +452,6 @@
     display: block;
     white-space: nowrap;
     overflow: hidden;
-    margin-top: 5px;
     text-overflow: ellipsis;
 }
 
