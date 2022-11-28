@@ -74,7 +74,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.7
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.8
 
 ```
 
@@ -107,12 +107,19 @@ location /ext-resources/modules {
 
 ## 版本说明
 
+- 1.0.8
+
+  - 解决首页搜索卡顿问题
+  - 图片图片支持所有图片格式
+  - 首页添加回到顶部功能
+  - 部分样式和结构优化
+  
 - 1.0.7
 
   - 修复默认图标被删除的bug
   - 优化部分样式
   - 新增发布倒计时功能（详见功能说明-发布倒计时）
-  
+
 - 1.0.6
 
   - 优化调整了一些页面样式。
