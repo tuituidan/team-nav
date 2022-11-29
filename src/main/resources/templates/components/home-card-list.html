@@ -49,7 +49,14 @@
     <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8">
         Vue.component('home-card-list', {
             template: '#home-card-list',
-            props: ["datas"]
+            props: ["datas"],
+            methods: {
+                cardClickHandler(item) {
+                    if (item.url) {
+                        window.open(item.url);
+                    }
+                }
+            }
         })
     </script>
 </div>
