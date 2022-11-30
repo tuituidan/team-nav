@@ -5,7 +5,7 @@
         <i-content class="main-content">
             <Row v-for="item in datas" :id="item.id" :key="item.id">
                 <i-col span="24" class="card-cat" icon="ios-home" v-text="item.name"></i-col>
-                <i-col span="6" v-for="child in item.children" :key="child.id">
+                <i-col class="card-sm card-md card-xl card-xxl" v-for="child in item.children" :key="child.id">
                     <Tooltip max-width="320"
                              th:transfer="${isIe}"
                              :content="child.tip"
