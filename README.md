@@ -74,7 +74,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.8
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.9
 
 ```
 
@@ -107,13 +107,19 @@ location /ext-resources/modules {
 
 ## 版本说明
 
+- 1.0.9
+
+  - 首页卡片响应式显示，不再固定一排4个，根据浏览器宽度显示3-5个
+  - 后台分类管理表格和卡片管理表格不再默认支持拖动排序，可拖动情况下会导致无法复制行内数据，可通过开关手动开启排序
+  - 解决IE下侧边栏收起时，从侧边栏滑到卡片区域会闪动的问题
+  
 - 1.0.8
 
   - 解决首页搜索卡顿问题
   - 图片图片支持所有图片格式
   - 首页添加回到顶部功能
   - 部分样式和结构优化
-  
+
 - 1.0.7
 
   - 修复默认图标被删除的bug
