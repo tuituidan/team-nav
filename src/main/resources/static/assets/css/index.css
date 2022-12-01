@@ -149,6 +149,15 @@
     position: fixed;
     height: 100%;
 }
+
+.admin-layout-container .layout .sidebar .ivu-layout-sider-trigger {
+    width: 0 !important;
+}
+
+.admin-layout-container .layout .sidebar .ivu-layout-sider-trigger i{
+    display: none;
+}
+
 .sidebar-show{
     margin-left: 260px;
 }

@@ -13,7 +13,10 @@
     <section class="admin-layout-container">
         <div class="layout">
             <Layout>
-                <Sider ref="sidebar" class="sidebar" hide-trigger collapsible width="260" :collapsed-width="80"
+                <Sider ref="sidebar" class="sidebar"
+                       collapsible
+                       width="260"
+                       :collapsed-width="80"
                        v-model="isCollapsed">
                     <div class="logo">
                         <div v-if="!isCollapsed" class="logo-saiqu">
