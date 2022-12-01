@@ -6,7 +6,11 @@
         <div>
             <div class="search-panel">
                 <div class="panel-left">
-                    <Alert show-icon>您可以拖动行实现排序</Alert>
+                    拖动排序
+                    <i-switch size="large" v-model="tableDraggable">
+                        <span slot="open">开启</span>
+                        <span slot="close">关闭</span>
+                    </i-switch>
                 </div>
                 <div class="panel-right">
                     <i-button type="success"
@@ -23,7 +27,7 @@
                          stripe
                          :columns="table.columns"
                          :data="table.datas"
-                         draggable
+                         :draggable="tableDraggable"
                          @on-selection-change="selectChange"
                          @on-drag-drop="changeSort">
                     <template slot-scope="{ row, index }" slot="icon-action">
@@ -59,6 +63,7 @@
             template: '#page-category-valid',
             data() {
                 return {
+                    tableDraggable: false,
                     selectedIds: [],
                     table: {
                         columns: [
