@@ -65,7 +65,7 @@
                 save() {
                     this.$refs.tableForm.validate(valid => {
                         if (valid) {
-                            this.editItem.endTime = this.editItem.endTime.toLocaleString().replaceAll('/','-').replace(' ','T')
+                            this.editItem.endTime = this.$tools.formatDate(this.editItem.endTime, 'yyyy-MM-dd HH:mm:ss');
                             this.$http.save('/api/v1/countdown', {...this.editItem})
                                 .then(() => {
                                     this.$notice.suc('保存成功');
