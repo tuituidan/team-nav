@@ -2,7 +2,14 @@
  * @author tuituidan
  * @date 2020/12/11
  */
-
+:root {
+    --default-menu-width: 260px;
+    --small-menu-width: 210px;
+    --default-header-height: 70px;
+    --small-header-height: 60px;
+    --default-logo-height: 100px;
+    --small-logo-height: 80px;
+}
 .content-wrapper .ivu-table th {
     background-color: #0062c6 !important;
     color: #fff !important;
@@ -109,13 +116,24 @@
 }
 
 .ivu-layout-header {
-    height: 70px;
-    line-height: 70px;
+    height: var(--default-header-height);
+    line-height: var(--default-header-height);
+}
+
+.small-layout-container .ivu-layout-header {
+    height: var(--small-header-height);
+    line-height: var(--small-header-height);
 }
 
 .ivu-menu {
-    height: calc(100% - 120px);
+    height: calc(100% - var(--default-logo-height));
     overflow-y: auto;
+    width: var(--default-menu-width) !important;
+}
+
+.small-layout-container .ivu-menu {
+    height: calc(100% - var(--small-logo-height));
+    width: var(--small-menu-width) !important;
 }
 
 .ivu-menu-item {
@@ -148,6 +166,14 @@
     background: #fff;
     position: fixed;
     height: 100%;
+    width: var(--default-menu-width) !important;
+    min-width: var(--default-menu-width) !important;
+    max-width: var(--default-menu-width) !important;
+}
+.small-layout-container .layout .sidebar {
+    width: var(--small-menu-width) !important;
+    min-width: var(--small-menu-width) !important;
+    max-width: var(--small-menu-width) !important;
 }
 
 .admin-layout-container .layout .sidebar .ivu-layout-sider-trigger {
@@ -159,7 +185,10 @@
 }
 
 .sidebar-show{
-    margin-left: 260px;
+    margin-left: var(--default-menu-width);
+}
+.small-layout-container .sidebar-show{
+    margin-left: var(--small-menu-width);
 }
 .sidebar-hidden{
     margin-left: 80px;
@@ -187,15 +216,19 @@
 
 .admin-layout-container .layout .logo {
     width: auto;
-    height: 120px;
+    height: var(--default-logo-height);
     display: flex;
     text-align: center;
     align-items: center;
     justify-content: flex-start;
     cursor: pointer;
     position: relative;
-    padding-left: 5px;
+    padding-left: 10px;
     background: #05264c;
+}
+
+.small-layout-container .layout .logo {
+    height: var(--small-logo-height);
 }
 
 .admin-layout-container .layout .logo .logo-avatar {
@@ -204,6 +237,10 @@
     height: 50px
 }
 
+.small-layout-container .layout .logo .logo-avatar {
+    width: 45px;
+    height: 40px
+}
 
 .admin-layout-container .layout .logo .logo-saiqu {
     display: flex;
@@ -217,6 +254,11 @@
     color: white;
     font-size: 22px;
     text-align: left;
+}
+
+.small-layout-container .layout .logo .logo-saiqu .logo-text {
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .admin-layout-container .layout-header-bar {
@@ -238,6 +280,11 @@
     box-shadow: 0 1px 6px rgba(0,0,0,.2);
     background: white;
     color: #05264c;
+    height: var(--default-header-height);
+}
+
+.small-layout-container .layout-header-bar .header-wapper {
+    height: var(--small-header-height);
 }
 
 .admin-layout-container .layout-header-bar .header-wapper .header-left {
@@ -252,12 +299,22 @@
 
 .admin-layout-container .layout-header-bar .header-wapper .header-right {
     margin-right: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+.admin-layout-container .layout-header-bar .header-wapper .header-right .header-right-item {
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.admin-layout-container .layout-header-bar .header-wapper .header-right .header-right-item:hover {
+    background-color: #f6f6f6;
 }
 
 .admin-layout-container .layout-header-bar .header-wapper .header-right .btn-blue {
     color: #fff;
     background-color: #05264c;
-    font-size: 16px;
+    font-size: 15px;
 }
 .admin-layout-container .layout-header-bar .header-wapper .header-right .btn-blue:hover {
     color: #fff;
@@ -317,6 +374,9 @@
     text-overflow: ellipsis;
     max-width: 180px;
 }
+.small-layout-container .menu-item span {
+    font-size: 15px;
+}
 .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):after {
      background: #2c4056;
  }
@@ -348,10 +408,10 @@
 
 .admin-layout-container .main-content {
     width: 100%;
-    height: calc(100% - 60px);
     position: relative;
     overflow: auto;
-    padding: 10px 10px 10px 20px
+    padding: 10px 10px 10px 20px;
+    background: #f5f7f9;
 }
 
 .master-page-container {
@@ -440,13 +500,21 @@
 .ivu-card-body{
     padding: 10px;
 }
+.small-layout-container .ivu-card-body {
+    padding: 8px;
+}
 .ivu-card:hover {
     box-shadow: 0 8px 17px 0 rgba(3, 102, 214, 0.2), 0 6px 20px 0 rgba(3, 102, 214, 0.19);
     border-color: #eee;
 }
-.card-cat{
+.card-cat {
     font-size: 17px;
     padding: 8px;
+}
+
+.small-layout-container .card-cat {
+    font-size: 16px;
+    padding: 6px;
 }
 
 .card-title{
@@ -456,12 +524,21 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.small-layout-container .card-title {
+    font-size: 14px;
+}
+
 .card-content{
     color: #0366d6;
     display: block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.small-layout-container .card-content {
+    font-size: 13px;
 }
 
 .blink-box {
@@ -492,6 +569,11 @@
         flex: 0 0 33.333333%;
         max-width: 33.333333%;
     }
+    .small-layout-container .card-md {
+        -ms-flex: 0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
 }
 
 
@@ -501,6 +583,11 @@
         flex: 0 0 25%;
         max-width: 25%;
     }
+    .small-layout-container .card-xl {
+        -ms-flex: 0 0 20%;
+        flex: 0 0 20%;
+        max-width: 20%;
+    }
 }
 
 @media (min-width: 1680px) {
@@ -509,4 +596,28 @@
         flex: 0 0 20%;
         max-width: 20%;
     }
+    .small-layout-container .card-xl {
+        -ms-flex: 0 0 16.666666%;
+        flex: 0 0 16.666666%;
+        max-width: 16.666666%;
+    }
+}
+
+/* 整个滚动条 */
+::-webkit-scrollbar {
+    /* 对应纵向滚动条的宽度 */
+    width: 6px;
+    /* 对应横向滚动条的宽度 */
+    height: 6px;
+}
+
+/* 滚动条上的滚动滑块 */
+::-webkit-scrollbar-thumb {
+    background-color: #515a6e;
+    border-radius: 3px;
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+    border-radius: 3px;
 }

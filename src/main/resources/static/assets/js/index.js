@@ -8,6 +8,7 @@ new Vue({
         return {
             keywords: '',
             isCollapsed: localStorage.IndexCollapsed === 'true',
+            isSmallLayout: localStorage.layoutSize === 'small-layout',
             datas: [],
             users: []
         }
@@ -50,9 +51,6 @@ new Vue({
                     console.error(err);
                     this.$notice.err(err.response.data);
                 })
-        },
-        gotoAdmin() {
-            location.href = '/admin/category';
         },
         collapsedSider() {
             this.$refs.sidebar.toggleCollapse();

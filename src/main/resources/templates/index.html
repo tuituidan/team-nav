@@ -10,12 +10,12 @@
 </head>
 <body>
 <div v-cloak id="app">
-    <section class="admin-layout-container">
+    <section class="admin-layout-container"
+             :class="{'small-layout-container':isSmallLayout}">
         <div class="layout">
             <Layout>
                 <Sider ref="sidebar" class="sidebar"
                        collapsible
-                       width="260"
                        :collapsed-width="80"
                        v-model="isCollapsed">
                     <div class="logo">
@@ -32,7 +32,6 @@
                     <i-menu
                             ref="side_menu"
                             theme="light"
-                            width="260px"
                             :class="menuitemClasses"
                             v-if="!isCollapsed">
                         <template v-for="item in datas" :key="item.id">
@@ -63,12 +62,13 @@
                         </div>
                     </div>
                 </Sider>
-                <Layout :style="{marginLeft: !isCollapsed?'260px':'80px'}">
+                <Layout :class="[isCollapsed?'sidebar-hidden':'sidebar-show']">
                     <i-header class="layout-header-bar">
-                        <div class="header-wapper" style="height: 70px">
+                        <div class="header-wapper">
                             <div class="header-left">
-                                <Icon @click.native="collapsedSider" :class="rotateIcon" type="md-menu"
-                                      size="28"></Icon>
+                                <Icon @click.native="collapsedSider"
+                                      :class="rotateIcon" type="md-menu"
+                                      size="26"></Icon>
                                 <i-input class="header-search"
                                          search
                                          placeholder="输入关键字回车搜索..."
@@ -76,10 +76,7 @@
                                          @on-search="loadTree"></i-input>
                                 <carousel-flip-countdown th:if="${countdown}"></carousel-flip-countdown>
                             </div>
-                            <div class="header-right">
-                                <i-button icon="md-exit" @click="gotoAdmin" class="btn-blue" size="large">管理
-                                </i-button>
-                            </div>
+                            <home-header-right></home-header-right>
                         </div>
                     </i-header>
                     <home-card-list :datas="datas"></home-card-list>
@@ -97,6 +94,7 @@
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
 <div th:replace="components/carousel-flip-countdown::carousel-flip-countdown"></div>
 <div th:replace="components/home-card-list::home-card-list"></div>
+<div th:replace="components/home-header-right::home-header-right"></div>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/index.js}"></script>
 </body>
 </html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="home-header-right">
+    <template id="home-header-right">
+        <div class="header-right">
+            <div class="header-right-item">
+                <Tooltip content="全屏切换">
+                    <Icon :size="26" v-if="!fullScreen" @click="setFullScreen" type="md-expand"></Icon>
+                    <Icon :size="26" v-if="fullScreen" @click="setNotFullScreen" type="md-contract"></Icon>
+                </Tooltip>
+            </div>
+            <div>
+                <Tooltip content="布局大小">
+                    <Dropdown  class="header-right-item"
+                               @on-click="changeLayoutSize"
+                               trigger="click"
+                               transfer>
+                        <Icon :size="26" type="ios-appstore"></Icon>
+                        <dropdown-menu slot="list">
+                            <dropdown-item name="big-layout" :selected="!isSmallLayout">较大</dropdown-item>
+                            <dropdown-item name="small-layout" :selected="isSmallLayout">中等</dropdown-item>
+                        </dropdown-menu>
+                    </Dropdown>
+                </Tooltip>
+            </div>
+            <div class="header-right-item">
+                <Tooltip content="后台管理">
+                    <Icon :size="26" type="md-settings" @click="gotoAdmin"></Icon>
+                </Tooltip>
+            </div>
+        </div>
+    </template>
+    <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8">
+        Vue.component('home-header-right', {
+            template: '#home-header-right',
+            data() {
+                return {
+                    fullScreen: false,
+                    isSmallLayout: localStorage.layoutSize === 'small-layout',
+                }
+            },
+            methods: {
+                setFullScreen() {
+                    if (document.documentElement.RequestFullScreen) {
+                        document.documentElement.RequestFullScreen();
+                    }
+                    console.log(document.documentElement.mozRequestFullScreen)
+                    if (document.documentElement.mozRequestFullScreen) {
+                        document.documentElement.mozRequestFullScreen();
+                    }
+                    if (document.documentElement.webkitRequestFullScreen) {
+                        document.documentElement.webkitRequestFullScreen();
+                    }
+                    if (document.documentElement.msRequestFullscreen) {
+                        document.documentElement.msRequestFullscreen();
+                    }
+                    this.fullScreen = true;
+                },
+                setNotFullScreen() {
+                    if (document.exitFullScreen) {
+                        document.exitFullscreen()
+                    }
+                    console.log(document.mozExitFullScreen)
+                    if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen()
+                    }
+                    if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen()
+                    }
+                    if (document.msExitFullscreen) {
+                        document.msExitFullscreen()
+                    }
+                    this.fullScreen = false;
+                },
+                changeLayoutSize(layoutSize) {
+                    localStorage.layoutSize = layoutSize;
+                    location.reload();
+                },
+                gotoAdmin() {
+                    location.href = '/admin/category';
+                },
+            }
+        })
+    </script>
+</div>
+</html>
