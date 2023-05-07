@@ -39,6 +39,7 @@ public class ViewController {
     @GetMapping({"/", "index.html"})
     public String index(HttpServletRequest request) {
         request.setAttribute("navName", settingService.getNavName());
+        request.setAttribute("logoPath", settingService.getLogoPath());
         request.setAttribute("isIe", RequestUtils.isIe());
         request.setAttribute("countdown", settingService.getCountdown());
         request.setAttribute("cutOverSpeed", settingService.getCutOverSpeed());
@@ -72,6 +73,7 @@ public class ViewController {
     public String admin(HttpServletRequest request) {
         request.setAttribute("page", StringUtils.substringAfterLast(request.getServletPath(), "/"));
         request.setAttribute("navName", settingService.getNavName());
+        request.setAttribute("logoPath", settingService.getLogoPath());
         request.setAttribute("userInfo", SecurityUtils.getUserInfo());
         request.setAttribute("loginEnable", SecurityUtils.isLoginEnable());
         request.setAttribute("changePwdEnable", changePwdEnable);

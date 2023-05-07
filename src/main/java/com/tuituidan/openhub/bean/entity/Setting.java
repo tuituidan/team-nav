@@ -47,4 +47,7 @@ public class Setting implements Serializable {
 
     @Column(name = "N_CUTOVER_SPEED")
     private Integer cutOverSpeed;
+
+    @Column(name = "C_LOGO_PATH", length = 400)
+    private String logoPath;
 }

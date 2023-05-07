@@ -20,7 +20,10 @@ public class SettingDto {
 
     private String navName;
 
+    private String logoPath;
+
     private Boolean countdown;
 
     private Integer cutOverSpeed;
+
 }

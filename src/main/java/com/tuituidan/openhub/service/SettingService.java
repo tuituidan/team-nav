@@ -30,6 +30,8 @@ public class SettingService implements ApplicationRunner {
     @Value("${nav-name}")
     private String navName;
 
+    private String logoPath;
+
     private boolean countdown;
 
     private Integer cutOverSpeed;
@@ -82,6 +84,15 @@ public class SettingService implements ApplicationRunner {
     }
 
     /**
+     * getLogoPath
+     *
+     * @return String
+     */
+    public String getLogoPath() {
+        return logoPath;
+    }
+
+    /**
      * get
      *
      * @return Setting
@@ -109,6 +120,8 @@ public class SettingService implements ApplicationRunner {
         this.navName = setting.getNavName();
         this.countdown = BooleanUtils.isTrue(setting.getCountdown());
         this.cutOverSpeed = setting.getCutOverSpeed();
+        this.logoPath = StringUtils.isBlank(setting.getLogoPath())
+                ? "/assets/images/logo.png" : setting.getLogoPath();
     }
 
 }

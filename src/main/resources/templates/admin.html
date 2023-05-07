@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
     <title th:text="${navName}"></title>
+    <link rel="shortcut icon" th:href="${logoPath}" />
     <link type="text/css" rel="stylesheet" th:href="@{/assets/lib/iview/iview.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/assets/css/common.css}">
     <link type="text/css" rel="stylesheet" th:href="@{/assets/css/admin.css}">
@@ -21,12 +22,13 @@
                         <div v-if="!isCollapsed" class="logo-saiqu">
                             <Avatar shape="square"
                                     icon="ios-paper-plane"
-                                    size="large" src="/assets/images/logo.png"></Avatar>
+                                    size="large" th:src="${logoPath}"></Avatar>
                             <span class="logo-text" th:text="${navName}"></span>
                         </div>
                         <Avatar shape="square"
                                 icon="ios-paper-plane"
-                                size="large" v-else src="/assets/images/logo.png"/>
+                                size="large" v-else
+                                th:src="${logoPath}"/>
                     </div>
                     <i-menu
                             ref="side_menu"

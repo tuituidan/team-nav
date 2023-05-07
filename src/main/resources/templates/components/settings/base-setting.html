@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="base-setting">
+  <div th:replace="components/com-uploader::com-uploader"></div>
   <style type="text/css">
     .multi-form-item {
       display:flex;
@@ -25,12 +26,15 @@
               :model="settingItem"
               label-width="120"
               :rules="settingItemRules" @submit.native.prevent>
-        <form-item label="服务名称" prop="navName">
+        <form-item label="网站标题" prop="navName">
           <i-input v-model.trim="settingItem.navName"
                    type="text"
                    clearable
                    maxlength="50"
-                   placeholder="服务名称"></i-input>
+                   placeholder="网站标题"></i-input>
+        </form-item>
+        <form-item label="网站LOGO" prop="logoPath">
+          <com-uploader v-model.trim="settingItem.logoPath"></com-uploader>
         </form-item>
         <form-item label="发布倒计时" prop="countdown">
           <div class="multi-form-item">
@@ -89,6 +93,7 @@
         return {
           settingItem: {
             navName: '',
+            logoPath: '',
             countdown: false,
             cutOverSpeed: 10,
             nginxOpen: false,
@@ -96,7 +101,10 @@
           },
           settingItemRules: {
             navName: [
-              {required: true, message: '服务名称不能为空'}
+              {required: true, message: '网站标题不能为空'},
+            ],
+            logoPath: [
+              {required: true, message: '网站LOGO不能为空'}
             ]
           }
         }
