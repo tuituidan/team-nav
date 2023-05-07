@@ -74,7 +74,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.0.9
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.1.0
 
 ```
 
@@ -107,12 +107,18 @@ location /ext-resources/modules {
 
 ## 版本说明
 
+- 1.1.0
+
+  - 修复添加倒计时结束时间报错bug
+  - 新增布局大小切换功能
+  - 支持网站LOGO在设置中修改
+  
 - 1.0.9
 
   - 首页卡片响应式显示，不再固定一排4个，根据浏览器宽度显示3-5个
   - 后台分类管理表格和卡片管理表格不再默认支持拖动排序，可拖动情况下会导致无法复制行内数据，可通过开关手动开启排序
   - 解决IE下侧边栏收起时，从侧边栏滑到卡片区域会闪动的问题
-  
+
 - 1.0.8
 
   - 解决首页搜索卡顿问题
@@ -230,4 +236,4 @@ location /ext-resources/modules {
 
 #### 后台-系统设置图
 
-![admin-system](https://user-images.githubusercontent.com/20398244/203549539-a8a67ec3-853c-42bd-8cab-af8180c05030.png)
+![admin-system](https://user-images.githubusercontent.com/20398244/236677914-5a5a31de-d101-44e1-b8cf-2b5336675b4a.png)

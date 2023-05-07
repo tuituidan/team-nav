@@ -44,6 +44,10 @@ public class SettingService implements ApplicationRunner {
             setting.setNavName(navName);
             settingRepository.save(setting);
         }
+        if (StringUtils.isBlank(setting.getLogoPath())) {
+            setting.setLogoPath("/assets/images/logo.png");
+            settingRepository.save(setting);
+        }
         this.settingChange(setting);
     }
 
@@ -120,8 +124,7 @@ public class SettingService implements ApplicationRunner {
         this.navName = setting.getNavName();
         this.countdown = BooleanUtils.isTrue(setting.getCountdown());
         this.cutOverSpeed = setting.getCutOverSpeed();
-        this.logoPath = StringUtils.isBlank(setting.getLogoPath())
-                ? "/assets/images/logo.png" : setting.getLogoPath();
+        this.logoPath = setting.getLogoPath();
     }
 
 }
