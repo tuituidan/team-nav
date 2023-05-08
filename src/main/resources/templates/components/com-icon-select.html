@@ -18,8 +18,16 @@
     </style>
     <template id="com-icon-select">
         <Dropdown :value="value"
-                  class="com-icon-select" :style="{width:width+'px'}" @on-visible-change="visibleChange" trigger="click">
-            <i-input readonly :prefix="value" placeholder="请选择" v-model="value" :suffix="inputSuffix"></i-input>
+                  class="com-icon-select"
+                  :style="{width:width+'px'}"
+                  :visible="visible"
+                  @on-visible-change="visibleChange"
+                  v-clickoutside="closeSelectPanel"
+                  trigger="custom">
+            <i-input readonly :prefix="value"
+                     placeholder="请选择"
+                     @click.native="openSelectPanel"
+                     v-model="value" :suffix="inputSuffix"></i-input>
             <DropdownMenu slot="list">
                 <div class="icon-select-search-panel">
                     <i-input placeholder="搜索..." v-model="searchVal" search @on-change="searchHandler"></i-input>
@@ -48,6 +56,7 @@
                     inputSuffix: 'ios-arrow-down',
                     searchVal: '',
                     datas: [],
+                    visible: false,
                     searchVals: []
                 }
             },
@@ -55,6 +64,12 @@
                 this.init();
             },
             methods: {
+                openSelectPanel(){
+                    this.visible = !this.visible;
+                },
+                closeSelectPanel(){
+                    this.visible = false;
+                },
                 init() {
                     this.$http.get('/api/v1/category/icons')
                         .then(res => {
@@ -75,6 +90,7 @@
                 selectIcon(val) {
                     this.value = val;
                     this.$emit('input', val);
+                    this.closeSelectPanel();
                 },
                 searchHandler() {
                     if (this.searchVal === '') {

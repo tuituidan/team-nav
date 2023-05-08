@@ -18,8 +18,12 @@
         }
     </style>
     <template id="card-icon-select">
-        <Dropdown class="card-icon-select" trigger="click" v-if="datas.length">
-            <i-button>
+        <Dropdown class="card-icon-select"
+                  :visible="visible"
+                  trigger="custom"
+                  v-clickoutside="closeSelectPanel"
+                  v-if="datas.length">
+            <i-button @click="openSelectPanel">
                 图标选择
                 <Icon type="ios-arrow-down"></Icon>
             </i-button>
@@ -45,6 +49,7 @@
                 return {
                     searchVal: '',
                     datas: [],
+                    visible: false,
                     searchVals: []
                 }
             },
@@ -52,6 +57,12 @@
                 this.init();
             },
             methods: {
+                openSelectPanel(){
+                    this.visible = !this.visible;
+                },
+                closeSelectPanel(){
+                    this.visible = false;
+                },
                 init() {
                     this.$http.get('/api/v1/card/icons')
                         .then(res => {
@@ -67,6 +78,7 @@
                 },
                 selectIcon(item) {
                     this.$emit('select', item.path);
+                    this.closeSelectPanel();
                 },
                 searchHandler() {
                     if (this.searchVal === '') {
