@@ -124,7 +124,7 @@ public class CardService {
         this.saveIcon(cardDto.getIcon());
         Card card = BeanExtUtils.convert(cardDto, Card::new);
         card.setId(StringUtils.isBlank(id) ? StringExtUtils.getUuid() : id);
-        cardTypeServiceFactory.getService(card.getType()).supplySave(card);
+        cardTypeServiceFactory.getService(card.getType()).supplySave(id, card);
         if (card.getSort() == null) {
             card.setSort(cardRepository.getMaxSort(card.getCategory()) + 1);
         }

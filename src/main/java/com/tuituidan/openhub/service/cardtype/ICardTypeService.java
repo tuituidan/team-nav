@@ -22,9 +22,10 @@ public interface ICardTypeService {
     /**
      * supplySave
      *
+     * @param id id
      * @param card card
      */
-    void supplySave(Card card);
+    void supplySave(String id, Card card);
 
     /**
      * supplyDelete

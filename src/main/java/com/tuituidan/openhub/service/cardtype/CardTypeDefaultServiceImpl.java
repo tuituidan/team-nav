@@ -26,7 +26,7 @@ public class CardTypeDefaultServiceImpl implements ICardTypeService {
     }
 
     @Override
-    public void supplySave(Card card) {
+    public void supplySave(String id, Card card) {
         // 默认的不用实现
     }
 
