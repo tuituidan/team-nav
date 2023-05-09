@@ -176,6 +176,11 @@
     max-width: var(--small-menu-width) !important;
 }
 
+.small-layout-container .layout .sidebar.ivu-layout-sider-collapsed{
+    width: var(--small-logo-height) !important;
+    min-width: var(--small-logo-height) !important;
+    max-width: var(--small-logo-height) !important;
+}
 .admin-layout-container .layout .sidebar .ivu-layout-sider-trigger {
     width: 0 !important;
 }
@@ -204,7 +209,8 @@
 }
 
 .admin-layout-container .layout .dropdown-wrap .dw-content {
-    height: 100%;
+    height: calc(100% - var(--small-logo-height));
+    overflow: auto;
 }
 
 .admin-layout-container .layout .dropdown-wrap .dw-content .dd-btn {

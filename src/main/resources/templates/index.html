@@ -28,7 +28,7 @@
                         </div>
                         <Avatar v-else class="logo-avatar"
                                 shape="square" icon="ios-paper-plane"
-                                th:src="${logoPath}"/>
+                                th:src="${logoPath}"></Avatar>
                     </div>
                     <i-menu
                             ref="side_menu"
@@ -42,7 +42,7 @@
                             </menu-item>
                         </template>
                     </i-menu>
-                    <div class="dropdown-wrap" v-if="isCollapsed">
+                    <div class="dropdown-wrap" v-else>
                         <div class="dw-content">
                             <template v-for="item in datas" :key="item.id">
                                 <Dropdown transfer placement="right-start"
