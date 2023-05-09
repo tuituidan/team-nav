@@ -14,6 +14,11 @@ new Vue({
         }
     },
     mounted() {
+        if (localStorage.username
+            && localStorage.password
+            && localStorage.autoLogin === 'true') {
+            this.$http.get('/api/v1/setting')
+        }
         this.loadTree();
         // iview的backtop组件要求高度固定，只能重写逻辑
         document.querySelector('.main-content')
@@ -60,7 +65,7 @@ new Vue({
             const rows = document.getElementById(id);
             rows.scrollIntoView(
                 {behavior: 'smooth', block: 'start'});
-            setTimeout(()=>{
+            setTimeout(() => {
                 if (rows.getBoundingClientRect().top > 100) {
                     rows.classList.add('blink-box');
                     setTimeout(() => {

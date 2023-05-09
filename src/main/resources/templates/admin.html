@@ -128,7 +128,7 @@
                                         <dropdown-item th:if="${loginEnable}">
                                             <i-button type="text"
                                                       icon="md-exit"
-                                                      to="/logout">退出登录
+                                                      @click="logout">退出登录
                                             </i-button>
                                         </dropdown-item>
                                     </dropdown-menu>
@@ -146,15 +146,17 @@
         </div>
     </section>
 </div>
+<script type="text/javascript" th:if="${isIe}" th:src="@{/assets/js/babel.min.js}"></script>
+<script type="text/javascript" th:if="${isIe}" th:src="@{/assets/js/polyfill.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/vue.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/vue-utils.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/color.js}"></script>
+<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
+<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/color.js}"></script>
 <div th:replace="'pages/'+${page}::${page}"></div>
 <script type="text/javascript" th:inline="javascript">
     const countdown = /*[[${countdown}]]*/ false;
 </script>
-<script type="text/javascript" th:src="@{/assets/js/admin.js}"></script>
+<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/admin.js}"></script>
 </body>
 </html>

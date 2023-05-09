@@ -83,6 +83,10 @@ new Vue({
         },
         dropdownClick(name) {
             this.choosedMenu(name);
-        }
+        },
+        logout() {
+            delete localStorage.autoLogin;
+            location.href = '/logout';
+        },
     }
 });

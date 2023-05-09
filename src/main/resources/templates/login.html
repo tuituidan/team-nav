@@ -60,6 +60,7 @@
             </form-item>
             <form-item class="remember-me-panel">
                 <Checkbox v-model="rememberMe">记住密码</Checkbox>
+                <Checkbox v-model="autoLogin" :disabled="!rememberMe">自动登录</Checkbox>
             </form-item>
             <form-item>
                 <i-button type="primary" @click="loginHandler()" long
@@ -72,17 +73,20 @@
         </i-form>
     </Card>
 </div>
+<script type="text/javascript" th:if="${isIe}" th:src="@{/assets/js/babel.min.js}"></script>
+<script type="text/javascript" th:if="${isIe}" th:src="@{/assets/js/polyfill.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/vue.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/js/vue-utils.js}"></script>
-<script type="text/javascript">
+<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
+<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8">
     new Vue({
         el: '#app',
         data() {
             return {
                 login_loading: false,
                 rememberMe: false,
+                autoLogin: false,
                 userForm: {
                     username: '',
                     password: ''
@@ -97,11 +101,24 @@
                 }
             }
         },
+        watch: {
+            rememberMe(val) {
+                if (!val) {
+                    this.autoLogin = false
+                }
+            }
+        },
         mounted() {
             if (localStorage.rememberMe === 'true') {
                 this.userForm.username = localStorage.username;
                 this.userForm.password = localStorage.password;
                 this.rememberMe = true;
+                if (localStorage.autoLogin === 'true') {
+                    this.autoLogin = true;
+                    this.$nextTick(() => {
+                        this.loginHandler();
+                    })
+                }
             }
             this.$refs.username.focus({cursor: 'end'});
         },
@@ -117,6 +134,11 @@
                         localStorage.username = this.userForm.username;
                         localStorage.password = this.userForm.password;
                         localStorage.rememberMe = this.rememberMe;
+                        if (this.autoLogin) {
+                            localStorage.autoLogin = this.autoLogin
+                        } else {
+                            delete localStorage.autoLogin;
+                        }
                     } else {
                         delete localStorage.username;
                         delete localStorage.password;

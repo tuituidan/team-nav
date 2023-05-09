@@ -60,6 +60,7 @@ public class ViewController {
             // 只使用一次就移除，再刷新页面就不显示了
             request.getSession().removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
         }
+        request.setAttribute("isIe", RequestUtils.isIe());
         return "login";
     }
 
@@ -79,6 +80,7 @@ public class ViewController {
         request.setAttribute("changePwdEnable", changePwdEnable);
         request.setAttribute("projectVersion", projectVersion);
         request.setAttribute("countdown", settingService.getCountdown());
+        request.setAttribute("isIe", RequestUtils.isIe());
         return "admin";
     }
 
