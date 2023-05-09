@@ -39,8 +39,10 @@
                :title="edit?'编辑卡片':'添加卡片'"
                :loading="loading"
                :mask-closable="false"
-               @on-ok="save">
-            <i-form ref="tableForm" :model="editItem" label-width="100" :rules="editItemRules" @submit.native.prevent>
+               ok-text="保存"
+               @on-ok="save(true)">
+            <i-form ref="tableForm" :model="editItem" label-width="100"
+                    :rules="editItemRules" @submit.native.prevent>
                 <form-item label="卡片类型" prop="type">
                     <radio-group v-model="editItem.type">
                         <Radio v-for="item in types" :disabled="edit&&editItem.type!==item.id" :label="item.id"
@@ -124,6 +126,12 @@
                     </div>
                 </form-item>
             </i-form>
+
+            <div v-if="!edit" slot="footer">
+                <i-button type="text" @click="closeModal">取消</i-button>
+                <i-button type="primary" @click="save(true)">保存</i-button>
+                <i-button type="info" @click="save(false)">保存并继续添加</i-button>
+            </div>
         </Modal>
     </template>
     <script type="text/javascript">
@@ -192,6 +200,9 @@
                 this.getCategory();
             },
             methods: {
+                closeModal(){
+                    this.show = false;
+                },
                 open(category, item) {
                     this.icons = [];
                     this.iconErrTip = false;
@@ -242,7 +253,7 @@
                 },
                 textIconColorChange() {
                     let curIcon = this.icons.find(icon => Boolean(icon.color));
-                    if(curIcon) {
+                    if(curIcon && this.textIcon.color) {
                         curIcon.color = this.textIcon.color;
                     }
                 },
@@ -298,12 +309,10 @@
                     this.editItem.icon = {...item};
                     this.iconErrTip = false;
                 },
-                save() {
-                    setTimeout(() => {
-                        if (!this.editItem.icon) {
-                            this.iconErrTip = true;
-                        }
-                    }, 1);
+                save(closeModal) {
+                    if (!this.editItem.icon) {
+                        this.iconErrTip = true;
+                    }
                     this.$refs.tableForm.validate(valid => {
                         if (valid && this.editItem.icon) {
                             if (this.editItem.type === 'zip' && this.newZip) {
@@ -312,7 +321,9 @@
                             this.$http.save('/api/v1/card', {...this.editItem})
                                 .then(() => {
                                     this.$notice.suc('保存成功');
-                                    this.show = false;
+                                    if(closeModal) {
+                                        this.show = false;
+                                    }
                                     this.$emit('refresh', this.editItem.category);
                                 })
                                 .catch(err => {

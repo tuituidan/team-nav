@@ -7,6 +7,7 @@
                :title="edit?'编辑':'添加'"
                :loading="loading"
                :mask-closable="false"
+               ok-text="保存"
                @on-ok="save">
             <i-form ref="tableForm" :model="editItem"
                     label-width="100"

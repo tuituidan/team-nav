@@ -8,6 +8,7 @@
                :title="edit?'编辑分类':'添加分类'"
                :loading="loading"
                :mask-closable="false"
+               ok-text="保存"
                @on-ok="save">
             <i-form ref="tableForm" :model="editItem" label-width="100" :rules="editItemRules" @submit.native.prevent>
                 <form-item label="分类名称" prop="name">
