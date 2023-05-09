@@ -74,7 +74,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.1.0
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.1.1
 
 ```
 
@@ -107,12 +107,25 @@ location /ext-resources/modules {
 
 ## 版本说明
 
+- 1.1.1
+
+  - 优化细节
+    - 分类图标选择和卡片图标选择后关闭下拉弹窗
+    - 卡片编辑时原型压缩包未重新上传不重复执行解压逻辑
+    - 卡片添加弹窗增加保存并继续添加按钮，保存卡片数据后不关闭弹窗，方便快速添加
+    - 卡片图标在进行选择，上传或输入文字生成图标后直接选中
+    - 登录页面添加自动登录选择框，勾选后，首页和登录页都会自动登录，主动退出登录将移除自动登录选择。
+  
+  - 缺陷处理
+    - 解决左侧菜单收起时菜单显示个数减少问题
+    - 解决IE下因css变量导致的样式问题
+  
 - 1.1.0
 
   - 修复添加倒计时结束时间报错bug
   - 新增布局大小切换功能
   - 支持网站LOGO在设置中修改
-  
+
 - 1.0.9
 
   - 首页卡片响应式显示，不再固定一排4个，根据浏览器宽度显示3-5个
