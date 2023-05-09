@@ -6,28 +6,34 @@
             margin-top: -24px;
             margin-bottom: 0;
         }
+
         .form-icon-select-panel {
             display: flex;
-            justify-content:space-between;
-            align-items:center;
+            justify-content: space-between;
+            align-items: center;
         }
-        .form-icon-select-show .ivu-badge{
+
+        .form-icon-select-show .ivu-badge {
             margin-top: 10px;
             margin-right: 10px;
         }
+
         .form-icon-text-panel {
             display: flex;
         }
+
         .form-icon-text-input {
             width: 120px;
             bottom: -1px;
         }
-        .form-icon-text-input input{
+
+        .form-icon-text-input input {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
             border-right: none;
         }
-        .form-icon-text-color-pick .ivu-color-picker-input{
+
+        .form-icon-text-color-pick .ivu-color-picker-input {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
         }
@@ -200,7 +206,7 @@
                 this.getCategory();
             },
             methods: {
-                closeModal(){
+                closeModal() {
                     this.show = false;
                 },
                 open(category, item) {
@@ -215,7 +221,7 @@
                         this.editItem = JSON.parse(JSON.stringify(item));
                         this.editItem.icon.checked = true;
                         this.icons.push(this.editItem.icon);
-                        if(this.editItem.icon.text){
+                        if (this.editItem.icon.text) {
                             this.textIcon = {...this.editItem.icon};
                         } else {
                             this.textIcon = {
@@ -253,15 +259,19 @@
                 },
                 textIconColorChange() {
                     let curIcon = this.icons.find(icon => Boolean(icon.color));
-                    if(curIcon && this.textIcon.color) {
+                    if (curIcon && this.textIcon.color) {
                         curIcon.color = this.textIcon.color;
                     }
                 },
                 uploadSuccess(response) {
-                    this.icons.push({src: response, checked: false});
+                    const item = {src: response, checked: true};
+                    this.icons.push(item);
+                    this.selectIcons(item);
                 },
                 iconSelect(src) {
-                    this.icons.push({src: src, checked: false});
+                    const item = {src: src, checked: true};
+                    this.icons.push(item);
+                    this.selectIcons(item);
                 },
                 uploadZipSuccess(response, file) {
                     this.newZip = true;
@@ -278,7 +288,16 @@
                     this.showFaviconLoading = true;
                     this.$http.get('/api/v1/card/icon', {params: {url: this.editItem.url}})
                         .then(res => {
-                            res.data.forEach(path => this.icons.push({src: path, checked: false}));
+                            if (!(Array.isArray(res.data) && res.data.length > 0)) {
+                                return;
+                            }
+                            for (let i = 0; i < res.data.length; i++) {
+                                const item = {src: res.data[i], checked: false};
+                                this.icons.push(item);
+                                if (i === (res.data.length - 1)) {
+                                    this.selectIcons(item);
+                                }
+                            }
                         })
                         .catch(err => {
                             console.error(err);
@@ -294,14 +313,17 @@
                         return;
                     }
                     let curIcon = this.icons.find(icon => Boolean(icon.text));
-                    if(curIcon) {
+                    if (curIcon) {
                         curIcon.text = this.textIcon.text;
+                        this.selectIcons(curIcon);
                         return;
                     }
-                    this.icons.push({
+                    curIcon = {
                         ...this.textIcon,
-                        checked: false
-                    });
+                        checked: true
+                    };
+                    this.icons.push(curIcon);
+                    this.selectIcons(curIcon);
                 },
                 selectIcons(item) {
                     this.icons.forEach(it => it.checked = false);
@@ -321,7 +343,7 @@
                             this.$http.save('/api/v1/card', {...this.editItem})
                                 .then(() => {
                                     this.$notice.suc('保存成功');
-                                    if(closeModal) {
+                                    if (closeModal) {
                                         this.show = false;
                                     }
                                     this.$emit('refresh', this.editItem.category);
