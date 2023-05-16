@@ -4,6 +4,7 @@ import com.tuituidan.openhub.annotation.CardType;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
 import com.tuituidan.openhub.bean.entity.Card;
+import com.tuituidan.openhub.bean.entity.Setting;
 import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.repository.CardRepository;
@@ -38,8 +39,9 @@ public class CardTypeZipServiceImpl implements ICardTypeService {
 
     @Override
     public void formatCardVo(CardTreeChildVo cardVo) {
-        if (StringUtils.isNotBlank(settingService.getNginxUrl())) {
-            cardVo.setUrl(settingService.getNginxUrl() + cardVo.getUrl());
+        Setting settingCache = settingService.getSettingCache();
+        if (StringUtils.isNotBlank(settingCache.getNginxUrl())) {
+            cardVo.setUrl(settingCache.getNginxUrl() + cardVo.getUrl());
         }
     }
 

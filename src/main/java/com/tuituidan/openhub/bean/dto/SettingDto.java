@@ -26,4 +26,6 @@ public class SettingDto {
 
     private Integer cutOverSpeed;
 
+    private Boolean logoToFavicon;
+
 }

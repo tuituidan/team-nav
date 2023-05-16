@@ -111,7 +111,7 @@ public class ClearUselessFilesService {
                 fileIds.add(FilenameUtils.getBaseName(zip.getPath()));
             }
         }
-        fileIds.add(FilenameUtils.getBaseName(settingService.getLogoPath()));
+        fileIds.add(FilenameUtils.getBaseName(settingService.getSettingCache().getLogoPath()));
         return fileIds;
     }
 

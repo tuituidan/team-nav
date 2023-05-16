@@ -2,6 +2,7 @@ package com.tuituidan.openhub.service;
 
 import com.tuituidan.openhub.bean.dto.SettingDto;
 import com.tuituidan.openhub.bean.entity.Setting;
+import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.repository.SettingRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import javax.annotation.Resource;
@@ -25,16 +26,10 @@ public class SettingService implements ApplicationRunner {
     @Resource
     private SettingRepository settingRepository;
 
-    private String nginxUrl;
+    private Setting settingCache;
 
     @Value("${nav-name}")
     private String navName;
-
-    private String logoPath;
-
-    private boolean countdown;
-
-    private Integer cutOverSpeed;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -45,55 +40,10 @@ public class SettingService implements ApplicationRunner {
             settingRepository.save(setting);
         }
         if (StringUtils.isBlank(setting.getLogoPath())) {
-            setting.setLogoPath("/assets/images/logo.png");
+            setting.setLogoPath(Consts.DEFAULT_LOGO_PATH);
             settingRepository.save(setting);
         }
         this.settingChange(setting);
-    }
-
-    /**
-     * getCountdown
-     *
-     * @return String
-     */
-    public boolean getCountdown() {
-        return countdown;
-    }
-
-    /**
-     * getNginxUrl
-     *
-     * @return String
-     */
-    public String getNginxUrl() {
-        return nginxUrl;
-    }
-
-    /**
-     * getCutOverSpeed
-     *
-     * @return Integer
-     */
-    public Integer getCutOverSpeed() {
-        return (cutOverSpeed == null ? 10 : cutOverSpeed) * 1000;
-    }
-
-    /**
-     * getNavName
-     *
-     * @return String
-     */
-    public String getNavName() {
-        return navName;
-    }
-
-    /**
-     * getLogoPath
-     *
-     * @return String
-     */
-    public String getLogoPath() {
-        return logoPath;
     }
 
     /**
@@ -113,18 +63,32 @@ public class SettingService implements ApplicationRunner {
     public void saveSetting(SettingDto settingDto) {
         Setting setting = BeanExtUtils.convert(settingDto, Setting::new).setId("setting-id");
         setting.setNginxUrl(StringUtils.stripEnd(settingDto.getNginxUrl(), "/"));
+        if (StringUtils.isBlank(setting.getLogoPath())) {
+            setting.setLogoPath(Consts.DEFAULT_LOGO_PATH);
+        }
         settingRepository.save(setting);
         this.settingChange(setting);
     }
 
+    /**
+     * 获取经过一些处理能直接使用的设置
+     *
+     * @return Setting
+     */
+    public Setting getSettingCache() {
+        return this.settingCache;
+    }
+
     private void settingChange(Setting setting) {
-        this.nginxUrl = BooleanUtils.isTrue(setting.getNginxOpen())
+        this.settingCache = BeanExtUtils.convert(setting, Setting::new);
+        this.settingCache.setNginxUrl(BooleanUtils.isTrue(setting.getNginxOpen())
                 && StringUtils.isNotBlank(setting.getNginxUrl())
-                ? setting.getNginxUrl() : StringUtils.EMPTY;
-        this.navName = setting.getNavName();
-        this.countdown = BooleanUtils.isTrue(setting.getCountdown());
-        this.cutOverSpeed = setting.getCutOverSpeed();
-        this.logoPath = setting.getLogoPath();
+                ? setting.getNginxUrl() : StringUtils.EMPTY);
+        settingCache.setNavName(setting.getNavName());
+        settingCache.setCountdown(BooleanUtils.isTrue(setting.getCountdown()));
+        settingCache.setLogoToFavicon(BooleanUtils.isTrue(setting.getLogoToFavicon()));
+        settingCache.setCutOverSpeed((setting.getCutOverSpeed() == null ? 10 : setting.getCutOverSpeed()) * 1000);
+        settingCache.setLogoPath(setting.getLogoPath());
     }
 
 }

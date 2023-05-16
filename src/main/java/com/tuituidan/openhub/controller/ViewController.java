@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.controller;
 
+import com.tuituidan.openhub.bean.entity.Setting;
 import com.tuituidan.openhub.service.SettingService;
 import com.tuituidan.openhub.util.RequestUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
@@ -38,11 +39,13 @@ public class ViewController {
      */
     @GetMapping({"/", "index.html"})
     public String index(HttpServletRequest request) {
-        request.setAttribute("navName", settingService.getNavName());
-        request.setAttribute("logoPath", settingService.getLogoPath());
+        Setting settingCache = settingService.getSettingCache();
+        request.setAttribute("navName", settingCache.getNavName());
+        request.setAttribute("logoToFavicon", settingCache.getLogoToFavicon());
+        request.setAttribute("logoPath", settingCache.getLogoPath());
         request.setAttribute("isIe", RequestUtils.isIe());
-        request.setAttribute("countdown", settingService.getCountdown());
-        request.setAttribute("cutOverSpeed", settingService.getCutOverSpeed());
+        request.setAttribute("countdown", settingCache.getCountdown());
+        request.setAttribute("cutOverSpeed", settingCache.getCutOverSpeed());
         return "index";
     }
 
@@ -72,14 +75,16 @@ public class ViewController {
      */
     @GetMapping("/admin/**")
     public String admin(HttpServletRequest request) {
+        Setting settingCache = settingService.getSettingCache();
         request.setAttribute("page", StringUtils.substringAfterLast(request.getServletPath(), "/"));
-        request.setAttribute("navName", settingService.getNavName());
-        request.setAttribute("logoPath", settingService.getLogoPath());
+        request.setAttribute("navName", settingCache.getNavName());
+        request.setAttribute("logoToFavicon", settingCache.getLogoToFavicon());
+        request.setAttribute("logoPath", settingCache.getLogoPath());
         request.setAttribute("userInfo", SecurityUtils.getUserInfo());
         request.setAttribute("loginEnable", SecurityUtils.isLoginEnable());
         request.setAttribute("changePwdEnable", changePwdEnable);
         request.setAttribute("projectVersion", projectVersion);
-        request.setAttribute("countdown", settingService.getCountdown());
+        request.setAttribute("countdown", settingCache.getCountdown());
         request.setAttribute("isIe", RequestUtils.isIe());
         return "admin";
     }

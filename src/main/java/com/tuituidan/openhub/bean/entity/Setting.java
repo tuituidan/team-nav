@@ -50,4 +50,7 @@ public class Setting implements Serializable {
 
     @Column(name = "C_LOGO_PATH", length = 400)
     private String logoPath;
+
+    @Column(name = "C_LOGO_TO_FAVICON")
+    private Boolean logoToFavicon;
 }

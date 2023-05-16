@@ -34,7 +34,20 @@
                    placeholder="网站标题"></i-input>
         </form-item>
         <form-item label="网站LOGO" prop="logoPath">
-          <com-uploader v-model.trim="settingItem.logoPath"></com-uploader>
+          <div style="display: flex;align-items: center;justify-content: space-between">
+            <com-uploader v-model.trim="settingItem.logoPath" @remove="onRemoveLogo"></com-uploader>
+            <div>
+              <Checkbox v-model="settingItem.logoToFavicon">同步修改favicon</Checkbox>
+              <Tooltip transfer
+                       max-width="320"
+                       content="勾选时网站的favicon也将使用此logo图片">
+                <Icon class="setting-item-tip"
+                      type="ios-information-circle-outline"
+                      color="#2d8cf0" size="25" />
+              </Tooltip>
+            </div>
+
+          </div>
         </form-item>
         <form-item label="发布倒计时" prop="countdown">
           <div class="multi-form-item">
@@ -95,6 +108,7 @@
             navName: '',
             logoPath: '',
             countdown: false,
+            logoToFavicon: false,
             cutOverSpeed: 10,
             nginxOpen: false,
             nginxUrl: ''
@@ -102,9 +116,6 @@
           settingItemRules: {
             navName: [
               {required: true, message: '网站标题不能为空'},
-            ],
-            logoPath: [
-              {required: true, message: '网站LOGO不能为空'}
             ]
           }
         }
@@ -119,6 +130,7 @@
                     this.settingItem = res.data;
                     this.settingItem.cutOverSpeed = res.data.cutOverSpeed || 10;
                     this.settingItem.countdown = Boolean(res.data.countdown);
+                    this.settingItem.logoToFavicon = Boolean(res.data.logoToFavicon);
                     this.settingItem.nginxOpen = Boolean(res.data.nginxOpen);
                   })
                   .catch(err => {
@@ -142,6 +154,10 @@
                       });
             }
           });
+        },
+        onRemoveLogo(url) {
+          // 只有一个，不用判断url，直接移除
+          this.settingItem.logoPath = '';
         }
       }
     })

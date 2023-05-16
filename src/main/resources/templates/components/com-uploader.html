@@ -98,6 +98,9 @@
             },
             watch: {
                 value(newVals){
+                    if(!newVals){
+                        return;
+                    }
                     let vals = newVals;
                     if(!Array.isArray(newVals)){
                         vals = [newVals];
@@ -112,6 +115,7 @@
                 handleRemove(file) {
                     const fileList = this.$refs.upload.fileList;
                     this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
+                    this.$emit('remove', file.url);
                 },
                 handleSuccess(res, file, fileList) {
                     this.$emit('input', res);

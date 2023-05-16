@@ -26,6 +26,11 @@ public class Consts {
             : System.getProperty("user.dir");
 
     /**
+     * 默认的logo路径
+     */
+    public static final String DEFAULT_LOGO_PATH = "/assets/images/logo.png";
+
+    /**
      * 获取favicon超时时间
      */
     public static final int FAVICON_TIMEOUT = 5000;
