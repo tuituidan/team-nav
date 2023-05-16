@@ -5,6 +5,7 @@ import com.tuituidan.openhub.bean.dto.CardZipDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.repository.CardRepository;
+import com.tuituidan.openhub.service.SettingService;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -37,6 +38,9 @@ public class ClearUselessFilesService {
 
     @Resource
     private CardRepository cardRepository;
+
+    @Resource
+    private SettingService settingService;
 
     @Scheduled(cron = "${clear-useless-files.cron}")
     private void clear() {
@@ -107,6 +111,7 @@ public class ClearUselessFilesService {
                 fileIds.add(FilenameUtils.getBaseName(zip.getPath()));
             }
         }
+        fileIds.add(FilenameUtils.getBaseName(settingService.getLogoPath()));
         return fileIds;
     }
 
