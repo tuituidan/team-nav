@@ -9,10 +9,9 @@
                     <Icon :size="26" v-if="fullScreen" @click="setNotFullScreen" type="md-contract"></Icon>
                 </Tooltip>
             </div>
-            <div>
+            <div class="header-right-item">
                 <Tooltip content="布局大小">
-                    <Dropdown  class="header-right-item"
-                               @on-click="changeLayoutSize"
+                    <Dropdown  @on-click="changeLayoutSize"
                                trigger="click"
                                transfer>
                         <Icon :size="26" type="ios-appstore"></Icon>
@@ -23,9 +22,9 @@
                     </Dropdown>
                 </Tooltip>
             </div>
-            <div class="header-right-item">
+            <div class="header-right-item" @click="gotoAdmin">
                 <Tooltip content="后台管理">
-                    <Icon :size="26" type="md-settings" @click="gotoAdmin"></Icon>
+                    <Icon :size="26" type="md-settings"></Icon>
                 </Tooltip>
             </div>
         </div>
