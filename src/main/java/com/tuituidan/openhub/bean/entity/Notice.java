@@ -1,6 +1,5 @@
 package com.tuituidan.openhub.bean.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 /**
- * Countdown.
+ * Notice.
  *
  * @author tuituidan
  * @version 1.0
@@ -23,10 +22,10 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "T_COUNTDOWN")
+@Table(name = "T_NOTICE")
 @DynamicUpdate
 @DynamicInsert
-public class Countdown implements Serializable {
+public class Notice implements ISortEntity<Notice> {
 
     private static final long serialVersionUID = 5686996589966592484L;
 
@@ -34,9 +33,12 @@ public class Countdown implements Serializable {
     @Column(name = "C_ID", length = 32)
     private String id;
 
-    @Column(name = "C_PREFIX_TEXT", length = 100)
-    private String prefixText;
+    @Column(name = "C_CONTENT", length = 400)
+    private String content;
 
     @Column(name = "DT_ENDTIME")
     private LocalDateTime endTime;
+
+    @Column(name = "N_SORT")
+    private Integer sort;
 }

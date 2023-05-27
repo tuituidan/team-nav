@@ -1,6 +1,5 @@
 package com.tuituidan.openhub.bean.entity;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,7 +24,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Table(name = "T_CATEGORY")
 @DynamicUpdate
 @DynamicInsert
-public class Category implements Serializable {
+public class Category implements ISortEntity<Category> {
     private static final long serialVersionUID = -369054106198786491L;
 
     @Id

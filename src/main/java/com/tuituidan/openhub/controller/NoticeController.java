@@ -1,9 +1,9 @@
 package com.tuituidan.openhub.controller;
 
-import com.tuituidan.openhub.bean.dto.CountdownDto;
-import com.tuituidan.openhub.bean.vo.CountdownVo;
+import com.tuituidan.openhub.bean.dto.NoticeDto;
+import com.tuituidan.openhub.bean.vo.NoticeVo;
 import com.tuituidan.openhub.consts.Consts;
-import com.tuituidan.openhub.service.CountdownService;
+import com.tuituidan.openhub.service.NoticeService;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.http.HttpStatus;
@@ -15,21 +15,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * CountdownController.
+ * NoticeController.
  *
  * @author tuituidan
  * @version 1.0
  * @date 2020/10/2
  */
 @RestController
-@RequestMapping(Consts.API_V1 + "/countdown")
-public class CountdownController {
+@RequestMapping(Consts.API_V1 + "/notice")
+public class NoticeController {
 
     @Resource
-    private CountdownService countdownService;
+    private NoticeService noticeService;
 
     /**
      * select
@@ -38,19 +39,19 @@ public class CountdownController {
      * @return List
      */
     @GetMapping
-    public ResponseEntity<List<CountdownVo>> select(Boolean status) {
-        return ResponseEntity.ok(countdownService.select(status));
+    public ResponseEntity<List<NoticeVo>> select(Boolean status) {
+        return ResponseEntity.ok(noticeService.select(status));
     }
 
     /**
      * add
      *
-     * @param countdown countdown
+     * @param noticeDto noticeDto
      * @return Void
      */
     @PostMapping
-    public ResponseEntity<Void> add(@RequestBody CountdownDto countdown) {
-        countdownService.save(null, countdown);
+    public ResponseEntity<Void> add(@RequestBody NoticeDto noticeDto) {
+        noticeService.save(null, noticeDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -58,13 +59,26 @@ public class CountdownController {
      * update
      *
      * @param id id
-     * @param countdown countdown
+     * @param noticeDto noticeDto
      * @return Void
      */
     @PatchMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") String id,
-            @RequestBody CountdownDto countdown) {
-        countdownService.save(id, countdown);
+            @RequestBody NoticeDto noticeDto) {
+        noticeService.save(id, noticeDto);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * changeSort
+     *
+     * @param before before
+     * @param after after
+     * @return Void
+     */
+    @PatchMapping("/actions/sort")
+    public ResponseEntity<Void> changeSort(@RequestParam Integer before, @RequestParam Integer after) {
+        noticeService.changeSort(before, after);
         return ResponseEntity.noContent().build();
     }
 
@@ -76,7 +90,7 @@ public class CountdownController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
-        countdownService.delete(id);
+        noticeService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

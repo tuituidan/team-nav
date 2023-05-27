@@ -308,6 +308,7 @@
 .admin-layout-container .layout-header-bar .header-wapper .header-left {
     display: flex;
     align-items: center;
+    width: calc(100% - 170px);
 }
 
 .admin-layout-container .layout-header-bar .header-wapper .header-left .header-title {
@@ -474,8 +475,7 @@
     padding-top: 10px
 }
 .header-search{
-    flex: 1;
-    min-width: 250px;
+    width: 250px;
 }
 
 .no-data {

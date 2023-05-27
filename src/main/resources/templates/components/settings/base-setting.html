@@ -9,6 +9,7 @@
     }
     .multi-form-item .multi-form-item-input {
       margin-left: 15px;
+      flex: auto;
     }
     .setting-item-tip {
       vertical-align: -0.3em;
@@ -49,14 +50,8 @@
 
           </div>
         </form-item>
-        <form-item label="发布倒计时" prop="countdown">
+        <form-item label="公告切换间隔" prop="countdown">
           <div class="multi-form-item">
-            <div>
-              <i-switch size="large" v-model="settingItem.countdown">
-                <span slot="open">开启</span>
-                <span slot="close">关闭</span>
-              </i-switch>
-            </div>
             <input-number :max="200"
                           :min="10"
                           v-model="settingItem.cutOverSpeed"
@@ -66,7 +61,7 @@
             <div>&nbsp;秒</div>
             <Tooltip transfer
                      max-width="320"
-                     content="配置是否开启发布倒计时功能，可配置多个进行中的发布数据显示时的自动切换时间">
+                     content="配置首页多个通知公告的自动切换间隔时间">
               <Icon class="setting-item-tip"
                     type="ios-information-circle-outline"
                     color="#2d8cf0" size="25" />
@@ -107,7 +102,6 @@
           settingItem: {
             navName: '',
             logoPath: '',
-            countdown: false,
             logoToFavicon: false,
             cutOverSpeed: 10,
             nginxOpen: false,
@@ -129,7 +123,6 @@
                   .then(res => {
                     this.settingItem = res.data;
                     this.settingItem.cutOverSpeed = res.data.cutOverSpeed || 10;
-                    this.settingItem.countdown = Boolean(res.data.countdown);
                     this.settingItem.logoToFavicon = Boolean(res.data.logoToFavicon);
                     this.settingItem.nginxOpen = Boolean(res.data.nginxOpen);
                   })

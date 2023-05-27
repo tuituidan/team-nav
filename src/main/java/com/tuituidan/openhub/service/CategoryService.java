@@ -7,11 +7,9 @@ import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,6 +45,9 @@ public class CategoryService {
 
     @Resource
     private CardRepository cardRepository;
+
+    @Resource
+    private CommonService commonService;
 
     /**
      * select
@@ -136,27 +137,13 @@ public class CategoryService {
      * @param after after
      */
     public void changeSort(int before, int after) {
-        if (before == after) {
-            return;
-        }
-        List<Category> categories = categoryRepository.findAll(Example.of(
+        Supplier<List<Category>> supplier = () -> categoryRepository.findAll(Example.of(
                 new Category().setValid(true)), Sort.by("sort"));
-        LinkedList<Category> list = new LinkedList<>(categories);
-        if (CollectionUtils.isEmpty(list) || list.size() == 1) {
+        List<Category> updateList = commonService.changeSort(supplier, before, after);
+        if (CollectionUtils.isEmpty(updateList)) {
             return;
         }
-        list.add(after, list.remove(before));
-        List<Category> updateList = new ArrayList<>();
-        int index = 0;
-        for (Category item : list) {
-            if (!Objects.equals(item.getSort(), index)) {
-                updateList.add(item.setSort(index));
-            }
-            index++;
-        }
-        if (CollectionUtils.isNotEmpty(updateList)) {
-            categoryRepository.saveAll(updateList);
-        }
+        categoryRepository.saveAll(updateList);
     }
 
     /**

@@ -85,7 +85,6 @@ public class SettingService implements ApplicationRunner {
                 && StringUtils.isNotBlank(setting.getNginxUrl())
                 ? setting.getNginxUrl() : StringUtils.EMPTY);
         settingCache.setNavName(setting.getNavName());
-        settingCache.setCountdown(BooleanUtils.isTrue(setting.getCountdown()));
         settingCache.setLogoToFavicon(BooleanUtils.isTrue(setting.getLogoToFavicon()));
         settingCache.setCutOverSpeed((setting.getCutOverSpeed() == null ? 10 : setting.getCutOverSpeed()) * 1000);
         settingCache.setLogoPath(setting.getLogoPath());

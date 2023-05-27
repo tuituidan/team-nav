@@ -75,7 +75,7 @@
                                          placeholder="输入关键字回车搜索..."
                                          v-model.trim="keywords"
                                          @on-search="loadTree"></i-input>
-                                <carousel-flip-countdown th:if="${countdown}"></carousel-flip-countdown>
+                                <carousel-flip-notice></carousel-flip-notice>
                             </div>
                             <home-header-right></home-header-right>
                         </div>
@@ -93,7 +93,7 @@
 <script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
-<div th:replace="components/carousel-flip-countdown::carousel-flip-countdown"></div>
+<div th:replace="components/carousel-flip-notice::carousel-flip-notice"></div>
 <div th:replace="components/home-card-list::home-card-list"></div>
 <div th:replace="components/home-header-right::home-header-right"></div>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/index.js}"></script>

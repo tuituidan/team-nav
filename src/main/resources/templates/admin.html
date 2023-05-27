@@ -154,9 +154,6 @@
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/color.js}"></script>
 <div th:replace="'pages/'+${page}::${page}"></div>
-<script type="text/javascript" th:inline="javascript">
-    const countdown = /*[[${countdown}]]*/ false;
-</script>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/admin.js}"></script>
 </body>
 </html>

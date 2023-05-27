@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="carousel-flip-countdown">
+<div th:fragment="carousel-flip-notice">
   <div th:replace="components/flip-countdown::flip-countdown"></div>
   <style type="text/css">
     .carousel-panel {
-      width: 520px;
+      width: calc(100% - 320px);
     }
     .carousel-panel .ivu-carousel-arrow{
       line-height: 36px;
@@ -15,25 +15,36 @@
       color: #05264c;
       line-height: 36px;
     }
+    .carousel-panel .ivu-carousel-item {
+      height: 70px !important;
+    }
+    .small-layout-container .carousel-panel .ivu-carousel-item {
+      height: 60px !important;
+    }
+    .carousel-panel .ivu-carousel-item .carousel-item-content{
+      display: flex;
+      justify-content: center;
+    }
   </style>
-  <template id="carousel-flip-countdown">
+  <template id="carousel-flip-notice">
     <Carousel v-model="carousel"
               autoplay
+              v-if="datas.length"
               class="carousel-panel"
               th:autoplay-speed="${cutOverSpeed}"
               :arrow="arrow"
               dots="none">
       <carousel-item v-for="item in datas" :key="item.id">
-        <div style="display: flex;justify-content: center;">
-          <div v-text="item.prefixText"></div>
-          <flip-countdown :deadline="item.endTime"></flip-countdown>
+        <div class="carousel-item-content">
+          <div v-html="item.content"></div>
+          <flip-countdown v-if="item.endTime" :deadline="item.endTime"></flip-countdown>
         </div>
       </carousel-item>
     </Carousel>
   </template>
   <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8">
-    Vue.component('carousel-flip-countdown', {
-      template: '#carousel-flip-countdown',
+    Vue.component('carousel-flip-notice', {
+      template: '#carousel-flip-notice',
       data() {
         return {
           carousel: 0,
@@ -46,7 +57,7 @@
       },
       methods: {
         init() {
-          this.$http.get(`/api/v1/countdown`, {params: {status: true}})
+          this.$http.get(`/api/v1/notice`, {params: {status: true}})
                   .then(res => {
                     if(Array.isArray(res.data)){
                       this.datas = res.data;

@@ -23,10 +23,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Resource;
@@ -57,6 +56,9 @@ public class CardService {
 
     @Resource
     private CardTypeServiceFactory cardTypeServiceFactory;
+
+    @Resource
+    private CommonService commonService;
 
     /**
      * 首页查询
@@ -160,25 +162,12 @@ public class CardService {
      * @param after 调整后的索引
      */
     public void changeSort(String category, int before, int after) {
-        if (before == after) {
+        Supplier<List<Card>> supplier = () -> cardRepository.findByCategoryOrderBySortAsc(category);
+        List<Card> updateList = commonService.changeSort(supplier, before, after);
+        if (CollectionUtils.isEmpty(updateList)) {
             return;
         }
-        LinkedList<Card> list = new LinkedList<>(cardRepository.findByCategoryOrderBySortAsc(category));
-        if (CollectionUtils.isEmpty(list) || list.size() == 1) {
-            return;
-        }
-        list.add(after, list.remove(before));
-        List<Card> updateList = new ArrayList<>();
-        int index = 0;
-        for (Card item : list) {
-            if (!Objects.equals(item.getSort(), index)) {
-                updateList.add(item.setSort(index));
-            }
-            index++;
-        }
-        if (CollectionUtils.isNotEmpty(updateList)) {
-            cardRepository.saveAll(updateList);
-        }
+        cardRepository.saveAll(updateList);
     }
 
     /**

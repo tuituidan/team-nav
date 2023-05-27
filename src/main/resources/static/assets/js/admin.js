@@ -20,23 +20,20 @@ new Vue({
                     name: 'card',
                     icon: 'ios-list',
                     href: '/admin/card'
-                }, {
+                },
+                {
+                    title: '通知公告',
+                    name: 'notice',
+                    icon: 'md-alarm',
+                    href: '/admin/notice'
+                },
+                {
                     title: '系统设置',
                     name: 'settings',
                     icon: 'md-settings',
                     href: '/admin/settings'
                 }
             ]
-        }
-    },
-    created() {
-        if(countdown){
-            this.menus.splice(2, 0, {
-                title: '发布倒计时',
-                name: 'countdown',
-                icon: 'md-alarm',
-                href: '/admin/countdown'
-            });
         }
     },
     computed: {

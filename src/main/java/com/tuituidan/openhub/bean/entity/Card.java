@@ -2,7 +2,6 @@ package com.tuituidan.openhub.bean.entity;
 
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -27,7 +26,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Table(name = "T_CARD")
 @DynamicInsert
 @DynamicUpdate
-public class Card implements Serializable {
+public class Card implements ISortEntity<Card> {
 
     private static final long serialVersionUID = -4281175586987550016L;
 

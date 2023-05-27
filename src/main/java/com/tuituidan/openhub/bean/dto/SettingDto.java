@@ -22,8 +22,6 @@ public class SettingDto {
 
     private String logoPath;
 
-    private Boolean countdown;
-
     private Integer cutOverSpeed;
 
     private Boolean logoToFavicon;

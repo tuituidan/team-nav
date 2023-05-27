@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="countdown-modal">
-    <template id="countdown-modal">
+<div th:fragment="notice-modal">
+    <template id="notice-modal">
         <Modal v-model="show"
-               :width="400"
+               :width="460"
                :title="edit?'编辑':'添加'"
                :loading="loading"
                :mask-closable="false"
@@ -13,26 +13,37 @@
                     label-width="100"
                     :rules="editItemRules"
                     @submit.native.prevent>
-                <form-item label="前置文本" prop="prefixText">
-                    <i-input v-model.trim="editItem.prefixText"
-                             clearable
-                             maxlength="15"
-                             placeholder="前置文本"></i-input>
+                <form-item label="公告内容" prop="content">
+                    <i-input type="textarea"
+                             maxlength="400"
+                             :autosize="{minRows: 4,maxRows: 15}"
+                             show-word-limit
+                             v-model.trim="editItem.content"
+                             placeholder="公告内容，支持HTML"></i-input>
                 </form-item>
                 <form-item label="结束时间" prop="endTime">
-                    <date-picker type="datetime"
-                                 clearable
-                                 v-model.trim="editItem.endTime"
-                                 format="yyyy-MM-dd HH:mm"
-                                 style="width: 100%"
-                                 placeholder="结束时间"></date-picker>
+                    <div style="display: flex;align-items: center">
+                        <date-picker type="datetime"
+                                     clearable
+                                     v-model.trim="editItem.endTime"
+                                     format="yyyy-MM-dd HH:mm"
+                                     style="flex: auto"
+                                     placeholder="结束时间"></date-picker>
+                        <Tooltip transfer
+                                 max-width="320"
+                                 content="配置后首页显示的公告内容将出现倒计时">
+                            <Icon style="margin-left: 15px;vertical-align: -0.3em;"
+                                  type="ios-information-circle-outline"
+                                  color="#2d8cf0" size="25" />
+                        </Tooltip>
+                    </div>
                 </form-item>
             </i-form>
         </Modal>
     </template>
     <script type="text/javascript">
-        Vue.component('countdown-modal', {
-            template: '#countdown-modal',
+        Vue.component('notice-modal', {
+            template: '#notice-modal',
             data() {
                 return {
                     show: false,
@@ -40,15 +51,12 @@
                     loading: true,
                     editItem: {
                         endTime: '',
-                        prefixText: ''
+                        content: ''
                     },
                     editItemRules: {
-                        prefixText: [
-                            {required: true, message: '前置文本不能为空'}
+                        content: [
+                            {required: true, message: '公告内容不能为空'}
                         ],
-                        endTime: [
-                            {required: true, message: '结束时间不能为空'}
-                        ]
                     }
                 }
             },
@@ -67,7 +75,7 @@
                     this.$refs.tableForm.validate(valid => {
                         if (valid) {
                             this.editItem.endTime = this.$tools.formatDate(this.editItem.endTime, 'yyyy-MM-dd HH:mm:ss');
-                            this.$http.save('/api/v1/countdown', {...this.editItem})
+                            this.$http.save('/api/v1/notice', {...this.editItem})
                                 .then(() => {
                                     this.$notice.suc('保存成功');
                                     this.show = false;

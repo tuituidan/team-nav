@@ -42,9 +42,6 @@ public class Setting implements Serializable {
     @Column(name = "C_NAV_NAME", length = 200)
     private String navName;
 
-    @Column(name = "C_COUNTDOWN")
-    private Boolean countdown;
-
     @Column(name = "N_CUTOVER_SPEED")
     private Integer cutOverSpeed;
 

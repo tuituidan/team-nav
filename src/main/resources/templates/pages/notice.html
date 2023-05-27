@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="countdown">
-    <div th:replace="modal/countdown-modal::countdown-modal"></div>
-    <template id="page-countdown">
+<div th:fragment="notice">
+    <div th:replace="modal/notice-modal::notice-modal"></div>
+    <template id="page-notice">
         <div>
             <div class="search-panel">
                 <div class="panel-left">
-                    <Alert show-icon>开关及切换时间请在在系统设置中设置</Alert>
+                    拖动排序
+                    <i-switch size="large" v-model="tableDraggable">
+                        <span slot="open">开启</span>
+                        <span slot="close">关闭</span>
+                    </i-switch>
                 </div>
                 <div class="panel-right">
                     <i-button type="success"
@@ -19,9 +23,10 @@
                          stripe
                          :columns="table.columns"
                          :data="table.datas"
-                         @on-selection-change="selectChange">
+                         :draggable="tableDraggable"
+                         @on-drag-drop="changeSort">
                     <template slot-scope="{ row, index }" slot="status-action">
-                        <Tag v-if="row.status" color="green">启用中</Tag>
+                        <Tag v-if="row.status || !Boolean(row.endTime)" color="green">启用中</Tag>
                         <Tag v-else color="red">已停止</Tag>
                     </template>
                     <template slot-scope="{ row, index }" slot="action">
@@ -34,15 +39,15 @@
                     </template>
                 </i-table>
             </div>
-            <countdown-modal ref="countdownModal" @refresh="initList"></countdown-modal>
+            <notice-modal ref="noticeModal" @refresh="initList"></notice-modal>
         </div>
     </template>
     <script type="text/javascript" th:inline="javascript">
-        Vue.component('page-countdown', {
-            template: '#page-countdown',
+        Vue.component('page-notice', {
+            template: '#page-notice',
             data() {
                 return {
-                    selectedIds: [],
+                    tableDraggable: false,
                     table: {
                         columns: [
                             {
@@ -51,9 +56,9 @@
                                 width: 66,
                                 align: 'center'
                             }, {
-                                title: '前置文本',
-                                key: 'prefixText',
-                                tooltip: true
+                                title: '公告内容',
+                                key: 'content',
+                                type: 'html'
                             }, {
                                 title: '结束时间',
                                 key: 'endTime'
@@ -76,8 +81,7 @@
             },
             methods: {
                 initList() {
-                    this.selectedIds = [];
-                    this.$http.get(`/api/v1/countdown`)
+                    this.$http.get(`/api/v1/notice`)
                         .then(res => {
                             this.table.datas = res.data;
                         })
@@ -87,7 +91,7 @@
                         });
                 },
                 deleteItem(id) {
-                    this.$http.delete(`/api/v1/countdown/${id}`)
+                    this.$http.delete(`/api/v1/notice/${id}`)
                         .then(() => {
                             this.$notice.suc('删除成功');
                             this.initList();
@@ -98,10 +102,17 @@
                         });
                 },
                 openModal(item) {
-                    this.$refs.countdownModal.open(item);
+                    this.$refs.noticeModal.open(item);
                 },
-                selectChange(items) {
-                    this.selectedIds = items.map(item => item.id);
+                changeSort(before, after) {
+                    this.$http.patch(`/api/v1/notice/actions/sort?before=${before}&after=${after}`)
+                        .then(() => {
+                            this.initList();
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        });
                 }
             }
         })
