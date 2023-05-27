@@ -43,6 +43,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -62,7 +63,7 @@ public class CommonService implements ApplicationRunner {
 
     private static final List<String> CARD_ICONS = new ArrayList<>();
 
-    private static final String CARD_ICON_PATH = Consts.ROOT_DIR + "/ext-resources/images/default";
+    private static final String CARD_ICON_PATH = "/ext-resources/images/default";
 
     /**
      * 初始化
@@ -96,7 +97,7 @@ public class CommonService implements ApplicationRunner {
      */
     public void loadCardIcons() {
         CARD_ICONS.clear();
-        File root = new File(CARD_ICON_PATH);
+        File root = new File(Consts.ROOT_DIR + CARD_ICON_PATH);
         if (!root.exists()) {
             return;
         }
@@ -117,11 +118,7 @@ public class CommonService implements ApplicationRunner {
      * @return 保存路径
      */
     public String upload(MultipartFile file, String type) {
-        String savePath = StringExtUtils.format("/ext-resources/{}/{}/{}.{}",
-                type,
-                DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()),
-                StringExtUtils.getUuid(),
-                FilenameUtils.getExtension(file.getOriginalFilename()));
+        String savePath = formatSavePath(type, file);
         File saveFile = new File(Consts.ROOT_DIR + savePath);
         try {
             FileUtils.forceMkdirParent(saveFile);
@@ -134,7 +131,38 @@ public class CommonService implements ApplicationRunner {
         } catch (Exception ex) {
             throw new ResourceWriteException("文件写入失败", ex);
         }
+        if ("default".equals(type)) {
+            CARD_ICONS.add(file.getOriginalFilename());
+        }
         return savePath;
+    }
+
+    private String formatSavePath(String type, MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        if ("default".equals(type)) {
+            String path = CARD_ICON_PATH + File.separator + fileName;
+            Assert.isTrue(!new File(Consts.ROOT_DIR + path).exists(), "文件名已经存在");
+            return path;
+        }
+        return StringExtUtils.format("/ext-resources/{}/{}/{}.{}",
+                type,
+                DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()),
+                StringExtUtils.getUuid(),
+                FilenameUtils.getExtension(fileName));
+    }
+
+    /**
+     * 图标删除
+     *
+     * @param fileName fileName
+     * @throws IOException IOException
+     */
+    public void deleteDefaultIcon(String fileName) throws IOException {
+        File file = new File(Consts.ROOT_DIR + CARD_ICON_PATH + File.separator + fileName);
+        if (file.exists()) {
+            FileUtils.forceDelete(file);
+            CARD_ICONS.removeIf(name -> Objects.equals(fileName, name));
+        }
     }
 
     /**

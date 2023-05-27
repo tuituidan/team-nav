@@ -27,7 +27,7 @@
   - 原型类型：标题，内容，图标，原型文件为必填，原型文件上传后会自动生成原型展示的链接，点击卡片可跳转到该地址。
   - 二维码类型：标题，内容，图标，链接均为必填，鼠标滑到卡片上会显示链接的二维码，可用手机进行扫描，方便进行移动端网址显示，[二维码展示图](#二维码展示图)。
 - 原型可通过配置Nginx访问，[后台-系统设置图](#后台-系统设置图)。
-- 发布倒计时功能，在首页对项目发布截止时间进行提醒，在系统设置中进行开启和关闭，同时有多个进行中的发布数据时，会定时切换，切换时间也在系统设置中设置。 [首页-发布倒计时](#首页-发布倒计时)  [后台-发布倒计时](#后台-发布倒计时)
+- 发布倒计时功能，在首页对项目发布截止时间进行提醒，在系统设置中进行开启和关闭，同时有多个进行中的发布数据时，会定时切换，切换时间也在系统设置中设置。 [首页-发布倒计时](#首页-发布倒计时)  [后台-通知公告](#后台-通知公告)
 
 ## 设计说明
 
@@ -215,7 +215,7 @@ location /ext-resources/modules {
 
 #### 首页-发布倒计时
 
-![首页-发布倒计时](https://user-images.githubusercontent.com/20398244/203549893-605fa437-a171-414a-9ff3-71f832dcdfe9.png)
+![首页-发布倒计时](https://user-images.githubusercontent.com/20398244/241405276-5c832aa3-09a7-4a52-853f-90dff2da7472.png)
 
 #### 后台-分类管理图
 
@@ -237,16 +237,16 @@ location /ext-resources/modules {
 
 #### 卡片图标选择图
 
-![admin-card-icon](https://user-images.githubusercontent.com/20398244/198856491-cb756529-8a1e-4d05-8367-a8184192eb4f.png)
+![admin-card-icon](https://user-images.githubusercontent.com/20398244/241405414-ec9ea24b-7dac-4567-b9a8-b018b970ed0f.png)
 
 #### 二维码展示图
 
 ![qrcode](https://user-images.githubusercontent.com/20398244/198856580-a7748b13-3310-44e7-9562-8419e20bc3b9.png)
 
-#### 后台-发布倒计时
+#### 后台-通知公告
 
-![后台-发布倒计时](https://user-images.githubusercontent.com/20398244/203557228-92c878c5-b09e-463d-9639-36b7aecd6d01.png)
+![后台-通知公告](https://github-production-user-asset-6210df.s3.amazonaws.com/20398244/241403417-9bfbe3b5-96bd-4a1d-b63c-3afea378577a.png)
 
 #### 后台-系统设置图
 
-![admin-system](https://user-images.githubusercontent.com/20398244/236677914-5a5a31de-d101-44e1-b8cf-2b5336675b4a.png)
+![admin-system](https://github-production-user-asset-6210df.s3.amazonaws.com/20398244/241403646-eec7c6e3-359b-434d-86b7-8e559553eb5d.png)

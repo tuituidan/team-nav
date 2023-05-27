@@ -3,6 +3,7 @@
 <div th:fragment="settings">
     <div th:replace="components/settings/base-setting::base-setting"></div>
     <div th:replace="components/settings/change-password::change-password"></div>
+    <div th:replace="components/settings/card-icon-upload::card-icon-upload"></div>
     <style type="text/css">
         .setting-panel {
             display: flex;
@@ -10,15 +11,10 @@
         }
         .card-style {
             margin: 5px;
-        }
-        .base-setting-panel{
             width: 500px;
         }
-        .pwd-setting-panel{
-            width: 400px;
-        }
-        .backup-setting-panel {
-            width: 250px;
+        .card-icon-upload-panel {
+            flex: auto;
         }
         .card-style .btn-save{
             cursor: pointer;
@@ -27,8 +23,9 @@
     </style>
     <template id="page-settings">
         <div class="setting-panel">
-            <base-setting class="card-style base-setting-panel"></base-setting>
-            <change-password class="card-style pwd-setting-panel" th:if="${loginEnable&&changePwdEnable}"></change-password>
+            <base-setting class="card-style"></base-setting>
+            <card-icon-upload class="card-style card-icon-upload-panel"></card-icon-upload>
+            <change-password class="card-style" th:if="${loginEnable&&changePwdEnable}"></change-password>
         </div>
     </template>
     <script type="text/javascript">

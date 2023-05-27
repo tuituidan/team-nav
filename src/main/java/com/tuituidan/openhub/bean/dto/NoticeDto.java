@@ -23,4 +23,6 @@ public class NoticeDto {
 
     @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime endTime;
+
+    private Integer sort;
 }

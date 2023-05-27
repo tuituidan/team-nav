@@ -28,6 +28,8 @@ public class NoticeVo {
 
     private Boolean status;
 
+    private Integer sort;
+
     /**
      * getStatus
      *

@@ -41,12 +41,30 @@
             cursor: pointer;
             margin: 0 2px;
         }
+
+        .uploader-picture-content {
+            width: 100%;
+            height: 100%;
+            line-height: 40px;
+        }
+
+        .uploader-picture-content .uploader-picture-name {
+            margin: 0;
+            line-height: 20px;
+            font-size: 10px;
+        }
     </style>
     <template id="com-uploader">
         <div>
             <div class="demo-upload-list" v-for="item in uploadList" :key="item.uid">
                 <template v-if="item.status === 'finished'">
-                    <img :src="item.url">
+                    <div v-if="showName" class="uploader-picture-content">
+                        <Avatar :title="item.name"
+                                size="large"
+                                :src="item.url"></Avatar>
+                        <div class="uploader-picture-name" v-text="item.name"></div>
+                    </div>
+                    <img v-else :src="item.url" :alt="item.name">
                     <div class="demo-upload-list-cover">
                         <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
                     </div>
@@ -55,17 +73,18 @@
                     <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
                 </template>
             </div>
-            <Upload  v-show="showAdd"
+            <Upload v-show="showAdd"
                     ref="upload"
                     :show-upload-list="false"
                     :default-file-list="fileList"
-                    :on-success="handleSuccess"
                     accept="image/x-icon,image/png,image/jpeg,image/jpg,image/gif,image/bmp"
                     :max-size="2048"
+                    :on-success="handleSuccess"
+                    :on-error="handleError"
                     :on-exceeded-size="handleMaxSize"
                     :multiple="maxCount>1"
                     type="drag"
-                    action="/api/v1/upload/images"
+                    :action="action"
                     style="display: inline-block;width:58px;">
                 <div style="width: 58px;height:58px;line-height: 58px;" v-if="showAdd">
                     <Icon type="ios-image-outline" size="20"></Icon>
@@ -84,6 +103,14 @@
                     type: Number,
                     default: 1
                 },
+                action: {
+                    type: String,
+                    default: '/api/v1/upload/images'
+                },
+                showName: {
+                    type: Boolean,
+                    default: false
+                },
             },
             data() {
                 return {
@@ -97,15 +124,18 @@
                 }
             },
             watch: {
-                value(newVals){
-                    if(!newVals){
+                value(newVals) {
+                    if (!newVals) {
                         return;
                     }
                     let vals = newVals;
-                    if(!Array.isArray(newVals)){
+                    if (!Array.isArray(newVals)) {
                         vals = [newVals];
                     }
-                    this.fileList = vals.map(val => ({name:'1', url: val}))
+                    this.fileList = vals.map(val => ({
+                        name: val.substring(val.lastIndexOf('/') + 1, val.lastIndexOf('.')),
+                        url: val
+                    }))
                     this.$nextTick(() => {
                         this.uploadList = this.$refs.upload.fileList;
                     })
@@ -118,13 +148,19 @@
                     this.$emit('remove', file.url);
                 },
                 handleSuccess(res, file, fileList) {
-                    this.$emit('input', res);
                     file.url = res;
+                    if (this.maxCount > 1) {
+                        this.$emit('input', fileList.map(item => (item.url)));
+                        this.$notice.suc(`文件【${file.name}】上传成功。`);
+                    } else {
+                        this.$emit('input', res);
+                    }
+                },
+                handleError(error, errMsg, file){
+                    this.$notice.err(`文件【${file.name}】上传错误，${errMsg}。`);
                 },
                 handleMaxSize(file) {
-                    this.$Notice.warning({
-                        desc: '文件【' + file.name + '】过大，请上传不超过2M的文件。'
-                    });
+                    this.$notice.warn(`文件【${file.name}】过大，请上传不超过2M的文件。`);
                 },
             }
         })

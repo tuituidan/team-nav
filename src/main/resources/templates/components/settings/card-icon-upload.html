@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="card-icon-upload">
+  <template id="card-icon-upload">
+    <Card>
+      <p slot="title">
+        <Icon type="ios-lock-outline"></Icon>
+        卡片图标上传
+        <Tooltip transfer
+                 max-width="320"
+                 content="设置卡片图标选择默认图标，文件名用于搜索，须保持唯一">
+          <Icon type="ios-information-circle-outline"
+                color="#2d8cf0" size="20" />
+        </Tooltip>
+      </p>
+      <div style="max-height: 270px;overflow: auto">
+        <com-uploader action="/api/v1/upload/default"
+                      show-name
+                      v-model.trim="iconPaths"
+                      @remove="onRemoveCardIcon"
+                      :max-count="500"></com-uploader>
+      </div>
+    </Card>
+  </template>
+  <script type="text/javascript">
+    Vue.component('card-icon-upload', {
+      template: '#card-icon-upload',
+      data() {
+        return {
+          iconPaths: []
+        }
+      },
+      mounted() {
+        this.init();
+      },
+      methods: {
+        init() {
+          this.$http.get('/api/v1/card/icons')
+                  .then(res => {
+                    this.iconPaths = res.data.map(filename => (`/ext-resources/images/default/${filename}`));
+                  })
+                  .catch(err => {
+                    console.error(err);
+                    this.$notice.err(err.response.data);
+                  })
+        },
+        onRemoveCardIcon(url) {
+          this.$http.delete(`/api/v1/icon/${url.substring(url.lastIndexOf('/') + 1)}`)
+                  .then(() => {
+                    this.$notice.suc('删除成功');
+                  })
+                  .catch(err => {
+                    console.error(err);
+                    this.$notice.err(err.response.data);
+                  })
+        }
+      }
+    })
+  </script>
+</div>
+</html>

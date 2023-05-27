@@ -2,9 +2,11 @@ package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CommonService;
+import java.io.IOException;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +38,19 @@ public class CommonController {
     @PostMapping("/upload/{type}")
     public ResponseEntity<String> upload(@PathVariable("type") String type, MultipartFile file) {
         return ResponseEntity.ok(commonService.upload(file, type));
+    }
+
+    /**
+     * 删除icon
+     *
+     * @param fileName fileName
+     * @return Void
+     * @throws IOException IOException
+     */
+    @DeleteMapping("/icon/{fileName}")
+    public ResponseEntity<Void> deleteIcon(@PathVariable("fileName") String fileName) throws IOException {
+        commonService.deleteDefaultIcon(fileName);
+        return ResponseEntity.noContent().build();
     }
 
     /**

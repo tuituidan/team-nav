@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
  * 虽然删除数据时有清理对应文件的操作，但修改时为了逻辑更简单，并未涉及文件删除，可能就会产生无用文件
  * 这里提供定时去清理
  *
- * @author zhujunhan
+ * @author tuituidan
  * @version 1.0
  * @date 2022/9/12
  */
