@@ -1,9 +1,11 @@
 package com.tuituidan.openhub.service;
 
+import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.ISortEntity;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.exception.ResourceReadException;
 import com.tuituidan.openhub.exception.ResourceWriteException;
+import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.QrCodeUtils;
 import com.tuituidan.openhub.util.RequestUtils;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +67,9 @@ public class CommonService implements ApplicationRunner {
     private static final List<String> CARD_ICONS = new ArrayList<>();
 
     private static final String CARD_ICON_PATH = "/ext-resources/images/default";
+
+    @Resource
+    private CardRepository cardRepository;
 
     /**
      * 初始化
@@ -160,9 +166,21 @@ public class CommonService implements ApplicationRunner {
     public void deleteDefaultIcon(String fileName) throws IOException {
         File file = new File(Consts.ROOT_DIR + CARD_ICON_PATH + File.separator + fileName);
         if (file.exists()) {
+            checkIconRef(fileName);
             FileUtils.forceDelete(file);
             CARD_ICONS.removeIf(name -> Objects.equals(fileName, name));
         }
+    }
+
+    private void checkIconRef(String fileName) {
+        List<String> list = cardRepository.findAll().stream()
+                .filter(item -> Objects.nonNull(item.getIcon())
+                        && StringUtils.isNotBlank(item.getIcon().getSrc())
+                        && StringUtils.contains(item.getIcon().getSrc(), "default")
+                        && StringUtils.endsWith(item.getIcon().getSrc(), fileName)
+                ).map(Card::getTitle).collect(Collectors.toList());
+        Assert.isTrue(CollectionUtils.isEmpty(list), "图标已被卡片【"
+                + StringUtils.join(list, ",") + "】使用，不能删除");
     }
 
     /**

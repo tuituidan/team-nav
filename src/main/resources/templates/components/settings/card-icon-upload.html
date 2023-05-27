@@ -52,6 +52,7 @@
                   .catch(err => {
                     console.error(err);
                     this.$notice.err(err.response.data);
+                    this.init();
                   })
         }
       }
