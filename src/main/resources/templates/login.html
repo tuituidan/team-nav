@@ -79,7 +79,8 @@
 <script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
-<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8">
+<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:inline="javascript">
+    const errMsg = /*[[${errorMsg}]]*/ '';
     new Vue({
         el: '#app',
         data() {
@@ -115,9 +116,11 @@
                 this.rememberMe = true;
                 if (localStorage.autoLogin === 'true') {
                     this.autoLogin = true;
-                    this.$nextTick(() => {
-                        this.loginHandler();
-                    })
+                    if (!errMsg) {
+                        this.$nextTick(() => {
+                            this.loginHandler();
+                        })
+                    }
                 }
             }
             this.$refs.username.focus({cursor: 'end'});
