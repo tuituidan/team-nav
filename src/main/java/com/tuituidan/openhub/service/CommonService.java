@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.service;
 
+import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.ISortEntity;
 import com.tuituidan.openhub.consts.Consts;
@@ -170,10 +171,25 @@ public class CommonService implements ApplicationRunner {
         File newFile = new File(root + newFileName);
         Assert.isTrue(oldFile.exists(), "原图标已不存在");
         Assert.isTrue(!newFile.exists(), "无法修改为图标名【" + newName + "】，该图标名已存在");
-        checkIconRef(fileName, "修改图标名");
         Assert.isTrue(oldFile.renameTo(newFile), "文件名修改失败");
         CARD_ICONS.set(CARD_ICONS.indexOf(fileName), newFileName);
+        resetRefIcon(fileName, newFileName);
+    }
 
+    private void resetRefIcon(String fileName, String newFileName) {
+        List<Card> updateList = cardRepository.findAll().stream()
+                .filter(item -> Objects.nonNull(item.getIcon())
+                        && StringUtils.isNotBlank(item.getIcon().getSrc())
+                        && StringUtils.contains(item.getIcon().getSrc(), "default")
+                        && StringUtils.endsWith(item.getIcon().getSrc(), fileName)
+                ).map(card -> {
+                    CardIconDto icon = card.getIcon();
+                    icon.setSrc(icon.getSrc().replace(fileName, newFileName));
+                    return card;
+                }).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(updateList)) {
+            cardRepository.saveAll(updateList);
+        }
     }
 
     /**
@@ -185,13 +201,13 @@ public class CommonService implements ApplicationRunner {
     public void deleteDefaultIcon(String fileName) throws IOException {
         File file = new File(Consts.ROOT_DIR + CARD_ICON_PATH + File.separator + fileName);
         if (file.exists()) {
-            checkIconRef(fileName, "删除");
+            checkIconRef(fileName);
             FileUtils.forceDelete(file);
             CARD_ICONS.removeIf(name -> StringUtils.equals(fileName, name));
         }
     }
 
-    private void checkIconRef(String fileName, String typeDesc) {
+    private void checkIconRef(String fileName) {
         List<String> list = cardRepository.findAll().stream()
                 .filter(item -> Objects.nonNull(item.getIcon())
                         && StringUtils.isNotBlank(item.getIcon().getSrc())
@@ -199,7 +215,7 @@ public class CommonService implements ApplicationRunner {
                         && StringUtils.endsWith(item.getIcon().getSrc(), fileName)
                 ).map(Card::getTitle).collect(Collectors.toList());
         Assert.isTrue(CollectionUtils.isEmpty(list), "图标已被卡片【"
-                + StringUtils.join(list, ",") + "】使用，不能" + typeDesc);
+                + StringUtils.join(list, ",") + "】使用，不能删除");
     }
 
     /**
