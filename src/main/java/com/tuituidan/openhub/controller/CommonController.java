@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,6 +51,20 @@ public class CommonController {
     @DeleteMapping("/icon/{fileName}")
     public ResponseEntity<Void> deleteIcon(@PathVariable("fileName") String fileName) throws IOException {
         commonService.deleteDefaultIcon(fileName);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 修改icon文件名
+     *
+     * @param fileName fileName
+     * @param newName newName
+     * @return Void
+     */
+    @PatchMapping("/icon/{fileName}/to/{newName}")
+    public ResponseEntity<Void> updateIconName(@PathVariable("fileName") String fileName,
+            @PathVariable("newName") String newName) {
+        commonService.updateIconName(fileName, newName);
         return ResponseEntity.noContent().build();
     }
 

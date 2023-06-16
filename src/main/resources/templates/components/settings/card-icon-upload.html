@@ -16,8 +16,10 @@
       <div style="max-height: 270px;overflow: auto">
         <com-uploader action="/api/v1/upload/default"
                       show-name
+                      show-edit
                       v-model.trim="iconPaths"
                       @remove="onRemoveCardIcon"
+                      @edit-name="onEditIconName"
                       :max-count="500"></com-uploader>
       </div>
     </Card>
@@ -54,7 +56,18 @@
                     this.$notice.err(err.response.data);
                     this.init();
                   })
-        }
+        },
+        onEditIconName(url, newName) {
+          this.$http.patch(`/api/v1/icon/${url.substring(url.lastIndexOf('/') + 1)}/to/${newName}`)
+                  .then(() => {
+                    this.$notice.suc('修改成功');
+                    this.init();
+                  })
+                  .catch(err => {
+                    console.error(err);
+                    this.$notice.err(err.response.data);
+                  })
+        },
       }
     })
   </script>

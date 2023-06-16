@@ -66,7 +66,8 @@
                     </div>
                     <img v-else :src="item.url" :alt="item.name">
                     <div class="demo-upload-list-cover">
-                        <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+                        <Icon type="ios-create-outline" v-if="showEdit" title="修改图标名" @click.native="handleEdit(item)"></Icon>
+                        <Icon type="ios-trash-outline" title="删除" @click.native="handleRemove(item)"></Icon>
                     </div>
                 </template>
                 <template v-else>
@@ -83,6 +84,7 @@
                     :on-error="handleError"
                     :on-exceeded-size="handleMaxSize"
                     :multiple="maxCount>1"
+                    paste
                     type="drag"
                     :action="action"
                     style="display: inline-block;width:58px;">
@@ -111,11 +113,16 @@
                     type: Boolean,
                     default: false
                 },
+                showEdit: {
+                    type: Boolean,
+                    default: false
+                },
             },
             data() {
                 return {
                     fileList: [],
-                    uploadList: []
+                    uploadList: [],
+                    fileName: '',
                 }
             },
             computed: {
@@ -156,11 +163,33 @@
                         this.$emit('input', res);
                     }
                 },
-                handleError(error, errMsg, file){
+                handleError(error, errMsg, file) {
                     this.$notice.err(`文件【${file.name}】上传错误，${errMsg}。`);
                 },
                 handleMaxSize(file) {
                     this.$notice.warn(`文件【${file.name}】过大，请上传不超过2M的文件。`);
+                },
+                handleEdit(file) {
+                    this.fileName = '';
+                    this.$Modal.confirm({
+                        render: (h) => {
+                            return h('Input', {
+                                props: {
+                                    autofocus: true,
+                                    placeholder: '请输入要修改的图标名称...'
+                                },
+                                on: {
+                                    input: val => {
+                                        this.fileName = val;
+                                    }
+                                }
+                            })
+                        },
+                        onOk: () => {
+                            this.$emit('edit-name', file.url, this.fileName);
+                        }
+
+                    });
                 },
             }
         })
