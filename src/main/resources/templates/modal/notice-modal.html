@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="notice-modal">
+    <link th:href="@{/assets/lib/wangeditor/style.css}" rel="stylesheet">
+    <style type="text/css">
+        #editor—wrapper {
+            border: 1px solid #ccc;
+            z-index: 100; /* 按需定义 */
+        }
+        #toolbar-container { border-bottom: 1px solid #ccc; }
+        #editor-container { height: 100px; }
+    </style>
     <template id="notice-modal">
         <Modal v-model="show"
-               :width="460"
+               :width="860"
                :title="edit?'编辑':'添加'"
                :loading="loading"
                :mask-closable="false"
@@ -14,12 +23,13 @@
                     :rules="editItemRules"
                     @submit.native.prevent>
                 <form-item label="公告内容" prop="content">
-                    <i-input type="textarea"
-                             maxlength="400"
-                             :autosize="{minRows: 4,maxRows: 15}"
-                             show-word-limit
-                             v-model.trim="editItem.content"
-                             placeholder="公告内容，支持HTML"></i-input>
+                    <div id="editor—wrapper">
+                        <div id="toolbar-container"><!-- 工具栏 --></div>
+                        <div id="editor-container"><!-- 编辑器 --></div>
+                    </div>
+                </form-item>
+                <form-item label="公告预览">
+                    <div v-html="editItem.content"></div>
                 </form-item>
                 <form-item label="结束时间" prop="endTime">
                     <div style="display: flex;align-items: center">
@@ -34,14 +44,17 @@
                                  content="配置后首页显示的公告内容将出现倒计时">
                             <Icon style="margin-left: 15px;vertical-align: -0.3em;"
                                   type="ios-information-circle-outline"
-                                  color="#2d8cf0" size="25" />
+                                  color="#2d8cf0" size="25"/>
                         </Tooltip>
                     </div>
                 </form-item>
             </i-form>
         </Modal>
     </template>
+    <script th:src="@{/assets/lib/wangeditor/index.js}"></script>
     <script type="text/javascript">
+        const { createEditor, createToolbar } = window.wangEditor;
+        let globalEditor;
         Vue.component('notice-modal', {
             template: '#notice-modal',
             data() {
@@ -55,20 +68,78 @@
                     },
                     editItemRules: {
                         content: [
-                            {required: true, message: '公告内容不能为空'}
+                            {required: true, message: '公告内容不能为空'},
+                            {
+                                validator: (rule, value, callback) => {
+                                    if (globalEditor.isEmpty()) {
+                                        callback(new Error('公告内容不能为空'));
+                                        return;
+                                    }
+                                    callback();
+                                },
+                                trigger: 'blur'
+                            }
                         ],
                     }
                 }
             },
+            mounted(){
+                this.initEditor()
+            },
             methods: {
+                initEditor() {
+                    const _this = this;
+                    const editorConfig = {
+                        placeholder: '请输入公告内容...',
+                        maxLength: 50,
+                        onChange(editor) {
+                            _this.editItem.content = editor.getHtml();
+                        }
+                    };
+
+                    const editor = createEditor({
+                        selector: '#editor-container',
+                        html: '',
+                        config: editorConfig,
+                        mode: 'simple', // or 'simple'
+                    });
+                    createToolbar({
+                        editor,
+                        selector: '#toolbar-container',
+                        config: {
+                            toolbarKeys: [
+                                'headerSelect',
+                                '|',
+                                'bold',
+                                'underline',
+                                'italic',
+                                'through',
+                                'color',
+                                'bgColor',
+                                'clearStyle',
+                                '|',
+                                'fontSize',
+                                'fontFamily',
+                                '|',
+                                'emotion',
+                                'undo',
+                                'redo',
+                            ]
+                        },
+                        //mode: 'default', // or 'simple'
+                    });
+                    globalEditor = editor;
+                },
                 open(item) {
                     this.$refs.tableForm.resetFields();
                     this.show = true;
                     this.edit = Boolean(item);
                     if (this.edit) {
                         this.editItem = {...item};
+                        globalEditor.setHtml(this.editItem.content);
                     } else {
                         this.editItem.id = '';
+                        globalEditor.clear();
                     }
                 },
                 save() {
