@@ -28,6 +28,7 @@ spring:
       name: admin
       roles: admin
       password: 123456
+    permit-url: /api/v1/card/tree,/api/v1/notice,/api/v1/qrcode,/api/v1/quick/login
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss

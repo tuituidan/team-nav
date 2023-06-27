@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.controller;
 
+import com.tuituidan.openhub.bean.dto.LoginDto;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CommonService;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -107,6 +109,17 @@ public class CommonController {
     @GetMapping("/qrcode")
     public void generateQrCode(String url) {
         commonService.generateQrCode(url);
+    }
+
+    /**
+     * quickLogin
+     *
+     * @param loginDto loginDto
+     * @return boolean
+     */
+    @PostMapping("/quick/login")
+    public ResponseEntity<Boolean> quickLogin(@RequestBody LoginDto loginDto) {
+        return ResponseEntity.ok(commonService.quickLogin(loginDto));
     }
 
 }

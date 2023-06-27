@@ -16,7 +16,13 @@ new Vue({
         if (localStorage.username
             && localStorage.password
             && localStorage.autoLogin === 'true') {
-            this.$http.get('/api/v1/setting')
+            this.$http.post('/api/v1/quick/login', {
+                username: localStorage.username, password: localStorage.password
+            }).then(res => {
+                if (res.data) {
+                    this.loadTree();
+                }
+            })
         }
         this.loadTree();
         // iview的backtop组件要求高度固定，只能重写逻辑
@@ -25,7 +31,7 @@ new Vue({
     },
     computed: {
         isSmallLayout() {
-            if(!localStorage.layoutSize){
+            if (!localStorage.layoutSize) {
                 localStorage.layoutSize = defLayoutSize;
             }
             return localStorage.layoutSize === 'small-layout'

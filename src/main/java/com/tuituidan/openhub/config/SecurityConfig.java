@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +30,9 @@ public class SecurityConfig {
     @Value("${login.enable}")
     private boolean loginEnable;
 
+    @Value("${spring.security.permit-url:}")
+    private String[] permitUrl;
+
     @Resource
     private UserService userService;
 
@@ -48,7 +53,7 @@ public class SecurityConfig {
         http.userDetailsService(userService);
         http.formLogin().loginPage("/login").loginProcessingUrl("/api/v1/login");
         http.logout().logoutUrl("/logout").logoutSuccessUrl("/admin/category").deleteCookies("JSESSIONID");
-        http.authorizeRequests().antMatchers("/api/v1/card/tree", "/api/v1/notice", "/api/v1/qrcode").permitAll();
+        http.authorizeRequests().antMatchers(permitUrl).permitAll();
         http.authorizeRequests().antMatchers("/admin/**", "/api/v1/**")
                 .authenticated().anyRequest().permitAll();
         http.exceptionHandling().defaultAuthenticationEntryPointFor((request, response, ex) ->
@@ -65,6 +70,18 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder cryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * authenticationManager
+     *
+     * @param authenticationConfiguration authenticationConfiguration
+     * @return AuthenticationManager
+     * @throws Exception Exception
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 }
