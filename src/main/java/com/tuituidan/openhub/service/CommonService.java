@@ -67,7 +67,7 @@ public class CommonService implements ApplicationRunner {
 
     private static final List<String> CARD_ICONS = new ArrayList<>();
 
-    private static final String CARD_ICON_PATH = "/ext-resources/images/default";
+    private static final String CARD_ICON_PATH = "/ext-resources/images/default/";
 
     @Resource
     private CardRepository cardRepository;
@@ -147,7 +147,7 @@ public class CommonService implements ApplicationRunner {
     private String formatSavePath(String type, MultipartFile file) {
         String fileName = file.getOriginalFilename();
         if ("default".equals(type)) {
-            String path = CARD_ICON_PATH + File.separator + fileName;
+            String path = CARD_ICON_PATH + fileName;
             Assert.isTrue(!new File(Consts.ROOT_DIR + path).exists(), "文件名已经存在");
             return path;
         }
@@ -165,7 +165,7 @@ public class CommonService implements ApplicationRunner {
      * @param newName newName
      */
     public void updateIconName(String fileName, String newName) {
-        String root = Consts.ROOT_DIR + CARD_ICON_PATH + File.separator;
+        String root = Consts.ROOT_DIR + CARD_ICON_PATH;
         File oldFile = new File(root + fileName);
         String newFileName = newName + "." + FilenameUtils.getExtension(fileName);
         File newFile = new File(root + newFileName);
@@ -199,7 +199,7 @@ public class CommonService implements ApplicationRunner {
      * @throws IOException IOException
      */
     public void deleteDefaultIcon(String fileName) throws IOException {
-        File file = new File(Consts.ROOT_DIR + CARD_ICON_PATH + File.separator + fileName);
+        File file = new File(Consts.ROOT_DIR + CARD_ICON_PATH + fileName);
         if (file.exists()) {
             checkIconRef(fileName);
             FileUtils.forceDelete(file);
