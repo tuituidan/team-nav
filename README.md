@@ -74,7 +74,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.1.3
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:1.1.4
 
 ```
 
@@ -109,12 +109,18 @@ V1.1.2版本可在系统设置中上传图标。
 
 ## 版本说明
 
+- 1.1.4
+
+  - 解决Windows下部署，图标上传文件名错误问题。
+  - 后台设置添加部署大小默认设置。
+  - 首页添加快捷登录（首页直接调接口登录，不再跳转登录页）。
+  
 - 1.1.3
 
   - 解决勾选自动登录但登录失败时无限重试的bug。
   - 系统设置中图标上传支持复制粘贴上传，新增图标名修改。
   - 通知公告内容支持富文本编辑。
-  
+
 - 1.1.2
 
   - 修复自定义上传logo会被定时清理掉的bug。
