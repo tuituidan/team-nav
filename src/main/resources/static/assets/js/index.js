@@ -8,7 +8,6 @@ new Vue({
         return {
             keywords: '',
             isCollapsed: localStorage.IndexCollapsed === 'true',
-            isSmallLayout: localStorage.layoutSize === 'small-layout',
             datas: [],
             users: []
         }
@@ -25,6 +24,12 @@ new Vue({
             .addEventListener('scroll', this.handleScroll)
     },
     computed: {
+        isSmallLayout() {
+            if(!localStorage.layoutSize){
+                localStorage.layoutSize = defLayoutSize;
+            }
+            return localStorage.layoutSize === 'small-layout'
+        },
         rotateIcon() {
             return [
                 'menu-icon',

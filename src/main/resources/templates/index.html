@@ -96,6 +96,9 @@
 <div th:replace="components/carousel-flip-notice::carousel-flip-notice"></div>
 <div th:replace="components/home-card-list::home-card-list"></div>
 <div th:replace="components/home-header-right::home-header-right"></div>
+<script type="text/javascript" th:inline="javascript">
+    const defLayoutSize = /*[[${layoutSize}]]*/ 'small-layout';
+</script>
 <script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/index.js}"></script>
 </body>
 </html>

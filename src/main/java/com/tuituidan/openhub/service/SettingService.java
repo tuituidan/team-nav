@@ -43,6 +43,10 @@ public class SettingService implements ApplicationRunner {
             setting.setLogoPath(Consts.DEFAULT_LOGO_PATH);
             settingRepository.save(setting);
         }
+        if (StringUtils.isBlank(setting.getLayoutSize())) {
+            setting.setLayoutSize("small-layout");
+            settingRepository.save(setting);
+        }
         this.settingChange(setting);
     }
 

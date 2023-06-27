@@ -17,7 +17,7 @@
                         <Icon :size="26" type="ios-appstore"></Icon>
                         <dropdown-menu slot="list">
                             <dropdown-item name="big-layout" :selected="!isSmallLayout">较大</dropdown-item>
-                            <dropdown-item name="small-layout" :selected="isSmallLayout">中等</dropdown-item>
+                            <dropdown-item name="small-layout" :selected="isSmallLayout">较小</dropdown-item>
                         </dropdown-menu>
                     </Dropdown>
                 </Tooltip>
@@ -35,8 +35,12 @@
             data() {
                 return {
                     fullScreen: false,
-                    isSmallLayout: localStorage.layoutSize === 'small-layout',
                 }
+            },
+            computed: {
+                isSmallLayout() {
+                    return localStorage.layoutSize === 'small-layout'
+                },
             },
             methods: {
                 setFullScreen() {

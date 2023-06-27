@@ -45,6 +45,7 @@ public class ViewController {
         request.setAttribute("logoPath", settingCache.getLogoPath());
         request.setAttribute("isIe", RequestUtils.isIe());
         request.setAttribute("cutOverSpeed", settingCache.getCutOverSpeed());
+        request.setAttribute("layoutSize", settingCache.getLayoutSize());
         return "index";
     }
 

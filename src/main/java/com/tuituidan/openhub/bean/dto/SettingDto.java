@@ -26,4 +26,6 @@ public class SettingDto {
 
     private Boolean logoToFavicon;
 
+    private String layoutSize;
+
 }

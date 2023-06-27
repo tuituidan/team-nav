@@ -1,159 +1,179 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="base-setting">
-  <div th:replace="components/com-uploader::com-uploader"></div>
-  <style type="text/css">
-    .multi-form-item {
-      display:flex;
-      align-items: center;
-    }
-    .multi-form-item .multi-form-item-input {
-      margin-left: 15px;
-      flex: auto;
-    }
-    .setting-item-tip {
-      vertical-align: -0.3em;
-      margin-left: 15px;
-    }
-  </style>
-  <template id="base-setting">
-    <Card>
-      <p slot="title">
-        <Icon type="ios-settings-outline"></Icon>
-        基础配置
-      </p>
-      <a href="javascript:void(0)" slot="extra" class="btn-save" @click="saveSetting()">保存</a>
-      <i-form ref="settingForm"
-              :model="settingItem"
-              label-width="120"
-              :rules="settingItemRules" @submit.native.prevent>
-        <form-item label="网站标题" prop="navName">
-          <i-input v-model.trim="settingItem.navName"
-                   type="text"
-                   clearable
-                   maxlength="50"
-                   placeholder="网站标题"></i-input>
-        </form-item>
-        <form-item label="网站LOGO" prop="logoPath">
-          <div style="display: flex;align-items: center;justify-content: space-between">
-            <com-uploader v-model.trim="settingItem.logoPath" @remove="onRemoveLogo"></com-uploader>
-            <div>
-              <Checkbox v-model="settingItem.logoToFavicon">同步修改favicon</Checkbox>
-              <Tooltip transfer
-                       max-width="320"
-                       content="勾选时网站的favicon也将使用此logo图片">
-                <Icon class="setting-item-tip"
-                      type="ios-information-circle-outline"
-                      color="#2d8cf0" size="25" />
-              </Tooltip>
-            </div>
+    <div th:replace="components/com-uploader::com-uploader"></div>
+    <style type="text/css">
+        .multi-form-item {
+            display: flex;
+            align-items: center;
+        }
 
-          </div>
-        </form-item>
-        <form-item label="公告切换间隔" prop="countdown">
-          <div class="multi-form-item">
-            <input-number :max="200"
-                          :min="10"
-                          v-model="settingItem.cutOverSpeed"
-                          class="multi-form-item-input"
-                          :editable="false"
-                          controls-outside></input-number>
-            <div>&nbsp;秒</div>
-            <Tooltip transfer
-                     max-width="320"
-                     content="配置首页多个通知公告的自动切换间隔时间">
-              <Icon class="setting-item-tip"
-                    type="ios-information-circle-outline"
-                    color="#2d8cf0" size="25" />
-            </Tooltip>
-          </div>
-        </form-item>
-        <form-item label="Nginx访问原型" prop="nginxOpen">
-          <div class="multi-form-item">
-            <div>
-              <i-switch size="large" v-model="settingItem.nginxOpen">
-                <span slot="open">开启</span>
-                <span slot="close">关闭</span>
-              </i-switch>
-            </div>
-            <i-input type="text"
-                     maxlength="100"
-                     clearable
-                     class="multi-form-item-input"
-                     v-model.trim="settingItem.nginxUrl"
-                     placeholder="Nginx地址"></i-input>
-            <Tooltip transfer
-                     max-width="320"
-                     content="可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址">
-              <Icon class="setting-item-tip"
-                    type="ios-information-circle-outline"
-                    color="#2d8cf0" size="25" />
-            </Tooltip>
-          </div>
-        </form-item>
-      </i-form>
-    </Card>
-  </template>
-  <script type="text/javascript">
-    Vue.component('base-setting', {
-      template: '#base-setting',
-      data() {
-        return {
-          settingItem: {
-            navName: '',
-            logoPath: '',
-            logoToFavicon: false,
-            cutOverSpeed: 10,
-            nginxOpen: false,
-            nginxUrl: ''
-          },
-          settingItemRules: {
-            navName: [
-              {required: true, message: '网站标题不能为空'},
-            ]
-          }
+        .multi-form-item .multi-form-item-input {
+            margin-left: 15px;
+            flex: auto;
         }
-      },
-      mounted() {
-        this.loadSetting();
-      },
-      methods: {
-        loadSetting(){
-          this.$http.get(`/api/v1/setting`)
-                  .then(res => {
-                    this.settingItem = res.data;
-                    this.settingItem.cutOverSpeed = res.data.cutOverSpeed || 10;
-                    this.settingItem.logoToFavicon = Boolean(res.data.logoToFavicon);
-                    this.settingItem.nginxOpen = Boolean(res.data.nginxOpen);
-                  })
-                  .catch(err => {
-                    console.error(err);
-                    this.$notice.err(err.response.data);
-                  });
-        },
-        saveSetting(){
-          this.$refs.settingForm.validate(valid => {
-            if (valid) {
-              this.$http.patch(`/api/v1/setting`, {...this.settingItem})
-                      .then(() => {
-                        this.$notice.suc('保存成功');
-                        setTimeout(()=>{
-                          location.reload();
-                        }, 1000);
-                      })
-                      .catch(err => {
-                        console.error(err);
-                        this.$notice.err(err.response.data);
-                      });
+
+        .setting-item-tip {
+            vertical-align: -0.3em;
+            margin-left: 15px;
+        }
+    </style>
+    <template id="base-setting">
+        <Card>
+            <p slot="title">
+                <Icon type="ios-settings-outline"></Icon>
+                基础配置
+            </p>
+            <a href="javascript:void(0)" slot="extra" class="btn-save" @click="saveSetting()">保存</a>
+            <i-form ref="settingForm"
+                    :model="settingItem"
+                    label-width="120"
+                    :rules="settingItemRules" @submit.native.prevent>
+                <form-item label="网站标题" prop="navName">
+                    <i-input v-model.trim="settingItem.navName"
+                             type="text"
+                             clearable
+                             maxlength="50"
+                             placeholder="网站标题"></i-input>
+                </form-item>
+                <form-item label="网站LOGO" prop="logoPath">
+                    <div style="display: flex;align-items: center;justify-content: space-between">
+                        <com-uploader v-model.trim="settingItem.logoPath" @remove="onRemoveLogo"></com-uploader>
+                        <div>
+                            <Checkbox v-model="settingItem.logoToFavicon">同步修改favicon</Checkbox>
+                            <Tooltip transfer
+                                     max-width="320"
+                                     content="勾选时网站的favicon也将使用此logo图片">
+                                <Icon class="setting-item-tip"
+                                      type="ios-information-circle-outline"
+                                      color="#2d8cf0" size="25"/>
+                            </Tooltip>
+                        </div>
+
+                    </div>
+                </form-item>
+                <form-item label="公告切换间隔" prop="countdown">
+                    <div class="multi-form-item">
+                        <input-number :max="200"
+                                      :min="10"
+                                      v-model="settingItem.cutOverSpeed"
+                                      class="multi-form-item-input"
+                                      :editable="false"
+                                      controls-outside></input-number>
+                        <div>&nbsp;秒</div>
+                        <Tooltip transfer
+                                 max-width="320"
+                                 content="配置首页多个通知公告的自动切换间隔时间">
+                            <Icon class="setting-item-tip"
+                                  type="ios-information-circle-outline"
+                                  color="#2d8cf0" size="25"/>
+                        </Tooltip>
+                    </div>
+                </form-item>
+                <form-item label="Nginx访问原型" prop="nginxOpen">
+                    <div class="multi-form-item">
+                        <div>
+                            <i-switch size="large" v-model="settingItem.nginxOpen">
+                                <span slot="open">开启</span>
+                                <span slot="close">关闭</span>
+                            </i-switch>
+                        </div>
+                        <i-input type="text"
+                                 maxlength="100"
+                                 clearable
+                                 class="multi-form-item-input"
+                                 v-model.trim="settingItem.nginxUrl"
+                                 placeholder="Nginx地址"></i-input>
+                        <Tooltip transfer
+                                 max-width="320"
+                                 content="可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址">
+                            <Icon class="setting-item-tip"
+                                  type="ios-information-circle-outline"
+                                  color="#2d8cf0" size="25"/>
+                        </Tooltip>
+                    </div>
+                </form-item>
+                <form-item label="默认布局大小" prop="layoutSize">
+                    <radio-group v-model="settingItem.layoutSize">
+                        <Radio v-for="item in layoutSizeList" :label="item.id"
+                               :key="item.id">{{item.name}}
+                        </Radio>
+                    </radio-group>
+                </form-item>
+            </i-form>
+        </Card>
+    </template>
+    <script type="text/javascript">
+        Vue.component('base-setting', {
+            template: '#base-setting',
+            data() {
+                return {
+                    settingItem: {
+                        navName: '',
+                        logoPath: '',
+                        logoToFavicon: false,
+                        cutOverSpeed: 10,
+                        nginxOpen: false,
+                        nginxUrl: '',
+                        layoutSize: ''
+                    },
+                    layoutSizeList: [
+                        {
+                            id: 'small-layout',
+                            name: '较小'
+                        },
+                        {
+                            id: 'big-layout',
+                            name: '较大'
+                        }
+                    ],
+                    settingItemRules: {
+                        navName: [
+                            {required: true, message: '网站标题不能为空'},
+                        ]
+                    }
+                }
+            },
+            mounted() {
+                this.loadSetting();
+            },
+            methods: {
+                loadSetting() {
+                    this.$http.get(`/api/v1/setting`)
+                        .then(res => {
+                            this.settingItem = res.data;
+                            this.settingItem.cutOverSpeed = res.data.cutOverSpeed || 10;
+                            this.settingItem.logoToFavicon = Boolean(res.data.logoToFavicon);
+                            this.settingItem.nginxOpen = Boolean(res.data.nginxOpen);
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            this.$notice.err(err.response.data);
+                        });
+                },
+                saveSetting() {
+                    this.$refs.settingForm.validate(valid => {
+                        if (valid) {
+                            this.$http.patch(`/api/v1/setting`, {...this.settingItem})
+                                .then(() => {
+                                    this.$notice.suc('保存成功');
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    this.$notice.err(err.response.data);
+                                });
+                        }
+                    });
+                },
+                onRemoveLogo(url) {
+                    // 只有一个，不用判断url，直接移除
+                    this.settingItem.logoPath = '';
+                }
             }
-          });
-        },
-        onRemoveLogo(url) {
-          // 只有一个，不用判断url，直接移除
-          this.settingItem.logoPath = '';
-        }
-      }
-    })
-  </script>
+        })
+    </script>
 </div>
 </html>
