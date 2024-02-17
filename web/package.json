@@ -21,7 +21,7 @@
     ]
   },
   "dependencies": {
-    "axios": "0.24.0",
+    "axios": "1.6.0",
     "core-js": "3.25.3",
     "element-ui": "2.15.13",
     "file-saver": "2.0.5",
