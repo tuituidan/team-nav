@@ -10,6 +10,7 @@ import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import com.tuituidan.openhub.util.TransactionUtils;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -171,7 +172,8 @@ public class CategoryService {
         List<Card> cards = cardRepository.findByCategory(category.getPid());
         TransactionUtils.execute(() -> {
             categoryRepository.save(category);
-            roleService.saveCategoryRoles(category.getId(), dto.getRoleIds());
+            roleService.saveCategoryRoles(downCascade(new ArrayList<>(Collections.singletonList(category)))
+                    .stream().map(Category::getId).collect(Collectors.toSet()), dto.getRoleIds());
             if (CollectionUtils.isNotEmpty(cards)) {
                 cards.forEach(item -> item.setCategory(category.getId()));
                 cardRepository.saveAll(cards);

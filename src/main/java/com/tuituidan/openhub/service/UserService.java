@@ -2,6 +2,7 @@ package com.tuituidan.openhub.service;
 
 import com.tuituidan.openhub.bean.dto.ChangePassword;
 import com.tuituidan.openhub.bean.dto.UserDto;
+import com.tuituidan.openhub.bean.entity.Role;
 import com.tuituidan.openhub.bean.entity.RoleUser;
 import com.tuituidan.openhub.bean.entity.User;
 import com.tuituidan.openhub.bean.vo.UserVo;
@@ -11,7 +12,9 @@ import com.tuituidan.openhub.repository.UserRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -90,11 +93,21 @@ public class UserService implements UserDetailsService, ApplicationRunner {
             }
             return predicate;
         };
-        Page<User> users = userRepository.findAll(search, PageRequest.of(pageIndex, pageSize, Sort.by("updateTime").descending()));
+        Page<User> users = userRepository.findAll(search,
+                PageRequest.of(pageIndex, pageSize, Sort.by("updateTime").descending()));
+        Map<String, List<Role>> userRolesMap =
+                getUserRolesMap(users.stream().map(User::getId).collect(Collectors.toSet()));
         return users.map(user ->
                 BeanExtUtils.convert(user, UserVo::new)
-                        .setRoles(cacheService.getRolesByUserId(user.getId()))
+                        .setRoles(userRolesMap.get(user.getId()))
         );
+    }
+
+    private Map<String, List<Role>> getUserRolesMap(Collection<String> userIds) {
+        List<RoleUser> roleUsers = roleUserRepository.findByUserIdIn(userIds);
+        return roleUsers.stream().collect(Collectors.groupingBy(RoleUser::getUserId,
+                Collectors.mapping(item -> cacheService.getRole(item.getRoleId()),
+                        Collectors.toList())));
     }
 
     @Override
@@ -131,7 +144,6 @@ public class UserService implements UserDetailsService, ApplicationRunner {
                 .map(roleId -> new RoleUser().setRoleId(roleId)
                         .setUserId(user.getId())).collect(Collectors.toList()));
         userRepository.save(user);
-        cacheService.getUserRolesCache().invalidate(user.getId());
     }
 
     /**
@@ -147,7 +159,6 @@ public class UserService implements UserDetailsService, ApplicationRunner {
         Assert.isTrue(!CollectionUtils.containsAny(usernames, "admin"), "默认管理员不可操作");
         userRepository.deleteAllById(Arrays.asList(id));
         roleUserRepository.deleteByUserIdIn(ids);
-        cacheService.getUserRolesCache().invalidateAll(ids);
     }
 
     /**

@@ -3,7 +3,6 @@ package com.tuituidan.openhub.repository;
 import com.tuituidan.openhub.bean.entity.Category;
 import java.util.List;
 import java.util.Set;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -56,7 +55,5 @@ public interface CategoryRepository extends JpaRepository<Category, String>, Jpa
      * @return List
      */
     List<Category> findByValidTrueOrderBySort();
-
-    List<Category> findByValidTrue(Sort sort);
 
 }

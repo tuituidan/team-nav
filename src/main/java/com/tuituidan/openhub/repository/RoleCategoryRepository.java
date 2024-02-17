@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.repository;
 
 import com.tuituidan.openhub.bean.entity.RoleCategory;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RoleCategoryRepository extends JpaRepository<RoleCategory, String> {
 
     /**
-     * deleteByCategoryId
+     * deleteByCategoryIdIn
      *
-     * @param categoryId categoryId
+     * @param categoryIds categoryIds
      */
     @Transactional(rollbackFor = Exception.class)
-    void deleteByCategoryId(String categoryId);
+    void deleteByCategoryIdIn(Collection<String> categoryIds);
 
     /**
      * deleteByRoleId

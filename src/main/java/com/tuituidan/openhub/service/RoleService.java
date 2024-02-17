@@ -10,8 +10,10 @@ import com.tuituidan.openhub.repository.RoleRepository;
 import com.tuituidan.openhub.repository.RoleUserRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
@@ -107,14 +109,20 @@ public class RoleService {
     /**
      * 保存分类和角色映射关系
      *
-     * @param categoryId categoryId
+     * @param categoryIds categoryIds
      * @param roleIds roleIds
      */
-    public void saveCategoryRoles(String categoryId, String[] roleIds) {
-        roleCategoryRepository.deleteByCategoryId(categoryId);
-        roleCategoryRepository.saveAll(Arrays.stream(roleIds).map(roleId -> new RoleCategory()
-                .setCategoryId(categoryId).setRoleId(roleId)).collect(Collectors.toList()));
-        cacheService.getCategoryCache().invalidate(categoryId);
+    public void saveCategoryRoles(Set<String> categoryIds, String[] roleIds) {
+        roleCategoryRepository.deleteByCategoryIdIn(categoryIds);
+        List<RoleCategory> saveList = new ArrayList<>();
+        for (String categoryId : categoryIds) {
+            for (String roleId : roleIds) {
+                saveList.add(new RoleCategory().setCategoryId(categoryId).setRoleId(roleId));
+            }
+        }
+        roleCategoryRepository.saveAll(saveList);
+        cacheService.getCategoryCache().invalidateAll(categoryIds);
+        cacheService.getCategoryRolesCache().invalidateAll(categoryIds);
     }
 
     /**
@@ -132,7 +140,6 @@ public class RoleService {
                             .setRoleId(roleId))
                     .collect(Collectors.toList()));
         }
-        cacheService.getRoleCategoriesCache().invalidate(roleId);
     }
 
     /**

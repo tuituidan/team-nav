@@ -49,6 +49,14 @@ public interface RoleUserRepository extends JpaRepository<RoleUser, String> {
     List<RoleUser> findByUserId(String userId);
 
     /**
+     * findByUserIdIn
+     *
+     * @param userIds userIds
+     * @return List
+     */
+    List<RoleUser> findByUserIdIn(Collection<String> userIds);
+
+    /**
      * findByRoleId
      *
      * @param roleId roleId

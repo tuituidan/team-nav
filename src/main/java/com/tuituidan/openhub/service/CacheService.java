@@ -5,11 +5,9 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.bean.entity.Role;
 import com.tuituidan.openhub.bean.entity.RoleCategory;
-import com.tuituidan.openhub.bean.entity.RoleUser;
 import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.repository.RoleCategoryRepository;
 import com.tuituidan.openhub.repository.RoleRepository;
-import com.tuituidan.openhub.repository.RoleUserRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,18 +26,16 @@ import org.springframework.stereotype.Service;
  * @date 2024/2/14
  */
 @Service
-@Getter
 public class CacheService implements ApplicationRunner {
 
+    @Getter
     private final Cache<String, Category> categoryCache = Caffeine.newBuilder().build();
 
+    @Getter
     private final Cache<String, Role> roleCache = Caffeine.newBuilder().build();
 
+    @Getter
     private final Cache<String, List<Role>> categoryRolesCache = Caffeine.newBuilder().build();
-
-    private final Cache<String, List<Category>> roleCategoriesCache = Caffeine.newBuilder().build();
-
-    private final Cache<String, List<Role>> userRolesCache = Caffeine.newBuilder().build();
 
     @Resource
     private CategoryRepository categoryRepository;
@@ -49,9 +45,6 @@ public class CacheService implements ApplicationRunner {
 
     @Resource
     private RoleCategoryRepository roleCategoryRepository;
-
-    @Resource
-    private RoleUserRepository roleUserRepository;
 
     /**
      * getCategory
@@ -87,26 +80,11 @@ public class CacheService implements ApplicationRunner {
         );
     }
 
-    /**
-     * getRolesByCategoryId
-     *
-     * @param userId userId
-     * @return List
-     */
-    public List<Role> getRolesByUserId(String userId) {
-        return userRolesCache.get(userId, id ->
-                roleUserRepository.findByUserId(id).stream()
-                        .map(item -> this.getRole(item.getRoleId()))
-                        .collect(Collectors.toList())
-        );
-    }
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
         loadCategoryCache();
         loadRoleCache();
-        loadCategoryToRoleCache();
-        loadUserRolesCache();
+        loadCategoryRolesCache();
     }
 
     private void loadCategoryCache() {
@@ -122,7 +100,7 @@ public class CacheService implements ApplicationRunner {
         roles.forEach(item -> roleCache.put(item.getId(), item));
     }
 
-    private void loadCategoryToRoleCache() {
+    private void loadCategoryRolesCache() {
         List<RoleCategory> roleCategories = roleCategoryRepository.findAll();
         Map<String, List<String>> categoryRoleIdsMap = roleCategories.stream()
                 .collect(Collectors.groupingBy(RoleCategory::getCategoryId,
@@ -130,18 +108,6 @@ public class CacheService implements ApplicationRunner {
         categoryRolesCache.invalidateAll();
         for (Entry<String, List<String>> entry : categoryRoleIdsMap.entrySet()) {
             categoryRolesCache.put(entry.getKey(), entry.getValue().stream()
-                    .map(this::getRole).collect(Collectors.toList()));
-        }
-    }
-
-    private void loadUserRolesCache() {
-        List<RoleUser> roleUsers = roleUserRepository.findAll();
-        Map<String, List<String>> userRoleIdsMap = roleUsers.stream()
-                .collect(Collectors.groupingBy(RoleUser::getUserId,
-                        Collectors.mapping(RoleUser::getRoleId, Collectors.toList())));
-        userRolesCache.invalidateAll();
-        for (Entry<String, List<String>> entry : userRoleIdsMap.entrySet()) {
-            userRolesCache.put(entry.getKey(), entry.getValue().stream()
                     .map(this::getRole).collect(Collectors.toList()));
         }
     }

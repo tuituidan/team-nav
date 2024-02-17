@@ -30,7 +30,7 @@ public class Category implements ISortEntity<Category> {
     private static final long serialVersionUID = -369054106198786491L;
 
     @Id
-    @Column(name = "id", length = 32)
+    @Column(name = "ID", length = 32)
     private String id;
 
     @Column(name = "pid", length = 32)
