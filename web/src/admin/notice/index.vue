@@ -1,12 +1,13 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="10" class="mb8">
+    <el-row class="mb8" type="flex" justify="space-between">
+      <el-col :span="1"></el-col>
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="success"
           plain
           icon="el-icon-plus"
-          size="mini"
+          size="small"
           @click="handleAdd"
         >新增</el-button>
       </el-col>

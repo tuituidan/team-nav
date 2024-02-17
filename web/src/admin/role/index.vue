@@ -4,81 +4,65 @@
       <el-col :span="8">
         <role-list @roleRowChange="roleRowChange"></role-list>
       </el-col>
-      <el-col :span="15" :offset="1">
-        <div style="height: 51px">
-          <span v-if="roleDetail.roleName">选择角色：</span>
-          <span v-text="roleDetail.roleName"></span>
-        </div>
-        <el-row>
-          <el-col :span="11">
-            <el-row class="mb8" type="flex" justify="space-between">
-              <el-col :span="18">
-                拥有分类：
-              </el-col>
-              <el-col :span="1.5">
-                <el-button
-                  type="primary"
-                  plain
-                  icon="el-icon-document"
-                  size="mini"
-                  :disabled="!Boolean(roleDetail.id)"
-                  @click="roleCategorySave()"
-                >保存
-                </el-button>
-              </el-col>
-            </el-row>
-            <el-card shadow="never">
-              <el-tree
-                ref="categoryTree"
-                :data="categories"
-                :props="{label: 'name'}"
-                node-key="id"
-                highlight-current
-                :default-checked-keys="roleDetail.categoryIds"
-                show-checkbox>
-              </el-tree>
-            </el-card>
-          </el-col>
-          <el-col :span="11" :offset="1">
-            <el-row class="mb8" type="flex" justify="space-between">
-              <el-col :span="18">
-                拥有用户：
-              </el-col>
-              <el-col :span="1.5">
-                <el-button
-                  type="primary"
-                  plain
-                  icon="el-icon-document"
-                  size="mini"
-                  :disabled="!Boolean(roleDetail.id)"
-                  @click="roleUserSave()"
-                >保存
-                </el-button>
-              </el-col>
-            </el-row>
-            <el-table
-              stripe
-              border
-              highlight-current-row
-              ref="dataTable"
-              v-loading="loading"
-              :data="table.dataList">
-              <el-table-column type="selection" width="50" align="center"/>
-              <el-table-column label="用户姓名" align="center" prop="nickname"
-                               :show-overflow-tooltip="true"/>
-            </el-table>
-            <pagination
-              small
-              :pager-count="5"
-              layout="sizes,prev,pager,next"
-              v-show="table.total>0"
-              :total="table.total"
-              :page.sync="queryParam.pageIndex"
-              :limit.sync="queryParam.pageSize"
-              @pagination="getUserList"
-            />
-          </el-col>
-        </el-row>
+      <el-col :span="7" :offset="1">
+        <el-card shadow="never">
+          <div slot="header" class="card-header">
+            <span>拥有分类</span>
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-document"
+              size="mini"
+              :disabled="!Boolean(roleDetail.id)"
+              @click="roleCategorySave()"
+            >保存
+            </el-button>
+          </div>
+          <el-tree
+            ref="categoryTree"
+            :data="categories"
+            :props="{label: 'name'}"
+            node-key="id"
+            highlight-current
+            :default-checked-keys="roleDetail.categoryIds"
+            show-checkbox>
+          </el-tree>
+        </el-card>
+      </el-col>
+      <el-col :span="7" :offset="1">
+        <el-card shadow="never" class="user-table-card">
+          <div slot="header" class="card-header">
+            <span>拥有用户</span>
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-document"
+              size="mini"
+              :disabled="!Boolean(roleDetail.id)"
+              @click="roleUserSave()"
+            >保存
+            </el-button>
+          </div>
+          <el-table
+            highlight-current-row
+            ref="dataTable"
+            v-loading="loading"
+            :data="table.dataList">
+            <el-table-column type="selection" width="50" align="center"/>
+            <el-table-column label="用户姓名" align="center" prop="nickname"
+                             :show-overflow-tooltip="true"/>
+          </el-table>
+          <pagination
+            small
+            :pager-count="5"
+            layout="sizes,prev,pager,next"
+            v-show="table.total>0"
+            :total="table.total"
+            :page.sync="queryParam.pageIndex"
+            :limit.sync="queryParam.pageSize"
+            @pagination="getUserList"
+          />
+        </el-card>
       </el-col>
     </el-row>
   </div>
@@ -151,7 +135,7 @@ export default {
       this.$http.patch(`/api/v1/role/${this.roleDetail.id}/category`, keys)
         .then(() => {
           this.$modal.msgSuccess("保存成功");
-          this.roleRowChange({id:this.roleDetail.id});
+          this.roleRowChange({id: this.roleDetail.id});
         })
     },
     roleUserSave() {
@@ -159,18 +143,37 @@ export default {
         return;
       }
       this.$http.patch(`/api/v1/role/${this.roleDetail.id}/user`, {
-        checkIds: this.$refs.dataTable.selection.map(it=>it.id),
-        userIds: this.table.dataList.map(it=>it.id)
+        checkIds: this.$refs.dataTable.selection.map(it => it.id),
+        userIds: this.table.dataList.map(it => it.id)
       })
         .then(() => {
           this.$modal.msgSuccess("保存成功");
-          this.roleRowChange({id:this.roleDetail.id});
+          this.roleRowChange({id: this.roleDetail.id});
         })
     },
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+::v-deep .el-card__header {
+  padding: 11px 15px;
+}
 
+::v-deep .el-card__body {
+  padding: 10px;
+}
+
+.user-table-card {
+  ::v-deep .el-card__body {
+    padding: 0 0 20px 0;
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  align-items: center;
+}
 </style>

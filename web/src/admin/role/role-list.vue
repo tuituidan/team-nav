@@ -1,31 +1,32 @@
 <template>
   <div>
-    <el-form :model="queryParam" ref="queryForm"
-             @submit.native.prevent
-             size="small" :inline="true" label-width="68px">
-      <el-form-item>
-        <el-input
-          v-model="queryParam.keywords"
-          placeholder="请输入角色名称进行搜索"
-          clearable
-          @clear="getList"
-          style="width: 300px"
-          @keyup.enter.native="getList"
-          suffix-icon="el-icon-search"
-        />
-      </el-form-item>
-    </el-form>
-    <el-row class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="openEditDialog()"
-        >新增
-        </el-button>
-      </el-col>
+    <el-row type="flex" justify="space-between">
+      <el-form :model="queryParam" ref="queryForm"
+               @submit.native.prevent>
+        <el-form-item>
+          <el-input
+            v-model="queryParam.keywords"
+            placeholder="请输入角色名称进行搜索"
+            clearable
+            @clear="getList"
+            style="width: 240px"
+            @keyup.enter.native="getList"
+            suffix-icon="el-icon-search"
+          />
+        </el-form-item>
+      </el-form>
+      <el-row class="mb8 mt5">
+        <el-col :span="1.5">
+          <el-button
+            type="success"
+            plain
+            icon="el-icon-plus"
+            size="small"
+            @click="openEditDialog()"
+          >新增
+          </el-button>
+        </el-col>
+      </el-row>
     </el-row>
     <el-table
       stripe

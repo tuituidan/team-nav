@@ -12,7 +12,7 @@
                            placeholder="请选择所属分类"></category-select>
         </el-form-item>
       </el-form>
-      <el-row :gutter="10" class="mb8">
+      <el-row :gutter="10" class="mb8 mt5">
         <el-col :span="1.5">
           <el-button
             type="success"

@@ -1,66 +1,66 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParam" ref="queryForm"
-             @submit.native.prevent
-             size="small" :inline="true" label-width="68px">
-      <el-form-item>
-        <el-input
-          v-model="queryParam.keywords"
-          placeholder="请输入登录账号或用户姓名进行搜索"
-          clearable
-          style="width: 300px"
-          @keyup.enter.native="getList"
-          suffix-icon="el-icon-search"
-        />
-      </el-form-item>
-    </el-form>
+    <el-row type="flex" justify="space-between">
+      <el-form :model="queryParam" ref="queryForm"
+               @submit.native.prevent>
+        <el-form-item>
+          <el-input
+            v-model="queryParam.keywords"
+            placeholder="请输入登录账号或用户姓名进行搜索"
+            clearable
+            style="width: 300px"
+            @keyup.enter.native="getList"
+            suffix-icon="el-icon-search"
+          />
+        </el-form-item>
+      </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="openEditDialog()"
-        >新增
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="openEditDialog()"
-        >修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-        >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-key"
-          size="mini"
-          :disabled="multiple"
-          @click="handleResetPwd"
-        >重置密码
-        </el-button>
-      </el-col>
+      <el-row :gutter="10" class="mb8 mt5">
+        <el-col :span="1.5">
+          <el-button
+            type="success"
+            plain
+            size="small"
+            icon="el-icon-plus"
+            @click="openEditDialog()"
+          >新增
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            icon="el-icon-edit"
+            :disabled="single"
+            @click="openEditDialog()"
+          >修改
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            size="small"
+            icon="el-icon-delete"
+            :disabled="multiple"
+            @click="handleDelete"
+          >删除
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            size="small"
+            icon="el-icon-key"
+            :disabled="multiple"
+            @click="handleResetPwd"
+          >重置密码
+          </el-button>
+        </el-col>
+      </el-row>
     </el-row>
-
     <el-table
       stripe
       border
