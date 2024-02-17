@@ -16,14 +16,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CategoryDto  {
 
+    private String pid;
+
     private String icon;
 
     private String name;
 
-    private Boolean privateCard;
-
-    private Boolean valid;
-
-    private Integer sort;
+    private String[] roleIds;
 
 }

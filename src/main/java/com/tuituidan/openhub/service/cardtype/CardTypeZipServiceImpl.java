@@ -5,7 +5,7 @@ import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Setting;
-import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
+import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.service.SettingService;
@@ -38,7 +38,7 @@ public class CardTypeZipServiceImpl implements ICardTypeService {
     private CardRepository cardRepository;
 
     @Override
-    public void formatCardVo(CardTreeChildVo cardVo) {
+    public void formatCardVo(CardVo cardVo) {
         Setting settingCache = settingService.getSettingCache();
         if (StringUtils.isNotBlank(settingCache.getNginxUrl())) {
             cardVo.setUrl(settingCache.getNginxUrl() + cardVo.getUrl());
@@ -69,7 +69,7 @@ public class CardTypeZipServiceImpl implements ICardTypeService {
         CardIconDto cardIconDto = card.getIcon();
         List<String> deletePaths = new ArrayList<>();
         if (StringUtils.isNotBlank(cardIconDto.getSrc())
-                && !StringUtils.contains(cardIconDto.getSrc(), "default")) {
+                && !StringUtils.contains(cardIconDto.getSrc(), CardTypeEnum.DEFAULT.getType())) {
             deletePaths.add(cardIconDto.getSrc());
         }
         deletePaths.add(card.getZip().getPath());

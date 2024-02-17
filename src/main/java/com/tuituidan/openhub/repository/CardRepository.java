@@ -3,7 +3,6 @@ package com.tuituidan.openhub.repository;
 import com.tuituidan.openhub.bean.entity.Card;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,15 @@ public interface CardRepository extends JpaRepository<Card, String> {
      * @param category category
      * @return List
      */
-    List<Card> findByCategoryOrderBySortAsc(String category);
+    List<Card> findByCategory(String category);
+
+    /**
+     * findByCategoryIn.
+     *
+     * @param categories categories
+     * @return List
+     */
+    List<Card> findByCategoryIn(List<String> categories);
 
     /**
      * findByTitleLikeOrContentLike.
@@ -48,9 +55,7 @@ public interface CardRepository extends JpaRepository<Card, String> {
      *
      * @param categoryId categoryId
      */
-    @Modifying
     @Transactional(rollbackFor = Exception.class)
-    @Query("delete from Card where category = ?1")
-    void deleteByCategoryId(String categoryId);
+    void deleteByCategory(String categoryId);
 
 }

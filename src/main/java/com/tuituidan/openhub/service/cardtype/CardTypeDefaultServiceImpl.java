@@ -3,7 +3,7 @@ package com.tuituidan.openhub.service.cardtype;
 import com.tuituidan.openhub.annotation.CardType;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.entity.Card;
-import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
+import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.util.FileExtUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class CardTypeDefaultServiceImpl implements ICardTypeService {
 
     @Override
-    public void formatCardVo(CardTreeChildVo cardVo) {
+    public void formatCardVo(CardVo cardVo) {
         // 默认的不用实现
     }
 
@@ -34,7 +34,7 @@ public class CardTypeDefaultServiceImpl implements ICardTypeService {
     public void supplyDelete(Card card) {
         CardIconDto cardIconDto = card.getIcon();
         if (StringUtils.isNotBlank(cardIconDto.getSrc())
-                && !StringUtils.contains(cardIconDto.getSrc(), "default")) {
+                && !StringUtils.contains(cardIconDto.getSrc(), CardTypeEnum.DEFAULT.getType())) {
             FileExtUtils.deleteFiles(false, cardIconDto.getSrc());
         }
     }

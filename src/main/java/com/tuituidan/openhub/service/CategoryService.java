@@ -1,30 +1,29 @@
 package com.tuituidan.openhub.service;
 
 import com.tuituidan.openhub.bean.dto.CategoryDto;
+import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
+import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
-import com.tuituidan.openhub.util.SecurityUtils;
+import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
+import com.tuituidan.openhub.util.TransactionUtils;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
+import javax.persistence.criteria.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -37,7 +36,6 @@ import org.springframework.util.Assert;
  * @date 2020/10/2
  */
 @Service
-@CacheConfig(cacheNames = "categorys")
 public class CategoryService {
 
     @Resource
@@ -49,17 +47,53 @@ public class CategoryService {
     @Resource
     private CommonService commonService;
 
+    @Resource
+    private RoleService roleService;
+
+    @Resource
+    private CacheService cacheService;
+
     /**
-     * select
+     * 查询列表
      *
      * @return List
      */
-    public List<Category> select() {
-        boolean isLogin = SecurityUtils.getUserInfo() != null;
-        return categoryRepository.findAll(Example.of(new Category().setValid(true)),
-                        Sort.by("sort")).stream()
-                .filter(item -> isLogin || BooleanUtils.isNotTrue(item.getPrivateCard()))
+    public List<CategoryVo> select(String keywords) {
+        Specification<Category> search = (root, query, builder) -> {
+            Predicate predicate = builder.conjunction();
+            if (StringUtils.isNotBlank(keywords)) {
+                predicate.getExpressions().add(builder.like(root.get("name"), "%" + keywords + "%"));
+            }
+            predicate.getExpressions().add(builder.isTrue(root.get("valid")));
+            return predicate;
+        };
+        List<Category> categories = categoryRepository.findAll(search);
+        if (CollectionUtils.isEmpty(categories)) {
+            return Collections.emptyList();
+        }
+        Map<String, Long> countMap = cardRepository.findByCategoryIn(categories.stream()
+                        .map(Category::getId).collect(Collectors.toList())).stream()
+                .collect(Collectors.groupingBy(Card::getCategory, Collectors.counting()));
+        List<CategoryVo> categoryList = categories.stream()
+                .map(item -> BeanExtUtils.convert(item, CategoryVo::new)
+                        .setCardCount(countMap.getOrDefault(item.getId(), 0L))
+                        .setRoles(cacheService.getRolesByCategoryId(item.getId()))
+                )
                 .collect(Collectors.toList());
+        return ListUtils.buildTree(categoryList);
+    }
+
+    /**
+     * selectTree
+     *
+     * @return List
+     */
+    public List<CategoryVo> selectTree(Integer level) {
+        List<CategoryVo> categoryList = categoryRepository
+                .findByValidTrueAndLevelLessThanEqual(level == null ? 3 : level).stream()
+                .map(item -> BeanExtUtils.convert(item, CategoryVo::new))
+                .collect(Collectors.toList());
+        return ListUtils.buildTree(categoryList);
     }
 
     /**
@@ -70,22 +104,44 @@ public class CategoryService {
      * @param pageSize pageSize
      * @return Page
      */
-    public Page<Category> selectPage(String keywords, Integer pageIndex, Integer pageSize) {
-        ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name",
-                GenericPropertyMatchers.contains());
-        return categoryRepository.findAll(Example.of(new Category().setValid(false).setName(keywords), matcher),
-                PageRequest.of(pageIndex, pageSize, Sort.by("sort").descending()));
+    public Page<CategoryVo> selectPage(String keywords, Integer pageIndex, Integer pageSize) {
+        Specification<Category> search = (root, query, builder) -> {
+            Predicate predicate = builder.conjunction();
+            if (StringUtils.isNotBlank(keywords)) {
+                predicate.getExpressions().add(builder.like(root.get("name"), "%" + keywords + "%"));
+            }
+            predicate.getExpressions().add(builder.isFalse(root.get("valid")));
+            return predicate;
+        };
+        Page<Category> page = categoryRepository.findAll(search,
+                PageRequest.of(pageIndex, pageSize, Sort.by("updateTime").descending()));
+        if (page.getTotalElements() <= 0) {
+            return page.map(item -> new CategoryVo());
+        }
+        Map<String, Long> countMap = cardRepository.findByCategoryIn(page.getContent().stream()
+                        .map(Category::getId).collect(Collectors.toList())).stream()
+                .collect(Collectors.groupingBy(Card::getCategory, Collectors.counting()));
+        return page.map(item -> {
+            item.setName(buildCategoryName(item.getId()));
+            CategoryVo vo = BeanExtUtils.convert(item, CategoryVo::new);
+            vo.setCardCount(countMap.getOrDefault(item.getId(), 0L));
+            vo.setRoles(cacheService.getRolesByCategoryId(item.getId()));
+            return vo;
+        });
     }
 
     /**
-     * get
+     * 构建级联分类名
      *
-     * @param id id
-     * @return Category
+     * @param categoryId categoryId
+     * @return String
      */
-    @Cacheable(key = "#id")
-    public Category get(String id) {
-        return categoryRepository.findById(id).orElse(new Category());
+    public String buildCategoryName(String categoryId) {
+        Category category = cacheService.getCategory(categoryId);
+        if ("0".equals(category.getPid())) {
+            return category.getName();
+        }
+        return buildCategoryName(category.getPid()) + " / " + category.getName();
     }
 
     /**
@@ -95,17 +151,36 @@ public class CategoryService {
      * @param dto dto
      * @return category
      */
-    @CachePut(key = "#result.id")
     public Category save(String id, CategoryDto dto) {
-        Category category = BeanExtUtils.convert(dto, Category::new);
+        Category category;
         if (StringUtils.isBlank(id)) {
+            category = BeanExtUtils.convert(dto, Category::new);
             category.setId(StringExtUtils.getUuid());
             category.setValid(true);
             category.setSort(categoryRepository.getMaxSort(true) + 1);
         } else {
-            category.setId(id);
+            category = categoryRepository.getReferenceById(id);
+            BeanExtUtils.copyNotNullProperties(dto, category);
         }
-        categoryRepository.save(category);
+
+        if ("0".equals(category.getPid())) {
+            category.setLevel(1);
+        } else {
+            category.setLevel(cacheService.getCategory(category.getPid()).getLevel() + 1);
+        }
+        List<Card> cards = cardRepository.findByCategory(category.getPid());
+        TransactionUtils.execute(() -> {
+            categoryRepository.save(category);
+            roleService.saveCategoryRoles(category.getId(), dto.getRoleIds());
+            if (CollectionUtils.isNotEmpty(cards)) {
+                cards.forEach(item -> item.setCategory(category.getId()));
+                cardRepository.saveAll(cards);
+            }
+        });
+        if (CollectionUtils.isNotEmpty(cards)) {
+            cacheService.getCategoryCache().invalidate(category.getPid());
+        }
+        cacheService.getCategoryCache().invalidate(category.getId());
         return category;
     }
 
@@ -114,20 +189,12 @@ public class CategoryService {
      *
      * @param id id
      */
-    @CacheEvict(key = "#id")
     public void delete(String id) {
+        List<Category> children = categoryRepository.findByPid(id);
+        Assert.isTrue(CollectionUtils.isEmpty(children), "存在子分类，不允许删除");
         categoryRepository.deleteById(id);
-        cardRepository.deleteByCategoryId(id);
-    }
-
-    /**
-     * 设为是否私密
-     *
-     * @param id id
-     * @param privateCard privateCard
-     */
-    public void updatePrivate(String id, Boolean privateCard) {
-        categoryRepository.updatePrivate(privateCard, Collections.singletonList(id));
+        cardRepository.deleteByCategory(id);
+        cacheService.getCategoryCache().invalidate(id);
     }
 
     /**
@@ -137,8 +204,7 @@ public class CategoryService {
      * @param after after
      */
     public void changeSort(int before, int after) {
-        Supplier<List<Category>> supplier = () -> categoryRepository.findAll(Example.of(
-                new Category().setValid(true)), Sort.by("sort"));
+        Supplier<List<Category>> supplier = () -> categoryRepository.findByValidTrueOrderBySort();
         List<Category> updateList = commonService.changeSort(supplier, before, after);
         if (CollectionUtils.isEmpty(updateList)) {
             return;
@@ -156,7 +222,9 @@ public class CategoryService {
     public void setValid(List<String> ids, Boolean valid) {
         Assert.isTrue(CollectionUtils.isNotEmpty(ids), "ids不能为空");
         int sort = categoryRepository.getMaxSort(valid) + 1;
-        List<Category> categories = categoryRepository.findAllById(ids);
+        List<Category> categories = BooleanUtils.isTrue(valid)
+                ? upCascade(categoryRepository.findAllById(ids))
+                : downCascade(categoryRepository.findAllById(ids));
         for (Category category : categories) {
             category.setValid(valid).setSort(sort);
             sort++;
@@ -164,9 +232,26 @@ public class CategoryService {
         if (CollectionUtils.isNotEmpty(categories)) {
             categoryRepository.saveAll(categories);
         }
-        if (BooleanUtils.isNotTrue(valid)) {
-            categoryRepository.updatePrivate(false, ids);
+    }
+
+    private List<Category> downCascade(List<Category> categories) {
+        List<Category> children = categoryRepository.findByPidIn(categories.stream()
+                .map(Category::getId).collect(Collectors.toSet()));
+        if (CollectionUtils.isEmpty(children)) {
+            return categories;
         }
+        categories.addAll(downCascade(children));
+        return categories;
+    }
+
+    private List<Category> upCascade(List<Category> categories) {
+        List<Category> parents = categoryRepository.findAllById(categories.stream()
+                .map(Category::getPid).collect(Collectors.toSet()));
+        if (CollectionUtils.isEmpty(parents)) {
+            return categories;
+        }
+        categories.addAll(upCascade(parents));
+        return categories;
     }
 
 }

@@ -1,8 +1,8 @@
 package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.CardDto;
-import com.tuituidan.openhub.bean.vo.CardTreeVo;
 import com.tuituidan.openhub.bean.vo.CardVo;
+import com.tuituidan.openhub.bean.vo.HomeDataVo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CardService;
 import java.util.List;
@@ -40,7 +40,7 @@ public class CardController {
      * @return List
      */
     @GetMapping("/card/tree")
-    public ResponseEntity<List<CardTreeVo>> tree(String keywords) {
+    public ResponseEntity<HomeDataVo> tree(String keywords) {
         return ResponseEntity.ok(cardService.tree(keywords));
     }
 

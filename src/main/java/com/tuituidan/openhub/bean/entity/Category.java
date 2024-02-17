@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.bean.entity;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * Category.
@@ -21,29 +23,36 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "T_CATEGORY")
+@Table(name = "nav_category", schema = "team_nav")
 @DynamicUpdate
 @DynamicInsert
 public class Category implements ISortEntity<Category> {
     private static final long serialVersionUID = -369054106198786491L;
 
     @Id
-    @Column(name = "C_ID", length = 32)
+    @Column(name = "id", length = 32)
     private String id;
 
-    @Column(name = "C_ICON", length = 400)
+    @Column(name = "pid", length = 32)
+    private String pid;
+
+    @Column(name = "icon", length = 400)
     private String icon;
 
-    @Column(name = "C_NAME", length = 100)
+    @Column(name = "name", length = 100)
     private String name;
 
-    @Column(name = "N_PRIVATE_CARD")
-    private Boolean privateCard;
-
-    @Column(name = "N_VALID")
+    @Column(name = "valid")
     private Boolean valid;
 
-    @Column(name = "N_SORT")
+    @Column(name = "sort")
     private Integer sort;
+
+    @Column(name = "level")
+    private Integer level;
+
+    @Column(name = "update_time")
+    @UpdateTimestamp
+    private LocalDateTime updateTime;
 
 }

@@ -4,11 +4,12 @@ import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.LoginDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.ISortEntity;
+import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.consts.Consts;
-import com.tuituidan.openhub.exception.ResourceReadException;
 import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.util.FileExtUtils;
+import com.tuituidan.openhub.util.HttpUtils;
 import com.tuituidan.openhub.util.QrCodeUtils;
 import com.tuituidan.openhub.util.RequestUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,14 +39,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Attribute;
-import org.dom4j.io.SAXReader;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,10 +63,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class CommonService implements ApplicationRunner {
 
-    private static final String ICON_SVG_PATH = "static/assets/lib/iview/fonts/ionicons.svg";
-
-    private static final List<String> CATEGORY_ICONS = new ArrayList<>();
-
     private static final List<String> CARD_ICONS = new ArrayList<>();
 
     private static final String CARD_ICON_PATH = "/ext-resources/images/default/";
@@ -86,26 +78,7 @@ public class CommonService implements ApplicationRunner {
      */
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        loadCategoryIcons();
         loadCardIcons();
-    }
-
-    /**
-     * 解析出iview的所有字体图标名称，用于前端选择图标的控件
-     */
-    private void loadCategoryIcons() {
-        org.dom4j.Document document;
-        try (InputStream inputStream = new ClassPathResource(ICON_SVG_PATH).getInputStream()) {
-            document = SAXReader.createDefault().read(inputStream);
-        } catch (Exception ex) {
-            throw new ResourceReadException("icon-xml读取失败", ex);
-        }
-        CATEGORY_ICONS.addAll(document.getRootElement().element("defs").element("font").elements("glyph")
-                .stream()
-                .map(element -> element.attribute("glyph-name"))
-                .filter(Objects::nonNull)
-                .map(Attribute::getValue)
-                .collect(Collectors.toList()));
     }
 
     /**
@@ -147,7 +120,7 @@ public class CommonService implements ApplicationRunner {
         } catch (Exception ex) {
             throw new ResourceWriteException("文件写入失败", ex);
         }
-        if ("default".equals(type)) {
+        if (CardTypeEnum.DEFAULT.getType().equals(type)) {
             CARD_ICONS.add(file.getOriginalFilename());
         }
         return savePath;
@@ -155,7 +128,7 @@ public class CommonService implements ApplicationRunner {
 
     private String formatSavePath(String type, MultipartFile file) {
         String fileName = file.getOriginalFilename();
-        if ("default".equals(type)) {
+        if (CardTypeEnum.DEFAULT.getType().equals(type)) {
             String path = CARD_ICON_PATH + fileName;
             Assert.isTrue(!new File(Consts.ROOT_DIR + path).exists(), "文件名已经存在");
             return path;
@@ -189,7 +162,7 @@ public class CommonService implements ApplicationRunner {
         List<Card> updateList = cardRepository.findAll().stream()
                 .filter(item -> Objects.nonNull(item.getIcon())
                         && StringUtils.isNotBlank(item.getIcon().getSrc())
-                        && StringUtils.contains(item.getIcon().getSrc(), "default")
+                        && StringUtils.contains(item.getIcon().getSrc(), CardTypeEnum.DEFAULT.getType())
                         && StringUtils.endsWith(item.getIcon().getSrc(), fileName)
                 ).map(card -> {
                     CardIconDto icon = card.getIcon();
@@ -220,20 +193,11 @@ public class CommonService implements ApplicationRunner {
         List<String> list = cardRepository.findAll().stream()
                 .filter(item -> Objects.nonNull(item.getIcon())
                         && StringUtils.isNotBlank(item.getIcon().getSrc())
-                        && StringUtils.contains(item.getIcon().getSrc(), "default")
+                        && StringUtils.contains(item.getIcon().getSrc(), CardTypeEnum.DEFAULT.getType())
                         && StringUtils.endsWith(item.getIcon().getSrc(), fileName)
                 ).map(Card::getTitle).collect(Collectors.toList());
         Assert.isTrue(CollectionUtils.isEmpty(list), "图标已被卡片【"
                 + StringUtils.join(list, ",") + "】使用，不能删除");
-    }
-
-    /**
-     * 获取分类的图标
-     *
-     * @return List
-     */
-    public List<String> categoryIcons() {
-        return CATEGORY_ICONS;
     }
 
     /**
@@ -288,19 +252,16 @@ public class CommonService implements ApplicationRunner {
     }
 
     private String getFromDocument(String domainUrl) {
-        try {
-            Document doc = Jsoup.connect(domainUrl)
-                    .timeout(Consts.FAVICON_TIMEOUT).get();
-            Elements links = doc.head().children().select("link[rel~=icon]");
-            if (links.isEmpty()) {
-                return "";
-            }
-            String href = links.get(0).attr("href");
-            return requestFavicon(formatLinkIcon(domainUrl, href));
-        } catch (Exception ex) {
-            // 拿不到就算了，不写日志
+        Document doc = HttpUtils.getJsoupDoc(domainUrl);
+        if (Objects.isNull(doc)) {
+            return StringUtils.EMPTY;
         }
-        return "";
+        Elements links = doc.head().children().select("link[rel~=icon]");
+        if (links.isEmpty()) {
+            return "";
+        }
+        String href = links.get(0).attr("href");
+        return requestFavicon(formatLinkIcon(domainUrl, href));
     }
 
     /**
@@ -324,22 +285,10 @@ public class CommonService implements ApplicationRunner {
     }
 
     private String requestFavicon(String url) {
-        URLConnection conn = null;
-        try {
-            conn = new URL(url).openConnection();
-            conn.setConnectTimeout(Consts.FAVICON_TIMEOUT);
-            conn.setReadTimeout(Consts.FAVICON_TIMEOUT);
-            byte[] body = IOUtils.toByteArray(conn);
-            // 要能实际获取到favicon的数据，如果返回是一个html文件，往往是鉴权导致重定向了
-            if (body != null && !FileExtUtils.isHtml(body)) {
-                return url;
-            }
-        } catch (Exception ex) {
-            // 拿不到就算了，不写日志
-        } finally {
-            if (conn != null) {
-                IOUtils.close(conn);
-            }
+        byte[] body = HttpUtils.toByteArray(url);
+        // 要能实际获取到favicon的数据，如果返回是一个html文件，往往是鉴权导致重定向了
+        if (body != null && !FileExtUtils.isHtml(body)) {
+            return url;
         }
         return "";
     }
@@ -353,7 +302,7 @@ public class CommonService implements ApplicationRunner {
         HttpServletResponse response = RequestUtils.getResponse();
         response.setContentType(MediaType.IMAGE_PNG_VALUE);
         try (OutputStream outputStream = response.getOutputStream()) {
-            BufferedImage image = QrCodeUtils.generate(url, 200, 200);
+            BufferedImage image = QrCodeUtils.generate(url, 200);
             ImageIO.write(image, "png", outputStream);
         } catch (Exception ex) {
             throw new ResourceWriteException("二维码写入失败");

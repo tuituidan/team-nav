@@ -1,7 +1,7 @@
 package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.CategoryDto;
-import com.tuituidan.openhub.bean.entity.Category;
+import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CategoryService;
 import java.util.List;
@@ -36,11 +36,23 @@ public class CategoryController {
     /**
      * 查询有效列表
      *
+     * @param keywords keywords
      * @return List
      */
     @GetMapping
-    public ResponseEntity<List<Category>> select() {
-        return ResponseEntity.ok(categoryService.select());
+    public ResponseEntity<List<CategoryVo>> select(String keywords) {
+        return ResponseEntity.ok(categoryService.select(keywords));
+    }
+
+    /**
+     * 查询有效列表
+     *
+     * @return List
+     */
+    @GetMapping("/tree")
+    public ResponseEntity<List<CategoryVo>> selectTree(
+            @RequestParam(required = false) Integer level) {
+        return ResponseEntity.ok(categoryService.selectTree(level));
     }
 
     /**
@@ -52,9 +64,9 @@ public class CategoryController {
      * @return Page
      */
     @GetMapping("/page")
-    public ResponseEntity<Page<Category>> selectPage(String keywords,
+    public ResponseEntity<Page<CategoryVo>> selectPage(String keywords,
             @RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
-        return ResponseEntity.ok(categoryService.selectPage(keywords, pageIndex, pageSize));
+        return ResponseEntity.ok(categoryService.selectPage(keywords, pageIndex - 1, pageSize));
     }
 
     /**
@@ -79,20 +91,6 @@ public class CategoryController {
     @PatchMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody CategoryDto category) {
         categoryService.save(id, category);
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * update private
-     *
-     * @param id id
-     * @param privateCard privateCard
-     * @return Void
-     */
-    @PatchMapping("/{id}/private/{type}")
-    public ResponseEntity<Void> updatePrivate(@PathVariable("id") String id,
-            @PathVariable("type") Boolean privateCard) {
-        categoryService.updatePrivate(id, privateCard);
         return ResponseEntity.noContent().build();
     }
 

@@ -1,17 +1,21 @@
 package com.tuituidan.openhub.bean.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -26,7 +30,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "T_USER")
+@Table(name = "nav_user", schema = "team_nav")
 @DynamicInsert
 @DynamicUpdate
 public class User implements UserDetails, Serializable {
@@ -34,20 +38,30 @@ public class User implements UserDetails, Serializable {
     private static final long serialVersionUID = -4826666254891063669L;
 
     @Id
-    @Column(name = "C_ID", length = 32)
+    @Column(name = "id", length = 32)
     private String id;
 
-    @Column(name = "C_NICKNAME", length = 100)
+    @Column(name = "nick_name", length = 100)
     private String nickname;
 
-    @Column(name = "C_AVATAR", length = 200)
+    @Column(name = "avatar", length = 200)
     private String avatar;
 
-    @Column(name = "C_USERNAME", length = 100)
+    @Column(name = "user_name", length = 100)
     private String username;
 
-    @Column(name = "C_PASSWORD", length = 100)
+    @Column(name = "password", length = 100)
     private String password;
+
+    @Column(name = "status", length = 100)
+    private String status;
+
+    @Column(name = "update_time")
+    @UpdateTimestamp
+    private LocalDateTime updateTime;
+
+    @Transient
+    private Set<String> roleIds;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

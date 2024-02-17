@@ -11,9 +11,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 /**
  * SecurityConfig.
@@ -27,14 +30,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${login.enable}")
-    private boolean loginEnable;
-
     @Value("${spring.security.permit-url:}")
     private String[] permitUrl;
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private LoginSuccessHandler loginSuccessHandler;
 
     /**
      * filterChain
@@ -47,19 +50,30 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
         http.csrf().disable();
-        if (!loginEnable) {
-            return http.authorizeRequests().anyRequest().permitAll().and().build();
-        }
         http.userDetailsService(userService);
-        http.formLogin().loginPage("/login").loginProcessingUrl("/api/v1/login");
-        http.logout().logoutUrl("/logout").logoutSuccessUrl("/admin/category").deleteCookies("JSESSIONID");
+
+        setLogin(http.formLogin());
+        setLogout(http.logout());
+
         http.authorizeRequests().antMatchers(permitUrl).permitAll();
-        http.authorizeRequests().antMatchers("/admin/**", "/api/v1/**")
-                .authenticated().anyRequest().permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/**").authenticated()
+                .anyRequest()
+                .permitAll();
         http.exceptionHandling().defaultAuthenticationEntryPointFor((request, response, ex) ->
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED),
                 request -> "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With")));
         return http.build();
+    }
+
+    private void setLogin(FormLoginConfigurer<HttpSecurity> login) {
+        loginSuccessHandler.setTargetUrlParameter("returnUrl");
+        login.loginPage("/login").loginProcessingUrl("/login").successHandler(loginSuccessHandler);
+    }
+
+    private void setLogout(LogoutConfigurer<HttpSecurity> logout) {
+        SimpleUrlLogoutSuccessHandler handler = new SimpleUrlLogoutSuccessHandler();
+        handler.setUseReferer(true);
+        logout.logoutUrl("/logout").logoutSuccessHandler(handler).deleteCookies("JSESSIONID");
     }
 
     /**

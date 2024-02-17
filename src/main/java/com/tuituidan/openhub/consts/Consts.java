@@ -31,8 +31,8 @@ public class Consts {
     public static final String DEFAULT_LOGO_PATH = "/assets/images/logo.png";
 
     /**
-     * 获取favicon超时时间
+     * 默认ID
      */
-    public static final int FAVICON_TIMEOUT = 5000;
+    public static final String DEFAULT_ID = "1";
 
 }

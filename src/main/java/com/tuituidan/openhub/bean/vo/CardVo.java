@@ -34,6 +34,8 @@ public class CardVo {
 
     private String url;
 
+    private String tip;
+
     private CardZipDto zip;
 
     private Integer sort;

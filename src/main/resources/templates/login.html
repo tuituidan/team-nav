@@ -1,158 +1,51 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <meta charset="UTF-8">
     <title>登录</title>
-    <link type="text/css" rel="stylesheet" th:href="@{/assets/lib/iview/iview.css}">
-    <link type="text/css" rel="stylesheet" th:href="@{/assets/css/common.css}">
-    <style type="text/css">
-        body {
-            background: #dfe0e2 center url(/assets/images/pattern.jpg) repeat;
-        }
-
-        .card-wrap {
-            width: 350px;
-            margin: 100px auto;
-        }
-
-        .card-wrap .icon-cls {
-            font-weight: bold;
-            width: 20px;
-            font-size: 18px;
-        }
-
-        .remember-me-panel {
-            margin-top: -10px;
-            margin-bottom: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="./assets/css/login.css">
 </head>
 <body>
-<div v-cloak id="app">
-    <Card class="card-wrap" shadow>
-        <p slot="title">
-            <Icon type="md-cafe" size="20" color="green"></Icon>
-            欢迎登录
-        </p>
-        <i-form ref="userForm"
-                :model="userForm"
-                action="/api/v1/login"
-                method="post"
-                @keyup.enter.native="loginHandler()"
-                @submit.native.prevent
-                :rules="ruleCustom">
-            <form-item prop="username">
-                <i-input name="username"
-                         ref="username"
-                         v-model.trim="userForm.username"
-                         placeholder="请输入" size="large">
-                    <Icon type="ios-person-outline" slot="prepend" class="icon-cls"></Icon>
-                </i-input>
-            </form-item>
-            <form-item prop="password">
-                <i-input name="password"
-                         type="password"
-                         v-model.trim="userForm.password"
-                         placeholder="请输入密码" size="large">
-                    <Icon type="ios-lock-outline" slot="prepend" class="icon-cls"></Icon>
-                </i-input>
-            </form-item>
-            <form-item class="remember-me-panel">
-                <Checkbox v-model="rememberMe">记住密码</Checkbox>
-                <Checkbox v-model="autoLogin" :disabled="!rememberMe">自动登录</Checkbox>
-            </form-item>
-            <form-item>
-                <i-button type="primary" @click="loginHandler()" long
-                          :loading="login_loading">登录
-                </i-button>
-            </form-item>
-            <form-item th:if="${errorMsg}">
-                <Alert type="error" show-icon th:text="${errorMsg}"></Alert>
-            </form-item>
-        </i-form>
-    </Card>
+<div class="login-wrapper">
+    <div class="login-content">
+        <div class="login-header">
+            <h1 class="login-header-h2">登录</h1>
+        </div>
+        <div class="login-form-wrapper">
+            <form onsubmit="return handleSubmit()" method="POST"
+                  th:action="${#request.getQueryString() != null ? #request.getRequestURL() + '?' + #request.getQueryString() : #request.getRequestURL()}">
+                <div class="username-wrapper">
+                    <input onfocus="inputFocus()"
+                           class="username username-input-default"
+                           type="text"
+                           name="username"
+                           id="username"
+                           value="admin"
+                           placeholder="请输入用户名">
+                </div>
+                <div class="password-wrapper">
+                    <input onfocus="inputFocus()"
+                           class="password password-input-default"
+                           type="password"
+                           name="password"
+                           id="password"
+                           value="123456"
+                           placeholder="请输入密码">
+                </div>
+                <div class="submit-btn-wrapper">
+                    <img class="btn-loading" src="./assets/images/loading.svg" alt="">
+                    <button type="submit" onclick="handleSubmit()" class="submit-btn">登录</button>
+                </div>
+                <div class="login-error-wrapper">
+                    <p class="login-error opacity1" th:text="${errorMsg}"></p>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-<script type="text/javascript" th:if="${isIe}" th:src="@{/assets/js/babel.min.js}"></script>
-<script type="text/javascript" th:if="${isIe}" th:src="@{/assets/js/polyfill.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/lib/vue.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/lib/iview/iview.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/lib/axios.min.js}"></script>
-<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:src="@{/assets/js/vue-utils.js}"></script>
-<script th:type="${isIe?'text/babel':'text/javascript'}" charset="UTF-8" th:inline="javascript">
-    const errMsg = /*[[${errorMsg}]]*/ '';
-    new Vue({
-        el: '#app',
-        data() {
-            return {
-                login_loading: false,
-                rememberMe: false,
-                autoLogin: false,
-                userForm: {
-                    username: '',
-                    password: ''
-                },
-                ruleCustom: {
-                    username: [
-                        {required: true, message: '用户名不能为空', trigger: 'blur'}
-                    ],
-                    password: [
-                        {required: true, message: '密码不能为空', trigger: 'blur'}
-                    ]
-                }
-            }
-        },
-        watch: {
-            rememberMe(val) {
-                if (!val) {
-                    this.autoLogin = false
-                }
-            }
-        },
-        mounted() {
-            if (localStorage.rememberMe === 'true') {
-                this.userForm.username = localStorage.username;
-                this.userForm.password = localStorage.password;
-                this.rememberMe = true;
-                if (localStorage.autoLogin === 'true') {
-                    this.autoLogin = true;
-                    if (!errMsg) {
-                        this.$nextTick(() => {
-                            this.loginHandler();
-                        })
-                    }
-                }
-            }
-            this.$refs.username.focus({cursor: 'end'});
-        },
-        methods: {
-            loginHandler() {
-                this.login_loading = true;
-                this.$refs.userForm.validate(valid => {
-                    if (!valid) {
-                        this.login_loading = false;
-                        return;
-                    }
-                    if (this.rememberMe) {
-                        localStorage.username = this.userForm.username;
-                        localStorage.password = this.userForm.password;
-                        localStorage.rememberMe = this.rememberMe;
-                        if (this.autoLogin) {
-                            localStorage.autoLogin = this.autoLogin
-                        } else {
-                            delete localStorage.autoLogin;
-                        }
-                    } else {
-                        delete localStorage.username;
-                        delete localStorage.password;
-                        delete localStorage.rememberMe;
-                    }
-                    this.$refs.userForm.$el.submit();
-                });
-
-            }
-        }
-    });
-</script>
 </body>
+<script type="application/javascript" src="./assets/js/login.js">
+</script>
 </html>
+
+

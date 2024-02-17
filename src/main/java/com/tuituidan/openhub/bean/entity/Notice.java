@@ -22,7 +22,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "T_NOTICE")
+@Table(name = "nav_notice", schema = "team_nav")
 @DynamicUpdate
 @DynamicInsert
 public class Notice implements ISortEntity<Notice> {
@@ -30,15 +30,15 @@ public class Notice implements ISortEntity<Notice> {
     private static final long serialVersionUID = 5686996589966592484L;
 
     @Id
-    @Column(name = "C_ID", length = 32)
+    @Column(name = "id", length = 32)
     private String id;
 
-    @Column(name = "C_CONTENT", length = 400)
+    @Column(name = "content", length = 400)
     private String content;
 
-    @Column(name = "DT_ENDTIME")
+    @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Column(name = "N_SORT")
+    @Column(name = "sort")
     private Integer sort;
 }

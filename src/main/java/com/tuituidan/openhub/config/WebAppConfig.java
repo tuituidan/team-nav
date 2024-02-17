@@ -4,6 +4,7 @@ import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.util.StringExtUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -22,7 +23,11 @@ public class WebAppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/ext-resources/**")
                 .addResourceLocations(StringExtUtils.format("file:{}/ext-resources/",
                         Consts.ROOT_DIR));
+    }
 
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/docs").setViewName("forward:/docs/index.html");
     }
 
 }

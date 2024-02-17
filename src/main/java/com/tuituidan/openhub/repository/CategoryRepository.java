@@ -2,10 +2,11 @@ package com.tuituidan.openhub.repository;
 
 import com.tuituidan.openhub.bean.entity.Category;
 import java.util.List;
+import java.util.Set;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * CategoryRepository.
@@ -14,18 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
  * @version 1.0
  * @date 2020/10/2
  */
-public interface CategoryRepository extends JpaRepository<Category, String> {
+public interface CategoryRepository extends JpaRepository<Category, String>, JpaSpecificationExecutor<Category> {
 
     /**
-     * updatePrivate.
+     * findByPid
      *
-     * @param privateCard privateCard
-     * @param id id
+     * @param pid pid
+     * @return List
      */
-    @Modifying
-    @Transactional(rollbackFor = Exception.class)
-    @Query("update Category set privateCard = ?1 where id in (?2)")
-    void updatePrivate(Boolean privateCard, List<String> id);
+    List<Category> findByPid(String pid);
+
+    /**
+     * findByPid
+     *
+     * @param pids pids
+     * @return List
+     */
+    List<Category> findByPidIn(Set<String> pids);
 
     /**
      * getMaxSort
@@ -35,5 +41,22 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
      */
     @Query("select coalesce(max(sort),0) from Category where valid = ?1")
     Integer getMaxSort(Boolean valid);
+
+    /**
+     * 根据级别查询
+     *
+     * @param level level
+     * @return List
+     */
+    List<Category> findByValidTrueAndLevelLessThanEqual(Integer level);
+
+    /**
+     * findByValidTrue
+     *
+     * @return List
+     */
+    List<Category> findByValidTrueOrderBySort();
+
+    List<Category> findByValidTrue(Sort sort);
 
 }

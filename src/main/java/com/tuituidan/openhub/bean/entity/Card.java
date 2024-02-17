@@ -23,7 +23,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "T_CARD")
+@Table(name = "nav_card", schema = "team_nav")
 @DynamicInsert
 @DynamicUpdate
 public class Card implements ISortEntity<Card> {
@@ -31,30 +31,30 @@ public class Card implements ISortEntity<Card> {
     private static final long serialVersionUID = -4281175586987550016L;
 
     @Id
-    @Column(name = "C_ID", length = 32)
+    @Column(name = "id", length = 32)
     private String id;
 
-    @Column(name = "C_TYPE", length = 100)
+    @Column(name = "type", length = 100)
     private String type;
 
-    @Column(name = "C_CATEGORY", length = 32)
+    @Column(name = "category", length = 32)
     private String category;
 
-    @Column(name = "C_ICON", length = 400)
+    @Column(name = "icon", length = 400)
     private CardIconDto icon;
 
-    @Column(name = "C_TITLE", length = 200)
+    @Column(name = "title", length = 200)
     private String title;
 
-    @Column(name = "C_CONTENT", length = 400)
+    @Column(name = "content", length = 400)
     private String content;
 
-    @Column(name = "C_URL", length = 200)
+    @Column(name = "url", length = 200)
     private String url;
 
-    @Column(name = "C_ZIP", length = 400)
+    @Column(name = "zip", length = 600)
     private CardZipDto zip;
 
-    @Column(name = "N_SORT")
+    @Column(name = "sort")
     private Integer sort;
 }

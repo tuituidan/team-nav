@@ -1,0 +1,217 @@
+
+html {
+    line-height: 1.15;
+    /* 1 */
+    -webkit-text-size-adjust: 100%;
+    /* 2 */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-width: 278px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Liberation Sans", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei, SimSun, "WenQuanYi Zen Hei Sharp", sans-serif;
+    font-size: 14px;
+    line-height: 1.33;
+    background: #dfe0e2 center url(../images/pattern.jpg) repeat;;
+}
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+img {
+    border-style: none;
+}
+
+
+button, input {
+    font-family: inherit;
+    /* 1 */
+    font-size: 100%;
+    /* 1 */
+    line-height: 1.15;
+    /* 1 */
+    margin: 0;
+    /* 2 */
+}
+
+
+button, input {
+    /* 1 */
+    overflow: visible;
+}
+
+
+button {
+    /* 1 */
+    text-transform: none;
+}
+
+
+button, [type="button"], [type="reset"], [type="submit"] {
+    -webkit-appearance: button;
+}
+
+
+button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+
+
+button:-moz-focusring, [type="button"]:-moz-focusring, [type="reset"]:-moz-focusring, [type="submit"]:-moz-focusring {
+    outline: 1px dotted ButtonText;
+}
+
+[hidden] {
+    display: none;
+}
+
+
+/* 代码*/
+
+.login-wrapper {
+    display: flex;
+    width: 480px;
+    height: 360px;
+    background: #fff;
+    box-shadow: 0 20px 80px 0 rgba(0, 0, 0, 0.3);
+    margin: 50px auto 0 auto;
+}
+
+.login-content {
+    color: #666;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px 75px 48px;
+}
+
+.login-header {
+    display: flex;
+}
+
+.login-header-h2 {
+    flex: 1;
+    margin-top: 20px;
+    text-align: center;
+    color: #666666;
+}
+
+.login-form-wrapper {
+    margin-top: 0;
+}
+
+.username-input-default {
+    box-sizing: border-box;
+    padding-left: 20px;
+    margin-top: 10px;
+    width: 100%;
+    height: 45px;
+    outline: none;
+    line-height: 45px;
+    border: 1px solid #e5e5e5;
+    border-radius: 0 0.2857rem 0.2857rem 0;
+    background: #ffffff;
+}
+
+.username-input-default::-webkit-input-placeholder {
+    color: #b3b3b3;
+}
+
+.username-input-default:-moz-placeholder {
+    color: #b3b3b3;
+}
+
+.username-input-default::-moz-placeholder {
+    color: #b3b3b3;
+}
+
+.username-input-default::-ms-input-placeholder {
+    color: #b3b3b3;
+}
+
+.password-input-default {
+    box-sizing: border-box;
+    padding-left: 20px;
+    margin-top: 5px;
+    width: 100%;
+    height: 45px;
+    outline: none;
+    line-height: 45px;
+    border: 1px solid #e5e5e5;
+    border-radius: 0 0.2857rem 0.2857rem 0;
+    background: #ffffff;
+}
+
+.password-input-default::-webkit-input-placeholder {
+    color: #b3b3b3;
+}
+
+.password-input-default:-moz-placeholder {
+    color: #b3b3b3;
+}
+
+.password-input-default::-moz-placeholder {
+    color: #b3b3b3;
+}
+
+.password-input-default::-ms-input-placeholder {
+    color: #b3b3b3;
+}
+
+.password-wrapper {
+    margin-top: 15px;
+}
+
+.submit-btn-wrapper {
+    margin-top: 25px;
+    position: relative;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 10px 26px;
+    color: #fff;
+    background: #78b2ff;
+    font-size: 20px;
+    line-height: 25px;
+    font-weight: 500;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 25px;
+    letter-spacing: 4px;
+}
+
+.btn-loading {
+    position: absolute;
+    left: 60%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 18px;
+    display: none;
+}
+
+.login-error-wrapper {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.login-error {
+    height: 18px;
+    margin: 5px 0 0 0;
+    color: #d95c5c;
+}
+
+.opacity0 {
+    opacity: 0;
+    transition: opacity .5s;
+}
+
+.opacity1 {
+    opacity: 1;
+    transition: opacity .5s;
+}

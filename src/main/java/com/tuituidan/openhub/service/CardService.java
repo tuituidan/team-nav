@@ -4,14 +4,16 @@ import com.tuituidan.openhub.bean.dto.CardDto;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
-import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
-import com.tuituidan.openhub.bean.vo.CardTreeVo;
 import com.tuituidan.openhub.bean.vo.CardVo;
+import com.tuituidan.openhub.bean.vo.CategoryVo;
+import com.tuituidan.openhub.bean.vo.HomeDataVo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
+import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,8 +23,10 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -31,6 +35,7 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -55,6 +60,12 @@ public class CardService {
     private CategoryService categoryService;
 
     @Resource
+    private CacheService cacheService;
+
+    @Resource
+    private CategoryRepository categoryRepository;
+
+    @Resource
     private CardTypeServiceFactory cardTypeServiceFactory;
 
     @Resource
@@ -66,39 +77,79 @@ public class CardService {
      * @param keywords keywords
      * @return List
      */
-    public List<CardTreeVo> tree(String keywords) {
-        List<Category> categories = categoryService.select();
+    public HomeDataVo tree(String keywords) {
+        List<Category> categories = categoryRepository.findByValidTrueOrderBySort();
         if (CollectionUtils.isEmpty(categories)) {
-            return Collections.emptyList();
+            return new HomeDataVo(Collections.emptyList(), Collections.emptyList());
         }
+        Map<String, List<CardVo>> cardMap = getCardMap(keywords);
+        if (MapUtils.isEmpty(cardMap)) {
+            return new HomeDataVo(Collections.emptyList(), Collections.emptyList());
+        }
+        List<CategoryVo> categoryList = collectCards(categories, cardMap);
+        List<CategoryVo> rightList = new ArrayList<>();
+        Map<String, CategoryVo> lowMap = new HashMap<>();
+        for (CategoryVo item : categoryList) {
+            if (item.getLevel() <= 2) {
+                rightList.add(item);
+                continue;
+            }
+            lowMap.computeIfAbsent(item.getPid(), key -> {
+                Category parent = cacheService.getCategory(key);
+                CategoryVo convert = BeanExtUtils.convert(parent, CategoryVo::new);
+                convert.setFlatSort(StringUtils.leftPad(parent.getSort().toString(), 2, '0'));
+                convert.setChildren(new ArrayList<>());
+                return convert;
+            }).getChildren().add(item);
+        }
+        rightList.addAll(lowMap.values());
+        Collection<CategoryVo> menus = buildMenus(rightList);
+        rightList.sort(Comparator.comparing(CategoryVo::getFlatSort));
+        return new HomeDataVo(ListUtils.buildTree(menus), rightList);
+    }
+
+    private List<CategoryVo> collectCards(List<Category> categories, Map<String, List<CardVo>> cardMap) {
+        return categories.stream().filter(item -> cardMap.containsKey(item.getId()))
+                .map(item -> {
+                    CategoryVo vo = BeanExtUtils.convert(item, CategoryVo::new);
+                    List<CardVo> cardList = cardMap.get(vo.getId());
+                    cardList.sort(Comparator.comparing(CardVo::getSort));
+                    vo.setCards(cardList);
+                    vo.setCardCount((long) cardList.size());
+                    vo.setFlatSort(StringUtils.leftPad(item.getSort().toString(), 2, '0'));
+                    return vo;
+                }).collect(Collectors.toList());
+    }
+
+    private Collection<CategoryVo> buildMenus(List<CategoryVo> highList) {
+        Map<String, CategoryVo> menus = new HashMap<>();
+        for (CategoryVo item : highList) {
+            menus.put(item.getId(), BeanExtUtils.convert(item, CategoryVo::new));
+            if ("0".equals(item.getPid())) {
+                continue;
+            }
+            Category parent = cacheService.getCategory(item.getPid());
+            item.setFlatSort(StringUtils.leftPad(parent.getSort().toString(), 2, '0') + item.getFlatSort());
+            item.setName(parent.getName() + " / " + item.getName());
+            menus.computeIfAbsent(item.getPid(), key -> BeanExtUtils.convert(parent, CategoryVo::new));
+        }
+        return menus.values();
+    }
+
+    private Map<String, List<CardVo>> getCardMap(String keywords) {
         List<Card> cards = StringUtils.isBlank(keywords)
                 ? cardRepository.findAll() : cardRepository.findByKeywords(keywords.toLowerCase());
         if (CollectionUtils.isEmpty(cards)) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
-        Map<String, List<Card>> cardMap = cards.stream().collect(Collectors.groupingBy(Card::getCategory));
-        return categories.stream()
-                .map(category -> BeanExtUtils.convert(category, CardTreeVo::new)
-                        .setChildren(setCardChildren(cardMap.get(category.getId()))))
-                .filter(item -> CollectionUtils.isNotEmpty(item.getChildren()))
-                .sorted(Comparator.comparing(CardTreeVo::getSort)).collect(Collectors.toList());
-    }
-
-    private List<CardTreeChildVo> setCardChildren(List<Card> cardList) {
-        if (CollectionUtils.isEmpty(cardList)) {
-            return Collections.emptyList();
-        }
-        List<CardTreeChildVo> result = new ArrayList<>();
-        for (Card card : cardList) {
-            CardTreeChildVo vo = BeanExtUtils.convert(card, CardTreeChildVo::new);
-            cardTypeServiceFactory.getService(card.getType()).formatCardVo(vo);
+        return cards.stream().map(item -> {
+            CardVo vo = BeanExtUtils.convert(item, CardVo::new);
+            cardTypeServiceFactory.getService(item.getType()).formatCardVo(vo);
             vo.setTip(Stream.of(vo.getTitle(), vo.getContent(), vo.getUrl())
                     .filter(StringUtils::isNotBlank).distinct()
-                    .collect(Collectors.joining("\n")));
-            result.add(vo);
-        }
-        result.sort(Comparator.comparing(CardTreeChildVo::getSort));
-        return result;
+                    .collect(Collectors.joining("<br/>")));
+            return vo;
+        }).collect(Collectors.groupingBy(CardVo::getCategory));
     }
 
     /**
@@ -108,12 +159,12 @@ public class CardService {
      * @return List
      */
     public List<CardVo> select(String category) {
-        List<Card> list = cardRepository.findByCategoryOrderBySortAsc(category);
+        List<Card> list = cardRepository.findByCategory(category);
         return list.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new);
-            vo.setCategoryName(categoryService.get(item.getCategory()).getName());
+            vo.setCategoryName(categoryService.buildCategoryName(item.getCategory()));
             return vo;
-        }).collect(Collectors.toList());
+        }).sorted(Comparator.comparing(CardVo::getSort)).collect(Collectors.toList());
     }
 
     /**
@@ -162,7 +213,8 @@ public class CardService {
      * @param after 调整后的索引
      */
     public void changeSort(String category, int before, int after) {
-        Supplier<List<Card>> supplier = () -> cardRepository.findByCategoryOrderBySortAsc(category);
+        Supplier<List<Card>> supplier = () -> cardRepository.findByCategory(category).stream()
+                .sorted(Comparator.comparing(Card::getSort)).collect(Collectors.toList());
         List<Card> updateList = commonService.changeSort(supplier, before, after);
         if (CollectionUtils.isEmpty(updateList)) {
             return;

@@ -1,15 +1,30 @@
 package com.tuituidan.openhub.service;
 
 import com.tuituidan.openhub.bean.dto.ChangePassword;
+import com.tuituidan.openhub.bean.dto.UserDto;
+import com.tuituidan.openhub.bean.entity.RoleUser;
 import com.tuituidan.openhub.bean.entity.User;
+import com.tuituidan.openhub.bean.vo.UserVo;
+import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.repository.RoleUserRepository;
 import com.tuituidan.openhub.repository.UserRepository;
-import com.tuituidan.openhub.util.SecurityUtils;
+import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.StringExtUtils;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
-import org.apache.commons.lang3.BooleanUtils;
+import javax.persistence.criteria.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,35 +45,109 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    private RoleUserRepository roleUserRepository;
+
+    @Resource
+    private CacheService cacheService;
+
     @Value("${spring.security.user.name}")
-    private String username;
+    private String defUsername;
 
     @Value("${spring.security.user.password}")
-    private String password;
-
-    @Value("${change-password.enable}")
-    private Boolean changePwdEnable;
+    private String defPassword;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        User user = get();
-        // 不支持在线修改密码，则每次都会读取配置，使得通过配置修改密码生效
-        if (BooleanUtils.isNotTrue(changePwdEnable)
-                || StringUtils.isBlank(user.getPassword())) {
-            // 加载默认配置，兼容老版本
-            user.setNickname(SecurityUtils.DEFAULT_USER.getNickname());
-            user.setAvatar(SecurityUtils.DEFAULT_USER.getAvatar());
-            user.setUsername(username);
-            user.setPassword(new BCryptPasswordEncoder().encode(password));
-            userRepository.save(user);
+        insertDefaultUser();
+    }
+
+    private void insertDefaultUser() {
+        if (userRepository.findById(Consts.DEFAULT_ID).isPresent()) {
+            return;
         }
+        userRepository.save(new User().setId(Consts.DEFAULT_ID)
+                .setUsername(defUsername)
+                .setNickname("管理员")
+                .setAvatar("/assets/images/header.png")
+                .setPassword(new BCryptPasswordEncoder().encode(defPassword)));
+    }
+
+    /**
+     * 分页查询用户
+     *
+     * @param keywords keywords
+     * @param pageIndex pageIndex
+     * @param pageSize pageSize
+     * @return Page
+     */
+    public Page<UserVo> selectPage(String keywords, Integer pageIndex, Integer pageSize) {
+        Specification<User> search = (root, query, builder) -> {
+            Predicate predicate = builder.conjunction();
+            if (StringUtils.isNotBlank(keywords)) {
+                predicate.getExpressions().add(builder.or(builder.like(root.get("username"), "%" + keywords + "%"),
+                        builder.like(root.get("nickname"), "%" + keywords + "%")));
+            }
+            return predicate;
+        };
+        Page<User> users = userRepository.findAll(search, PageRequest.of(pageIndex, pageSize, Sort.by("updateTime").descending()));
+        return users.map(user ->
+                BeanExtUtils.convert(user, UserVo::new)
+                        .setRoles(cacheService.getRolesByUserId(user.getId()))
+        );
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = get();
-        Assert.isTrue(StringUtils.equals(username, user.getUsername()), "用户名或密码错误");
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("用户名或密码错误");
+        }
         return user;
+    }
+
+    /**
+     * 保存
+     *
+     * @param id id
+     * @param userDto userDto
+     */
+    public void save(String id, UserDto userDto) {
+        Assert.isTrue(!StringUtils.equalsIgnoreCase(userDto.getUsername(), "admin"), "默认管理员不可操作");
+        User user;
+        User exitUser = userRepository.findByUsername(userDto.getUsername());
+        if (StringUtils.isBlank(id)) {
+            Assert.isTrue(exitUser == null, "登录账号已存在");
+            user = BeanExtUtils.convert(userDto, User::new);
+            user.setId(StringExtUtils.getUuid());
+            user.setPassword(new BCryptPasswordEncoder().encode(defPassword));
+        } else {
+            user = userRepository.getReferenceById(id);
+            Assert.isTrue(StringUtils.equals(exitUser.getId(), id), "登录账号已存在");
+            BeanExtUtils.copyNotNullProperties(userDto, user);
+            roleUserRepository.deleteByUserId(user.getId());
+        }
+        roleUserRepository.saveAll(Arrays.stream(userDto.getRoleIds())
+                .map(roleId -> new RoleUser().setRoleId(roleId)
+                        .setUserId(user.getId())).collect(Collectors.toList()));
+        userRepository.save(user);
+        cacheService.getUserRolesCache().invalidate(user.getId());
+    }
+
+    /**
+     * 删除
+     *
+     * @param id id
+     */
+    public void delete(String[] id) {
+        List<String> ids = Arrays.asList(id);
+        Set<String> usernames = userRepository.findAllById(ids).stream()
+                .map(User::getUsername)
+                .collect(Collectors.toSet());
+        Assert.isTrue(!CollectionUtils.containsAny(usernames, "admin"), "默认管理员不可操作");
+        userRepository.deleteAllById(Arrays.asList(id));
+        roleUserRepository.deleteByUserIdIn(ids);
+        cacheService.getUserRolesCache().invalidateAll(ids);
     }
 
     /**
@@ -67,7 +156,8 @@ public class UserService implements UserDetailsService, ApplicationRunner {
      * @param changePassword changePassword
      */
     public void changePassword(ChangePassword changePassword) {
-        User user = get();
+        User user = userRepository.getReferenceById(changePassword.getId());
+        Assert.notNull(user, "用户获取失败");
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Assert.isTrue(passwordEncoder.matches(changePassword.getOldPassword(),
                 user.getPassword()), "原密码不匹配");
@@ -75,9 +165,15 @@ public class UserService implements UserDetailsService, ApplicationRunner {
         userRepository.save(user);
     }
 
-    private User get() {
-        return userRepository.findAll().stream().findFirst()
-                .orElse(new User().setId("1"));
+    /**
+     * resetPassword
+     *
+     * @param ids ids
+     */
+    public void resetPassword(String[] ids) {
+        List<User> users = userRepository.findAllById(Arrays.asList(ids));
+        users.forEach(user -> user.setPassword(new BCryptPasswordEncoder().encode(defPassword)));
+        userRepository.saveAll(users);
     }
 
 }

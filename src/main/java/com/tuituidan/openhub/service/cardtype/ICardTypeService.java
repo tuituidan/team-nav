@@ -1,7 +1,7 @@
 package com.tuituidan.openhub.service.cardtype;
 
 import com.tuituidan.openhub.bean.entity.Card;
-import com.tuituidan.openhub.bean.vo.CardTreeChildVo;
+import com.tuituidan.openhub.bean.vo.CardVo;
 
 /**
  * 类型接口，方便扩展.
@@ -17,7 +17,7 @@ public interface ICardTypeService {
      *
      * @param cardVo cardVo
      */
-    void formatCardVo(CardTreeChildVo cardVo);
+    void formatCardVo(CardVo cardVo);
 
     /**
      * supplySave

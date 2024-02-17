@@ -22,7 +22,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table(name = "T_SETTING")
+@Table(name = "nav_setting", schema = "team_nav")
 @DynamicInsert
 @DynamicUpdate
 public class Setting implements Serializable {
@@ -30,27 +30,26 @@ public class Setting implements Serializable {
     private static final long serialVersionUID = -6313930717204077701L;
 
     @Id
-    @Column(name = "C_ID", length = 32)
+    @Column(name = "id", length = 32)
     private String id;
 
-    @Column(name = "C_NGINX_OPEN")
+    @Column(name = "nginx_open")
     private Boolean nginxOpen;
 
-    @Column(name = "C_NGINX_URL", length = 200)
+    @Column(name = "nginx_url", length = 200)
     private String nginxUrl;
 
-    @Column(name = "C_NAV_NAME", length = 200)
+    @Column(name = "nav_name", length = 200)
     private String navName;
 
-    @Column(name = "N_CUTOVER_SPEED")
+    @Column(name = "cut_over_speed")
     private Integer cutOverSpeed;
 
-    @Column(name = "C_LOGO_PATH", length = 400)
+    @Column(name = "logo_path", length = 400)
     private String logoPath;
 
-    @Column(name = "C_LOGO_TO_FAVICON")
+    @Column(name = "logo_to_favicon")
     private Boolean logoToFavicon;
 
-    @Column(name = "C_LAYOUTSIZE", length = 50)
-    private String layoutSize;
+
 }

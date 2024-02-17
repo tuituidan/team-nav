@@ -15,15 +15,20 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class CardTreeVo {
+public class CardTreeVo implements TreeData<CardTreeVo> {
 
     private String id;
+
+    private String pid;
+
+    private Integer sort;
 
     private String icon;
 
     private String name;
 
-    private Integer sort;
+    private List<CardTreeChildVo> cards;
 
-    private List<CardTreeChildVo> children;
+    private List<CardTreeVo> children;
+
 }

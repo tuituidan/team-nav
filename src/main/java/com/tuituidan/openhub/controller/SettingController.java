@@ -1,10 +1,8 @@
 package com.tuituidan.openhub.controller;
 
-import com.tuituidan.openhub.bean.dto.ChangePassword;
 import com.tuituidan.openhub.bean.dto.SettingDto;
 import com.tuituidan.openhub.bean.entity.Setting;
 import com.tuituidan.openhub.service.SettingService;
-import com.tuituidan.openhub.service.UserService;
 import javax.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +26,6 @@ public class SettingController {
     @Resource
     private SettingService settingService;
 
-    @Resource
-    private UserService userService;
-
     /**
      * 获取配置
      *
@@ -51,18 +46,6 @@ public class SettingController {
     public ResponseEntity<Void> saveSetting(@RequestBody SettingDto settingDto) {
         settingService.saveSetting(settingDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    /**
-     * changePassword
-     *
-     * @param changePassword changePassword
-     * @return Void
-     */
-    @PatchMapping("/user/password")
-    public ResponseEntity<Void> changePassword(@RequestBody ChangePassword changePassword) {
-        userService.changePassword(changePassword);
-        return ResponseEntity.noContent().build();
     }
 
 }

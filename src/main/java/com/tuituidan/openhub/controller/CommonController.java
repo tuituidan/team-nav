@@ -1,8 +1,10 @@
 package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.LoginDto;
+import com.tuituidan.openhub.bean.vo.VersionInfo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CommonService;
+import com.tuituidan.openhub.task.VersionCheckTask;
 import java.io.IOException;
 import java.util.List;
 import javax.annotation.Resource;
@@ -30,6 +32,9 @@ public class CommonController {
 
     @Resource
     private CommonService commonService;
+
+    @Resource
+    private VersionCheckTask versionCheckTask;
 
     /**
      * 文件上传
@@ -75,16 +80,6 @@ public class CommonController {
      *
      * @return List
      */
-    @GetMapping("/category/icons")
-    public ResponseEntity<List<String>> categoryIcons() {
-        return ResponseEntity.ok(commonService.categoryIcons());
-    }
-
-    /**
-     * 获取分类的图标
-     *
-     * @return List
-     */
     @GetMapping("/card/icons")
     public ResponseEntity<List<String>> cardIcons() {
         return ResponseEntity.ok(commonService.cardIcons());
@@ -120,6 +115,16 @@ public class CommonController {
     @PostMapping("/quick/login")
     public ResponseEntity<Boolean> quickLogin(@RequestBody LoginDto loginDto) {
         return ResponseEntity.ok(commonService.quickLogin(loginDto));
+    }
+
+    /**
+     * getVersionInfo
+     *
+     * @return VersionInfo
+     */
+    @GetMapping("/app/version")
+    public ResponseEntity<VersionInfo> getVersionInfo() {
+        return ResponseEntity.ok(versionCheckTask.getVersionInfo());
     }
 
 }
