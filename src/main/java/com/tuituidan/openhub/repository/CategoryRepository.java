@@ -1,8 +1,8 @@
 package com.tuituidan.openhub.repository;
 
 import com.tuituidan.openhub.bean.entity.Category;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -30,7 +30,7 @@ public interface CategoryRepository extends JpaRepository<Category, String>, Jpa
      * @param pids pids
      * @return List
      */
-    List<Category> findByPidIn(Set<String> pids);
+    List<Category> findByPidIn(Collection<String> pids);
 
     /**
      * getMaxSort

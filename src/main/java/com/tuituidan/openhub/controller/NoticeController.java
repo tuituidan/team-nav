@@ -89,7 +89,7 @@ public class NoticeController {
      * @return Void
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") String[] id) {
         noticeService.delete(id);
         return ResponseEntity.noContent().build();
     }

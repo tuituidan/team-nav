@@ -11,7 +11,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import plugins from './plugins' // plugins
-
+import '@/plugins/directive/table-btn-control'
 import './assets/icons' // icon
 // 分页组件
 import Pagination from "@/components/Pagination";

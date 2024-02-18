@@ -20,7 +20,7 @@
             plain
             icon="el-icon-sort"
             size="small"
-            @click="toggleExpandAll"
+            @click="toggleExpandAll()"
           >展开/折叠
           </el-button>
         </el-col>
@@ -34,16 +34,53 @@
           >新增
           </el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            icon="el-icon-edit"
+            v-btn-single="selections"
+            @click="openDialog(selections[0])"
+          >修改
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="warning"
+            plain
+            size="small"
+            icon="el-icon-remove-outline"
+            v-btn-multiple="selections"
+            @click="handleRemove()"
+          >移除
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            size="small"
+            icon="el-icon-delete"
+            v-btn-multiple="selections"
+            @click="handleDelete()"
+          >删除
+          </el-button>
+        </el-col>
       </el-row>
     </el-row>
     <el-table
       stripe
       border
+      ref="dataTable"
       v-loading="loading"
       :data="categoryList"
       row-key="id"
       v-if="refreshTable"
+      @selection-change="selections = $refs.dataTable.selection"
       :default-expand-all="isExpandAll">
+      <el-table-column label="序号" type="index" width="55" align="center"/>
+      <el-table-column type="selection" align="center" width="55"></el-table-column>
       <el-table-column prop="name" label="分类名称" :show-overflow-tooltip="true" width="300"></el-table-column>
       <el-table-column prop="icon" label="图标" align="center" width="100">
         <template slot-scope="scope">
@@ -82,33 +119,22 @@
             @click="openDialog({pid:scope.row.id})"
           >新增
           </el-button>
-          <el-popconfirm
-            class="el-confirm-span"
-            title="将移除到历史分类，您确定要移除此项吗？"
-            @confirm="removeItem(scope.row.id)"
-          >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="text"
-              icon="el-icon-remove-outline"
-            >移除
-            </el-button>
-          </el-popconfirm>
-          <el-popconfirm
-            class="el-confirm-span"
-            title="将被永久删除，您确定要删除此项吗？"
-            @confirm="deleteItem(scope.row.id)"
-          >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-            >删除
-            </el-button>
-          </el-popconfirm>
-
+          <el-button
+            slot="reference"
+            size="mini"
+            type="text"
+            icon="el-icon-remove-outline"
+            @click="handleRemove(scope.row)"
+          >移除
+          </el-button>
+          <el-button
+            slot="reference"
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -125,6 +151,8 @@ export default {
   },
   data() {
     return {
+      // 选中数组
+      selections: [],
       // 是否展开，默认全部折叠
       isExpandAll: false,
       // 重新渲染表格状态
@@ -164,20 +192,25 @@ export default {
     openDialog(item) {
       this.$refs.editDialog.open(item);
     },
-    removeItem(id) {
-      this.$http.patch(`/api/v1/category/valid/false`, [id])
-        .then(() => {
-          this.$modal.notifySuccess('已移除到历史分类');
-          this.getList();
-        });
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row ? row.id : this.selections.map(item => item.id).join(',');
+      this.$modal.confirm('将被永久删除，是否确认删除选中的数据项？').then(() => {
+        return this.$http.delete(`/api/v1/category/${ids}`);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      });
     },
-    deleteItem(id) {
-      this.$http.delete(`/api/v1/category/${id}`)
-        .then(() => {
-          this.$modal.notifySuccess('删除成功');
-          this.getList();
-        });
-    }
+    handleRemove(row) {
+      const ids = row ? [row.id] : this.selections.map(item => item.id);
+      this.$modal.confirm('将移除到历史分类，是否确认移除选中的数据项？').then(() => {
+        return this.$http.patch('/api/v1/category/valid/false', ids);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("已移除到历史分类");
+      });
+    },
   }
 }
 </script>

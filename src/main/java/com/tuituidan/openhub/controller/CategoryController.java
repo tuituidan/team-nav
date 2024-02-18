@@ -101,7 +101,7 @@ public class CategoryController {
      * @return Void
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") String[] id) {
         categoryService.delete(id);
         return ResponseEntity.noContent().build();
     }

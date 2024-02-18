@@ -32,8 +32,8 @@
             plain
             size="small"
             icon="el-icon-edit"
-            :disabled="single"
-            @click="openEditDialog()"
+            v-btn-single="selections"
+            @click="openEditDialog(selections[0])"
           >修改
           </el-button>
         </el-col>
@@ -43,7 +43,7 @@
             plain
             size="small"
             icon="el-icon-delete"
-            :disabled="multiple"
+            v-btn-multiple="selections"
             @click="handleDelete"
           >删除
           </el-button>
@@ -54,7 +54,7 @@
             plain
             size="small"
             icon="el-icon-key"
-            :disabled="multiple"
+            v-btn-multiple="selections"
             @click="handleResetPwd"
           >重置密码
           </el-button>
@@ -67,7 +67,8 @@
       ref="dataTable"
       v-loading="loading"
       :data="table.dataList"
-      @selection-change="handleSelectionChange">
+      @selection-change="selections = $refs.dataTable.selection">
+      <el-table-column label="序号" type="index" width="55" align="center" />
       <el-table-column type="selection" width="50" align="center" :selectable="tableSelectable"/>
       <el-table-column label="登录账号" align="center" prop="username"
                        :show-overflow-tooltip="true"/>
@@ -89,7 +90,10 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="140" class-name="small-padding fixed-width">
+      <el-table-column label="操作"
+                       align="center"
+                       width="140"
+                       class-name="small-padding fixed-width">
         <template slot-scope="scope" v-if="scope.row.username!=='admin'">
           <el-button
             size="mini"
@@ -131,11 +135,7 @@ export default {
       // 遮罩层
       loading: true,
       // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
+      selections: [],
       // 查询参数
       queryParam: {
         pageIndex: 0,
@@ -161,12 +161,6 @@ export default {
           this.loading = false;
         });
     },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
-    },
     /** 修改按钮操作 */
     openEditDialog(row) {
       this.$refs.refUser.open(row);
@@ -176,7 +170,7 @@ export default {
     },
     /** 重置密码按钮操作 */
     handleResetPwd(row) {
-      const userIds = row.id || this.ids.join(',');
+      const userIds = row.id || this.selections.map(item => item.id).join(',');
       this.$modal.confirm('是否确认重置选中用户的密码？').then(() => {
         return this.$http.patch(`/api/v1/user/${userIds}/actions/reset-password`);
       }).then(() => {
@@ -186,7 +180,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const userIds = row.id || this.ids.join(',');
+      const userIds = row.id || this.selections.map(item => item.id).join(',');
       this.$modal.confirm('是否确认删除选中数据项？').then(() => {
         return this.$http.delete(`/api/v1/user/${userIds}`);
       }).then(() => {

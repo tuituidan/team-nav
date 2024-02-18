@@ -7,6 +7,7 @@ import com.tuituidan.openhub.repository.NoticeRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -96,8 +97,8 @@ public class NoticeService {
      *
      * @param id id
      */
-    public void delete(String id) {
-        noticeRepository.deleteById(id);
+    public void delete(String[] id) {
+        noticeRepository.deleteAllById(Arrays.asList(id));
     }
 
 }

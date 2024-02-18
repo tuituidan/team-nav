@@ -103,7 +103,7 @@ public class CardController {
      * @return Void
      */
     @DeleteMapping("/card/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") String[] id) {
         cardService.delete(id);
         return ResponseEntity.noContent().build();
     }

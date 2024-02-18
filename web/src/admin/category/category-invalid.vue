@@ -18,13 +18,24 @@
       <el-row :gutter="10" class="mb8 mt5">
         <el-col :span="1.5">
           <el-button
-            type="info"
-            class="ivu-info-style"
+            type="primary"
             plain
             size="small"
             icon="el-icon-circle-plus-outline"
-            @click="batchSetValid()"
-          >批量还原
+            v-btn-multiple="selections"
+            @click="handleRecover()"
+          >还原
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            size="small"
+            icon="el-icon-delete"
+            v-btn-multiple="selections"
+            @click="handleDelete()"
+          >删除
           </el-button>
         </el-col>
       </el-row>
@@ -34,6 +45,7 @@
       border
       ref="dataTable"
       v-loading="loading"
+      @selection-change="selections = $refs.dataTable.selection"
       :data="table.dataList">
       <el-table-column label="序号" type="index" width="55" align="center"/>
       <el-table-column type="selection" align="center" width="55"></el-table-column>
@@ -63,22 +75,17 @@
             size="mini"
             type="text"
             icon="el-icon-circle-plus-outline"
-            @click="batchSetValid(scope.row.id)"
+            @click="handleRecover(scope.row)"
           >还原
           </el-button>
-          <el-popconfirm
-            class="el-confirm-span"
-            title="将被永久删除，您确定要删除此项吗？"
-            @confirm="deleteItem(scope.row.id)"
-          >
-            <el-button
-              slot="reference"
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-            >删除
-            </el-button>
-          </el-popconfirm>
+          <el-button
+            slot="reference"
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,6 +106,8 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      // 选中数组
+      selections: [],
       // 查询参数
       queryParam: {
         pageIndex: 0,
@@ -124,17 +133,8 @@ export default {
           this.loading = false;
         });
     },
-    batchSetValid(id) {
-      let ids;
-      if (id) {
-        ids = [id];
-      } else {
-        ids = this.$refs.dataTable.selection.map(it => it.id);
-      }
-      if (!ids.length) {
-        this.$modal.notifyWarning('请选择要还原的项');
-        return;
-      }
+    handleRecover(row) {
+      const ids = row ? [row.id] : this.selections.map(item => item.id);
       this.$http.patch(`/api/v1/category/valid/true`, ids)
         .then(() => {
           this.$modal.notifySuccess('已还原');
@@ -142,12 +142,15 @@ export default {
           this.getList();
         });
     },
-    deleteItem(id) {
-      this.$http.delete(`/api/v1/category/${id}`)
-        .then(() => {
-          this.$modal.notifySuccess('删除成功');
-          this.getList();
-        });
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row ? row.id : this.selections.map(item => item.id).join(',');
+      this.$modal.confirm('将被永久删除，是否确认删除选中的数据项？').then(() => {
+        return this.$http.delete(`/api/v1/category/${ids}`);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      });
     },
   }
 }
@@ -156,17 +159,5 @@ export default {
 <style scoped lang="scss">
 .app-container {
   padding: 0;
-}
-
-.ivu-info-style {
-  color: #2db7f5;
-  background-color: #e8f4ff;
-  border-color: #a3d3ff;
-}
-
-.ivu-info-style:hover {
-  background-color: #2db7f5;
-  color: white;
-  border-color: #2db7f5;
 }
 </style>

@@ -23,14 +23,39 @@
           >新增
           </el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            icon="el-icon-edit"
+            v-btn-single="selections"
+            @click="openDialog(selections[0])"
+          >修改
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            size="small"
+            icon="el-icon-delete"
+            v-btn-multiple="selections"
+            @click="handleDelete()"
+          >删除
+          </el-button>
+        </el-col>
       </el-row>
     </el-row>
     <el-table
       stripe
       border
+      ref="dataTable"
       v-loading="loading"
-      :data="dataList">
+      :data="dataList"
+      @selection-change="selections = $refs.dataTable.selection">
       <el-table-column label="序号" type="index" width="55" align="center"/>
+      <el-table-column type="selection" width="50" align="center"/>
       <el-table-column label="分类" align="center" prop="categoryName" show-overflow-tooltip/>
       <el-table-column label="图标" align="center" width="80" prop="icon" class-name="narrow-padding">
         <template slot-scope="scope">
@@ -81,6 +106,8 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      // 选中数组
+      selections: [],
       dataList: [],
       // 查询参数
       queryParams: {
@@ -104,13 +131,13 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const postIds = row.postId || this.ids;
-      this.$modal.confirm('是否确认删除岗位编号为"' + postIds + '"的数据项？').then(function () {
-        return delPost(postIds);
+      const ids = row ? row.id : this.selections.map(item => item.id).join(',');
+      this.$modal.confirm('是否确认删除选中的数据项？').then(() => {
+        return this.$http.delete(`/api/v1/card/${ids}`);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      })
+      });
     },
   }
 }

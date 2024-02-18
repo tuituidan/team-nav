@@ -11,6 +11,7 @@ import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import com.tuituidan.openhub.util.TransactionUtils;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -191,12 +192,13 @@ public class CategoryService {
      *
      * @param id id
      */
-    public void delete(String id) {
-        List<Category> children = categoryRepository.findByPid(id);
-        Assert.isTrue(CollectionUtils.isEmpty(children), "存在子分类，不允许删除");
-        categoryRepository.deleteById(id);
-        cardRepository.deleteByCategory(id);
-        cacheService.getCategoryCache().invalidate(id);
+    public void delete(String[] id) {
+        List<String> ids = Arrays.asList(id);
+        List<Category> children = categoryRepository.findByPidIn(ids);
+        Assert.isTrue(CollectionUtils.isEmpty(children), "要删除的分类存在子分类，不允许删除");
+        categoryRepository.deleteAllById(ids);
+        cardRepository.deleteByCategoryIn(ids);
+        cacheService.getCategoryCache().invalidateAll(ids);
     }
 
     /**

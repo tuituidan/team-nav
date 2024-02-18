@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.repository;
 
 import com.tuituidan.openhub.bean.entity.Card;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -53,9 +54,9 @@ public interface CardRepository extends JpaRepository<Card, String> {
     /**
      * deleteByCategory
      *
-     * @param categoryId categoryId
+     * @param categoryIds categoryIds
      */
     @Transactional(rollbackFor = Exception.class)
-    void deleteByCategory(String categoryId);
+    void deleteByCategoryIn(Collection<String> categoryIds);
 
 }

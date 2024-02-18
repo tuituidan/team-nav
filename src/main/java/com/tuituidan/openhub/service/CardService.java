@@ -23,6 +23,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -227,10 +228,13 @@ public class CardService {
      *
      * @param id id
      */
-    public void delete(String id) {
-        Card card = cardRepository.findById(id).orElseThrow(NullPointerException::new);
-        cardRepository.deleteById(id);
-        cardTypeServiceFactory.getService(card.getType()).supplyDelete(card);
+    public void delete(String[] id) {
+        List<String> ids = Arrays.asList(id);
+        List<Card> cards = cardRepository.findAllById(ids);
+        cardRepository.deleteAllById(ids);
+        for (Card card : cards) {
+            cardTypeServiceFactory.getService(card.getType()).supplyDelete(card);
+        }
     }
 
 }
