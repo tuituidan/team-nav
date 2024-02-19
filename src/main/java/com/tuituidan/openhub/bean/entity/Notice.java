@@ -33,7 +33,7 @@ public class Notice implements ISortEntity<Notice> {
     @Column(name = "id", length = 32)
     private String id;
 
-    @Column(name = "content", length = 400)
+    @Column(name = "content", columnDefinition = "text")
     private String content;
 
     @Column(name = "end_time")
@@ -41,4 +41,5 @@ public class Notice implements ISortEntity<Notice> {
 
     @Column(name = "sort")
     private Integer sort;
+
 }

@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="title" :visible.sync="show" width="600px" append-to-body :close-on-click-modal="false">
-    <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="100px" @submit.native.prevent>
       <el-row>
         <el-col :span="24">
           <el-form-item label="上级分类" prop="pid">

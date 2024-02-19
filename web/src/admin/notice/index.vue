@@ -51,7 +51,12 @@
         </template>
       </el-table-column>
       <el-table-column label="结束时间" align="center" prop="endTime" />
-      <el-table-column label="状态" align="center" prop="status"></el-table-column>
+      <el-table-column label="状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <el-tag type="success" v-if="scope.row.status || !Boolean(scope.row.endTime)">启用中</el-tag>
+          <el-tag v-else type="danger">已停止</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -69,7 +74,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <edit-dialog ref="editDialog"></edit-dialog>
+    <edit-dialog ref="editDialog" @refresh="getList"></edit-dialog>
   </div>
 </template>
 

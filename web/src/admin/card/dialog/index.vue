@@ -3,7 +3,7 @@
              width="600px"
              :close-on-click-modal="false"
              append-to-body>
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px" @submit.native.prevent>
       <el-form-item label="卡片类型" prop="type">
         <el-radio-group v-model="form.type">
           <el-radio

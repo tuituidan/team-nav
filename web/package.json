@@ -29,6 +29,7 @@
     "nprogress": "0.2.0",
     "qs": "^6.11.2",
     "quill": "1.3.7",
+    "quill-emoji": "^0.2.0",
     "screenfull": "5.0.2",
     "sortablejs": "1.10.2",
     "vue": "2.6.12",

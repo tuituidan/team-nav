@@ -1,13 +1,24 @@
 <template>
-  <el-dialog :title="title" :visible.sync="show" width="800px"
+  <el-dialog :title="title" :visible.sync="show" width="700px"
              :close-on-click-modal="false"
              append-to-body>
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-      <el-form-item label="公告内容" prop="postName">
-        <quill-editor v-model="form.content" placeholder="请输入岗位名称"/>
+    <el-form ref="form" :model="form" :rules="rules" submit.native.prevent label-width="80px">
+      <el-form-item label="公告内容" prop="content">
+        <quill-editor v-model="form.content" @on-change="editorOnchange" placeholder="请输入公告内容"/>
       </el-form-item>
-      <el-form-item label="结束时间" prop="postCode">
-        <el-input v-model="form.endTime" placeholder="请输入编码名称"/>
+      <el-form-item label="结束时间" prop="endTime">
+        <div style="display: flex;align-items: center">
+          <el-date-picker
+            v-model="form.endTime"
+            type="datetime"
+            clearable
+            style="flex: auto"
+            value-format="yyyy-MM-dd HH:mm"
+            format="yyyy-MM-dd HH:mm"
+            placeholder="请选择结束时间">
+          </el-date-picker>
+          <com-tip tip="配置后首页显示的公告内容将出现倒计时"></com-tip>
+        </div>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -21,7 +32,8 @@
 export default {
   name: "index",
   components: {
-    'quill-editor': () => import('@/components/Editor/index.vue')
+    'quill-editor': () => import('@/components/Editor/index.vue'),
+    'com-tip': () => import('@/components/com-tip/index.vue'),
   },
   data() {
     return {
@@ -29,30 +41,44 @@ export default {
       title: "",
       // 是否显示弹出层
       show: false,
+      contentText: '',
       // 表单参数
-      form: {},
+      form: {
+        endTime: '',
+        content: '',
+      },
       // 表单校验
       rules: {
-        postName: [
-          {required: true, message: "岗位名称不能为空", trigger: "blur"}
+        content: [
+          {required: true, message: "公告内容不能为空", trigger: "blur"},
+          {
+            validator: (rule, value, callback) => {
+              if (!this.contentText) {
+                callback(new Error('公告内容不能为空'));
+                return;
+              }
+              callback();
+            },
+            trigger: 'blur'
+          }
         ],
-        postCode: [
-          {required: true, message: "岗位编码不能为空", trigger: "blur"}
-        ],
-        postSort: [
-          {required: true, message: "岗位顺序不能为空", trigger: "blur"}
-        ]
       }
     }
   },
   methods: {
     open(item){
+      this.reset();
       if(item){
-        this.title = '编辑'
+        this.title = '编辑';
+        this.form = {...item};
       }else {
+        this.form.id = '';
         this.title = '新增'
       }
       this.show = true;
+    },
+    editorOnchange(text){
+      this.contentText = text;
     },
     // 取消按钮
     cancel() {
@@ -62,32 +88,21 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        postId: undefined,
-        postCode: undefined,
-        postName: undefined,
-        postSort: 0,
-        status: "0",
-        remark: undefined
+        id: '',
+        content: '',
+        endTime: '',
       };
-      this.$refs.form.resetFields();
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.postId != undefined) {
-            updatePost(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
+          this.$http.save('/api/v1/notice', {...this.form})
+            .then(() => {
+              this.$modal.notifySuccess('保存成功');
               this.show = false;
-              this.getList();
-            });
-          } else {
-            addPost(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.show = false;
-              this.getList();
-            });
-          }
+              this.$emit('refresh');
+            })
         }
       });
     },

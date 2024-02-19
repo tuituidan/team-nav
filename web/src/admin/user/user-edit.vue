@@ -2,7 +2,7 @@
   <el-dialog :title="title" :visible.sync="show"
              :close-on-click-modal="false"
              width="600px" append-to-body>
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px" @submit.native.prevent>
       <el-form-item label="用户姓名" prop="nickname">
         <el-input v-model="form.nickname" placeholder="请输入用户姓名" maxlength="30"/>
       </el-form-item>

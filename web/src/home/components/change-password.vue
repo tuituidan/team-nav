@@ -2,7 +2,7 @@
   <el-dialog title="修改密码" :visible.sync="show" width="500px"
              :close-on-click-modal="false"
              append-to-body>
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px" @submit.native.prevent>
       <el-form-item label="旧密码" prop="oldPassword">
         <el-input v-model="form.oldPassword" placeholder="请输入旧密码" type="password" show-password/>
       </el-form-item>
