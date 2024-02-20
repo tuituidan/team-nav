@@ -36,10 +36,12 @@ public interface CategoryRepository extends JpaRepository<Category, String>, Jpa
      * getMaxSort
      *
      * @param valid valid
+     * @param pid pid
+     * @param id id
      * @return Integer
      */
-    @Query("select coalesce(max(sort),0) from Category where valid = ?1")
-    Integer getMaxSort(Boolean valid);
+    @Query("select coalesce(max(sort),0) from Category where id <> ?1 and pid = ?2 and valid = ?3")
+    Integer getMaxSort(String id, String pid, Boolean valid);
 
     /**
      * 根据级别查询

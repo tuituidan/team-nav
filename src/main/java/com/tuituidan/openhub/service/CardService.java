@@ -70,9 +70,6 @@ public class CardService {
     @Resource
     private CardTypeServiceFactory cardTypeServiceFactory;
 
-    @Resource
-    private CommonService commonService;
-
     /**
      * 首页查询
      *

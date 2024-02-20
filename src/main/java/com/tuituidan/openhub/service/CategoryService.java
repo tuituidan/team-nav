@@ -14,8 +14,10 @@ import com.tuituidan.openhub.util.TransactionUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -28,7 +30,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 /**
@@ -46,9 +47,6 @@ public class CategoryService {
 
     @Resource
     private CardRepository cardRepository;
-
-    @Resource
-    private CommonService commonService;
 
     @Resource
     private RoleService roleService;
@@ -160,7 +158,7 @@ public class CategoryService {
             category = BeanExtUtils.convert(dto, Category::new);
             category.setId(StringExtUtils.getUuid());
             category.setValid(true);
-            category.setSort(categoryRepository.getMaxSort(true) + 1);
+            category.setSort(categoryRepository.getMaxSort(category.getId(), category.getPid(), true) + 1);
         } else {
             category = categoryRepository.getReferenceById(id);
             BeanExtUtils.copyNotNullProperties(dto, category);
@@ -197,8 +195,10 @@ public class CategoryService {
         List<String> ids = Arrays.asList(id);
         List<Category> children = categoryRepository.findByPidIn(ids);
         Assert.isTrue(CollectionUtils.isEmpty(children), "要删除的分类存在子分类，不允许删除");
-        categoryRepository.deleteAllById(ids);
-        cardRepository.deleteByCategoryIn(ids);
+        TransactionUtils.execute(() -> {
+            categoryRepository.deleteAllById(ids);
+            cardRepository.deleteByCategoryIn(ids);
+        });
         cacheService.getCategoryCache().invalidateAll(ids);
     }
 
@@ -208,7 +208,8 @@ public class CategoryService {
      * @param sortDto sortDto
      */
     public void changeSort(SortDto sortDto) {
-        Supplier<List<Category>> getFunc = () -> categoryRepository.findByPidAndValidTrueOrderBySort(sortDto.getParentId());
+        Supplier<List<Category>> getFunc =
+                () -> categoryRepository.findByPidAndValidTrueOrderBySort(sortDto.getParentId());
         ListUtils.changeSort(getFunc,
                 categoryRepository::saveAll,
                 sortDto);
@@ -220,19 +221,31 @@ public class CategoryService {
      * @param ids ids
      * @param valid valid
      */
-    @Transactional(rollbackFor = Exception.class)
     public void setValid(List<String> ids, Boolean valid) {
         Assert.isTrue(CollectionUtils.isNotEmpty(ids), "ids不能为空");
-        int sort = categoryRepository.getMaxSort(valid) + 1;
         List<Category> categories = BooleanUtils.isTrue(valid)
                 ? upCascade(categoryRepository.findAllById(ids))
                 : downCascade(categoryRepository.findAllById(ids));
+        categories = categories.stream()
+                .filter(item -> !Objects.equals(valid, item.getValid()))
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(categories)) {
+            return;
+        }
+        Map<String, Integer> sortMap = new HashMap<>();
         for (Category category : categories) {
-            category.setValid(valid).setSort(sort);
-            sort++;
+            category.setValid(valid);
+            Integer sort;
+            if (sortMap.containsKey(category.getPid())) {
+                sort = sortMap.get(category.getPid());
+            } else {
+                sort = categoryRepository.getMaxSort(category.getId(), category.getPid(), valid) + 1;
+            }
+            category.setSort(sort);
+            sortMap.put(category.getPid(), sort + 1);
         }
         if (CollectionUtils.isNotEmpty(categories)) {
-            categoryRepository.saveAll(categories);
+            categoryRepository.flush();
         }
     }
 
