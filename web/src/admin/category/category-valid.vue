@@ -97,7 +97,6 @@
           <svg-icon v-if="scope.row.icon" :icon-class="scope.row.icon"/>
         </template>
       </el-table-column>
-      <el-table-column prop="sort" label="排序" width="60"></el-table-column>
       <el-table-column prop="cardCount" label="卡片数" width="60"></el-table-column>
       <el-table-column label="可查看角色（不配置则任何人都可查看）" align="center" prop="roles">
         <template slot-scope="scope">
