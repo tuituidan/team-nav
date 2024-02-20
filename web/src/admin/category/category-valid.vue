@@ -67,6 +67,16 @@
           >删除
           </el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button
+            plain
+            size="small"
+            icon="el-icon-delete"
+            :disabled="categoryList.length<=0"
+            @click="openSortDialog()"
+          >排序
+          </el-button>
+        </el-col>
       </el-row>
     </el-row>
     <el-table
@@ -87,7 +97,6 @@
           <svg-icon v-if="scope.row.icon" :icon-class="scope.row.icon"/>
         </template>
       </el-table-column>
-      <el-table-column prop="sort" label="排序" width="60"></el-table-column>
       <el-table-column prop="cardCount" label="卡片数" width="60"></el-table-column>
       <el-table-column label="可查看角色（不配置则任何人都可查看）" align="center" prop="roles">
         <template slot-scope="scope">
@@ -139,6 +148,7 @@
       </el-table-column>
     </el-table>
     <edit-dialog ref="editDialog" @refresh="getList"></edit-dialog>
+    <sort-dialog ref="sortDialog" @change-sort="changeSort"></sort-dialog>
   </div>
 </template>
 
@@ -147,7 +157,8 @@
 export default {
   name: "category-valid",
   components: {
-    'edit-dialog': () => import('@/admin/category/dialog/index.vue')
+    'edit-dialog': () => import('@/admin/category/dialog/index.vue'),
+    'sort-dialog': () => import('@/admin/components/sort-dialog'),
   },
   data() {
     return {
@@ -161,7 +172,6 @@ export default {
       loading: true,
       // 表格树数据
       categoryList: [],
-      activeRows: [],
       // 查询参数
       keywords: '',
     };
@@ -175,7 +185,6 @@ export default {
       this.$http.get('/api/v1/category', {params: {keywords: this.keywords}})
         .then(res => {
           this.categoryList = res;
-          this.activeRows = res;
         })
         .finally(() => {
           this.loading = false;
@@ -188,6 +197,21 @@ export default {
       this.$nextTick(() => {
         this.refreshTable = true;
       });
+    },
+    openSortDialog() {
+      this.$refs.sortDialog.open(this.categoryList);
+    },
+    changeSort(draggingData, dropData, type) {
+      const data = {
+        draggingId: draggingData.id,
+        dropId: dropData.id,
+        parentId: dropData.pid,
+        type: type
+      };
+      this.$http.patch('/api/v1/category/actions/sort', data).then(() => {
+        this.$modal.msgSuccess("排序成功");
+        this.getList();
+      })
     },
     openDialog(item) {
       this.$refs.editDialog.open(item);

@@ -12,6 +12,21 @@ import java.io.Serializable;
 public interface ISortEntity<T> extends Serializable {
 
     /**
+     * getId
+     *
+     * @return String
+     */
+    String getId();
+
+    /**
+     * setId
+     *
+     * @param id id
+     * @return T
+     */
+    T setId(String id);
+
+    /**
      * getSort
      *
      * @return Integer

@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.CardDto;
+import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.bean.vo.HomeDataVo;
 import com.tuituidan.openhub.consts.Consts;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -84,15 +84,13 @@ public class CardController {
      * 排序
      *
      * @param category 分类id
-     * @param before 原来排序
-     * @param after 现在的排序
+     * @param sortDto sortDto
      * @return Void
      */
     @PatchMapping("/category/{category}/card/actions/sort")
     public ResponseEntity<Void> changeSort(@PathVariable("category") String category,
-            @RequestParam("before") Integer before,
-            @RequestParam("after") Integer after) {
-        cardService.changeSort(category, before, after);
+            @RequestBody SortDto sortDto) {
+        cardService.changeSort(category, sortDto);
         return ResponseEntity.noContent().build();
     }
 

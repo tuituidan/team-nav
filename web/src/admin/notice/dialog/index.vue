@@ -99,7 +99,7 @@ export default {
         if (valid) {
           this.$http.save('/api/v1/notice', {...this.form})
             .then(() => {
-              this.$modal.notifySuccess('保存成功');
+              this.$modal.msgSuccess('保存成功');
               this.show = false;
               this.$emit('refresh');
             })

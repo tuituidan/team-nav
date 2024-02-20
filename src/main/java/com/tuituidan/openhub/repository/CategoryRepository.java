@@ -56,4 +56,12 @@ public interface CategoryRepository extends JpaRepository<Category, String>, Jpa
      */
     List<Category> findByValidTrueOrderBySort();
 
+    /**
+     * findByPidAndValidTrueOrderBySort
+     *
+     * @param pid pid
+     * @return List
+     */
+    List<Category> findByPidAndValidTrueOrderBySort(String pid);
+
 }

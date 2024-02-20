@@ -3,7 +3,6 @@ package com.tuituidan.openhub.service;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.LoginDto;
 import com.tuituidan.openhub.bean.entity.Card;
-import com.tuituidan.openhub.bean.entity.ISortEntity;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.exception.ResourceWriteException;
@@ -24,11 +23,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -307,35 +303,6 @@ public class CommonService implements ApplicationRunner {
         } catch (Exception ex) {
             throw new ResourceWriteException("二维码写入失败");
         }
-    }
-
-    /**
-     * changeSort
-     *
-     * @param supplier supplier
-     * @param before before
-     * @param after after
-     * @param <T> T
-     * @return List
-     */
-    public <T extends ISortEntity<T>> List<T> changeSort(Supplier<List<T>> supplier, int before, int after) {
-        if (before == after) {
-            return Collections.emptyList();
-        }
-        LinkedList<T> list = new LinkedList<>(supplier.get());
-        if (CollectionUtils.isEmpty(list) || list.size() == 1) {
-            return Collections.emptyList();
-        }
-        list.add(after, list.remove(before));
-        List<T> updateList = new ArrayList<>();
-        int index = 0;
-        for (T item : list) {
-            if (!Objects.equals(item.getSort(), index)) {
-                updateList.add(item.setSort(index));
-            }
-            index++;
-        }
-        return updateList;
     }
 
     /**

@@ -43,13 +43,13 @@ export default {
     onRemoveCardIcon(url) {
       this.$http.delete(`/api/v1/icon/${url.substring(url.lastIndexOf('/') + 1)}`)
         .then(() => {
-          this.$modal.notifySuccess('删除成功');
+          this.$modal.msgSuccess('删除成功');
         });
     },
     onEditIconName(url, newName) {
       this.$http.patch(`/api/v1/icon/${url.substring(url.lastIndexOf('/') + 1)}/to/${newName}`)
         .then(() => {
-          this.$modal.notifySuccess('修改成功');
+          this.$modal.msgSuccess('修改成功');
           this.init();
         });
     },

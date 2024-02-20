@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.service;
 
 import com.tuituidan.openhub.bean.dto.CategoryDto;
+import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
@@ -204,16 +205,13 @@ public class CategoryService {
     /**
      * 修改排序
      *
-     * @param before before
-     * @param after after
+     * @param sortDto sortDto
      */
-    public void changeSort(int before, int after) {
-        Supplier<List<Category>> supplier = () -> categoryRepository.findByValidTrueOrderBySort();
-        List<Category> updateList = commonService.changeSort(supplier, before, after);
-        if (CollectionUtils.isEmpty(updateList)) {
-            return;
-        }
-        categoryRepository.saveAll(updateList);
+    public void changeSort(SortDto sortDto) {
+        Supplier<List<Category>> getFunc = () -> categoryRepository.findByPidAndValidTrueOrderBySort(sortDto.getParentId());
+        ListUtils.changeSort(getFunc,
+                categoryRepository::saveAll,
+                sortDto);
     }
 
     /**

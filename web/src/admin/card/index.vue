@@ -45,6 +45,16 @@
           >删除
           </el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button
+            plain
+            size="small"
+            icon="el-icon-delete"
+            :disabled="dataList.length<2"
+            @click="openSortDialog()"
+          >排序
+          </el-button>
+        </el-col>
       </el-row>
     </el-row>
     <el-table
@@ -91,6 +101,7 @@
       </el-table-column>
     </el-table>
     <edit-dialog ref="editDialog" @refresh="getList"></edit-dialog>
+    <sort-dialog ref="sortDialog" @change-sort="changeSort"></sort-dialog>
   </div>
 </template>
 
@@ -101,6 +112,7 @@ export default {
     'edit-dialog': () => import("@/admin/card/dialog/index.vue"),
     'category-select': () => import('@/components/category-select/index.vue'),
     'ivu-avatar': () => import('@/components/ivu-avatar/index.vue'),
+    'sort-dialog': () => import('@/admin/components/sort-dialog'),
   },
   data() {
     return {
@@ -128,6 +140,20 @@ export default {
     },
     openDialog(item) {
       this.$refs.editDialog.open(item);
+    },
+    openSortDialog() {
+      this.$refs.sortDialog.open(this.dataList, {label: 'title'});
+    },
+    changeSort(draggingData, dropData, type) {
+      const data = {
+        draggingId: draggingData.id,
+        dropId: dropData.id,
+        type: type
+      };
+      this.$http.patch(`/api/v1/category/${this.queryParams.category}/card/actions/sort`, data).then(() => {
+        this.$modal.msgSuccess("排序成功");
+        this.getList();
+      })
     },
     /** 删除按钮操作 */
     handleDelete(row) {

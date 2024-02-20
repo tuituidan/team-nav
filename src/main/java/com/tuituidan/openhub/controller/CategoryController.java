@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.CategoryDto;
+import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CategoryService;
@@ -109,13 +110,12 @@ public class CategoryController {
     /**
      * changeSort
      *
-     * @param before before
-     * @param after after
+     * @param sortDto sortDto
      * @return Void
      */
     @PatchMapping("/actions/sort")
-    public ResponseEntity<Void> changeSort(@RequestParam Integer before, @RequestParam Integer after) {
-        categoryService.changeSort(before, after);
+    public ResponseEntity<Void> changeSort(@RequestBody SortDto sortDto) {
+        categoryService.changeSort(sortDto);
         return ResponseEntity.noContent().build();
     }
 

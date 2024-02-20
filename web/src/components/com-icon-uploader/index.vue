@@ -105,13 +105,13 @@ export default {
       file.url = res;
       if (this.maxCount > 1) {
         this.$emit('input', fileList.map(item => (item.url)));
-        this.$modal.notifySuccess(`文件【${file.name}】上传成功。`);
+        this.$modal.msgSuccess(`文件【${file.name}】上传成功。`);
       } else {
         this.$emit('input', res);
       }
     },
     handleError(error, file) {
-      this.$modal.notifyError(`文件【${file.name}】上传错误，${error}。`);
+      this.$modal.msgError(`文件【${file.name}】上传错误，${error}。`);
     },
     handlePaste(event) {
       const items = event.clipboardData && event.clipboardData.items;

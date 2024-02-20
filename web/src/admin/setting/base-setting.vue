@@ -106,7 +106,7 @@ export default {
         if (valid) {
           this.$http.patch(`/api/v1/setting`, {...this.settingItem})
             .then(() => {
-              this.$modal.notifySuccess('保存成功');
+              this.$modal.msgSuccess('保存成功');
               setTimeout(() => {
                 location.reload();
               }, 1000);

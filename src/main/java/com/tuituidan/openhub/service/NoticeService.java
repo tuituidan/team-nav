@@ -1,20 +1,20 @@
 package com.tuituidan.openhub.service;
 
 import com.tuituidan.openhub.bean.dto.NoticeDto;
+import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Notice;
 import com.tuituidan.openhub.bean.vo.NoticeVo;
 import com.tuituidan.openhub.repository.NoticeRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
@@ -33,9 +33,6 @@ public class NoticeService {
 
     @Resource
     private NoticeRepository noticeRepository;
-
-    @Resource
-    private CommonService commonService;
 
     /**
      * select
@@ -80,16 +77,12 @@ public class NoticeService {
     /**
      * 修改排序
      *
-     * @param before before
-     * @param after after
+     * @param sortDto sortDto
      */
-    public void changeSort(int before, int after) {
-        Supplier<List<Notice>> supplier = () -> noticeRepository.findAll(Sort.by("sort"));
-        List<Notice> updateList = commonService.changeSort(supplier, before, after);
-        if (CollectionUtils.isEmpty(updateList)) {
-            return;
-        }
-        noticeRepository.saveAll(updateList);
+    public void changeSort(SortDto sortDto) {
+        ListUtils.changeSort(() -> noticeRepository.findAll(Sort.by("sort")),
+                noticeRepository::saveAll,
+                sortDto);
     }
 
     /**

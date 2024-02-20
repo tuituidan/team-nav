@@ -2,6 +2,7 @@ package com.tuituidan.openhub.service;
 
 import com.tuituidan.openhub.bean.dto.CardDto;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
+import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.bean.vo.CardVo;
@@ -210,17 +211,14 @@ public class CardService {
      * 上移和下移，交换两个卡片序号
      *
      * @param category 分类ID
-     * @param before 原来的索引
-     * @param after 调整后的索引
+     * @param sortDto sortDto
      */
-    public void changeSort(String category, int before, int after) {
+    public void changeSort(String category, SortDto sortDto) {
         Supplier<List<Card>> supplier = () -> cardRepository.findByCategory(category).stream()
                 .sorted(Comparator.comparing(Card::getSort)).collect(Collectors.toList());
-        List<Card> updateList = commonService.changeSort(supplier, before, after);
-        if (CollectionUtils.isEmpty(updateList)) {
-            return;
-        }
-        cardRepository.saveAll(updateList);
+        ListUtils.changeSort(supplier,
+                cardRepository::saveAll,
+                sortDto);
     }
 
     /**

@@ -137,7 +137,7 @@ export default {
       const ids = row ? [row.id] : this.selections.map(item => item.id);
       this.$http.patch(`/api/v1/category/valid/true`, ids)
         .then(() => {
-          this.$modal.notifySuccess('已还原');
+          this.$modal.msgSuccess('已还原');
           this.queryParam.pageIndex = 1;
           this.getList();
         });
