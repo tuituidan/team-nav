@@ -49,6 +49,12 @@ public class Card implements ISortEntity<Card> {
     @Column(name = "content", length = 400)
     private String content;
 
+    @Column(name = "private_content", length = 400)
+    private String privateContent;
+
+    @Column(name = "show_qrcode")
+    private Boolean showQrcode;
+
     @Column(name = "url", length = 200)
     private String url;
 

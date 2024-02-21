@@ -32,6 +32,10 @@ public class CardVo {
 
     private String content;
 
+    private String privateContent;
+
+    private Boolean showQrcode;
+
     private String url;
 
     private String tip;

@@ -4,10 +4,10 @@
              width="600px" append-to-body>
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" @submit.native.prevent>
       <el-form-item label="用户姓名" prop="nickname">
-        <el-input v-model="form.nickname" placeholder="请输入用户姓名" maxlength="30"/>
+        <el-input v-model.trim="form.nickname" placeholder="请输入用户姓名" maxlength="30"/>
       </el-form-item>
       <el-form-item label="登录账号" prop="nickname">
-        <el-input v-model="form.username" placeholder="请输入登录账号" maxlength="30"/>
+        <el-input v-model.trim="form.username" placeholder="请输入登录账号" maxlength="30"/>
       </el-form-item>
       <el-form-item label="所属角色">
         <role-select v-model="form.roleIds"></role-select>

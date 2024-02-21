@@ -23,21 +23,26 @@ export default {
         category: '',
         title:'',
         content:'',
+        privateContent: '',
         url: '',
+        showQrcode: false,
         icon: null
       },
       types: [
         {
           id: 'default',
-          name: '普通'
-        },
-        {
-          id: 'file',
-          name: '文件'
+          name: '普通',
+          disabled: false,
         },
         {
           id: 'site',
-          name: '静态网站'
+          name: '静态网站',
+          disabled: false,
+        },
+        {
+          id: 'file',
+          name: '文件',
+          disabled: true,
         },
       ],
       // 表单校验
@@ -59,10 +64,12 @@ export default {
   },
   methods: {
     open(item) {
-      if (item) {
+      if (item.id) {
         this.title = '编辑卡片';
         this.form = {...item};
       } else {
+        this.form.type = 'default';
+        this.form.category = item.category;
         this.title = '新增卡片';
       }
       this.show = true;

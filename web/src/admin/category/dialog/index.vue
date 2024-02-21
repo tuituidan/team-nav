@@ -18,7 +18,7 @@
         </el-col>
         <el-col :span="24">
           <el-form-item label="分类名称" prop="name">
-            <el-input clearable v-model="form.name" placeholder="请输入分类名称"/>
+            <el-input clearable v-model.trim="form.name" placeholder="请输入分类名称"/>
           </el-form-item>
         </el-col>
         <el-col :span="24">

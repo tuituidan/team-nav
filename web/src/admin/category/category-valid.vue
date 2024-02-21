@@ -5,7 +5,7 @@
         <el-form-item>
           <el-input placeholder="请输入分类名称"
                     style="width: 340px"
-                    v-model="keywords"
+                    v-model.trim="keywords"
                     clearable
                     @clear="getList"
                     @keyup.enter.native="getList">

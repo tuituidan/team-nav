@@ -5,7 +5,7 @@
                @submit.native.prevent>
         <el-form-item>
           <el-input
-            v-model="queryParam.keywords"
+            v-model.trim="queryParam.keywords"
             placeholder="请输入角色名称进行搜索"
             clearable
             @clear="getList"
