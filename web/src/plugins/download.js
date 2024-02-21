@@ -1,5 +1,5 @@
 import http from './http'
-import {Notification} from 'element-ui'
+import {Message} from 'element-ui'
 import {saveAs} from 'file-saver'
 
 export default {
@@ -18,11 +18,11 @@ export default {
           reader.readAsText(err.response.data);
           reader.onload = () => {
             const {message} = JSON.parse(reader.result);
-            Notification.error(message || '下载失败');
+            Message.error(message || '下载失败');
           };
           return;
         }
-        Notification.error('下载失败');
+        Message.error('下载失败');
       })
   },
   saveAs(text, name, opts) {

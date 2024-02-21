@@ -35,11 +35,12 @@ export default {
 
 <style lang="scss">
 // fix css style bug in open el-dialog
-.el-popup-parent--hidden {
-  .fixed-header {
-    padding-right: 6px;
-  }
-}
+// 有滚动条才需要
+//.el-popup-parent--hidden {
+//  .fixed-header {
+//    padding-right: 6px;
+//  }
+//}
 
 ::-webkit-scrollbar {
   width: 6px;
