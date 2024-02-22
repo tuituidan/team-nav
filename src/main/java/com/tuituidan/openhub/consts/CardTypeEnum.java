@@ -22,13 +22,13 @@ public enum CardTypeEnum {
      */
     DEFAULT("default"),
     /**
-     * 原型
+     * 网站
      */
     ZIP("zip"),
     /**
-     * 二维码
+     * 文件
      */
-    QRCODE("qrcode");
+    FILE("file");
 
     private String type;
 

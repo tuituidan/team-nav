@@ -15,6 +15,7 @@ import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.ListUtils;
+import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,9 +32,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -141,10 +143,17 @@ public class CardService {
         if (CollectionUtils.isEmpty(cards)) {
             return Collections.emptyMap();
         }
+        List<Function<CardVo, String>> tipsFunc = new ArrayList<>();
+        tipsFunc.add(CardVo::getTitle);
+        tipsFunc.add(CardVo::getContent);
+        if (Objects.nonNull(SecurityUtils.getUserInfo())) {
+            tipsFunc.add(CardVo::getPrivateContent);
+        }
+        tipsFunc.add(CardVo::getUrl);
         return cards.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new);
             cardTypeServiceFactory.getService(item.getType()).formatCardVo(vo);
-            vo.setTip(Stream.of(vo.getTitle(), vo.getContent(), vo.getUrl())
+            vo.setTip(tipsFunc.stream().map(func -> func.apply(vo))
                     .filter(StringUtils::isNotBlank).distinct()
                     .collect(Collectors.joining("<br/>")));
             return vo;

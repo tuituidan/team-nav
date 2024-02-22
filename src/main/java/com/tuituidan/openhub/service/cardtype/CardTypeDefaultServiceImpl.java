@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @date 2022/9/7
  */
 @Service
-@CardType({CardTypeEnum.DEFAULT, CardTypeEnum.QRCODE})
+@CardType(CardTypeEnum.DEFAULT)
 public class CardTypeDefaultServiceImpl implements ICardTypeService {
 
     @Override

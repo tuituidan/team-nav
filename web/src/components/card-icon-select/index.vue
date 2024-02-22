@@ -62,7 +62,7 @@ export default {
   },
   data() {
     return {
-      uploadUrl: process.env.VUE_APP_BASE_API + '/api/v1/upload/images',
+      uploadUrl: `${process.env.VUE_APP_BASE_API}/api/v1/upload/images`,
       iconErrTip: false,
       textIcon: {
         text: '',

@@ -2,7 +2,10 @@
   <div class="category-children">
     <div class="card-sm card-md card-xl card-xxl" v-for="card in datas" :key="card.id">
       <el-popover trigger="hover" popper-class="my-popover" :close-delay="0">
-        <el-card class="nav-card" shadow="hover" slot="reference">
+        <el-card class="nav-card"
+                 shadow="hover"
+                 slot="reference"
+                 @click.native="cardClickHandler(card)">
           <div style="display: flex">
             <ivu-avatar v-if="card.icon.src"
                         :src="card.icon.src"
@@ -34,6 +37,13 @@ export default {
   components: {
     'ivu-avatar': () => import('@/components/ivu-avatar/index.vue'),
   },
+  methods: {
+    cardClickHandler(card){
+      if (card.url) {
+        window.open(card.url);
+      }
+    }
+  }
 }
 </script>
 

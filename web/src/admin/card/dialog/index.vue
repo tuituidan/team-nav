@@ -1,9 +1,9 @@
 <template>
   <el-dialog :title="title" :visible.sync="show"
-             width="620px"
+             width="630px"
              :close-on-click-modal="false"
              append-to-body>
-    <el-form ref="form" :model="form" :rules="rules" label-width="100px" @submit.native.prevent>
+    <el-form ref="form" :model="form" :rules="rules" label-width="110px" @submit.native.prevent>
       <el-form-item label="卡片类型" prop="type">
          <span slot="label">
           <el-tooltip placement="top">
@@ -54,10 +54,11 @@
                   maxlength="200"
                   show-word-limit
                   clearable
-                  :rows="3"
+                  :rows="2"
                   placeholder="请输入内容"/>
       </el-form-item>
       <el-form-item label="链接"
+                    v-if="form.type==='default'"
                     :rules="[{required: form.showQrcode, message:'链接不能为空', trigger:'blue' }]"
                     prop="url">
         <el-row>
@@ -68,6 +69,17 @@
             <el-checkbox v-model="form.showQrcode">显示二维码</el-checkbox>
           </el-col>
         </el-row>
+      </el-form-item>
+      <el-form-item label="网站文件" prop="zip" v-else>
+        <el-upload
+          :action="uploadUrl"
+          accept="application/zip"
+          :file-list="zipFileList"
+          :on-remove="zipFileRemove"
+          :on-success="zipFileUploadSuccess"
+          :limit="1">
+          <el-button icon="el-icon-upload" size="small">zip压缩包上传</el-button>
+        </el-upload>
       </el-form-item>
       <el-form-item class="form-icon-loading" v-if="showFaviconLoading">
         <el-button loading type="text">正在尝试获取该地址的图标</el-button>
@@ -85,7 +97,7 @@
 
 <script src="./index.js"></script>
 
-<style scoped>
+<style scoped lang="scss">
 .form-icon-loading {
   margin-top: -16px;
   margin-bottom: 0;
