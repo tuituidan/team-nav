@@ -1,3 +1,5 @@
+import http from '@/plugins/http';
+
 const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
 const state = {
   title: process.env.VUE_APP_TITLE,
@@ -5,10 +7,10 @@ const state = {
   showSettings: false,
   cutOverSpeed: 10,
   logoPath: '/assets/images/logo.png',
-  logoToFavicon:false,
+  logoToFavicon: false,
 }
 const mutations = {
-  CHANGE_SETTING: (state, { key, value }) => {
+  CHANGE_SETTING: (state, {key, value}) => {
     if (state.hasOwnProperty(key)) {
       state[key] = value
     }
@@ -17,15 +19,18 @@ const mutations = {
 
 const actions = {
   // 修改布局设置
-  changeSetting({ commit }, data) {
+  changeSetting({commit}, data) {
     commit('CHANGE_SETTING', data)
   },
-  // 设置网页标题
-  setSetting({ commit }, setting) {
-    state.title = setting.navName;
-    state.cutOverSpeed = setting.cutOverSpeed;
-    state.logoPath = setting.logoPath;
-    state.logoToFavicon = setting.logoToFavicon;
+  // 加载配置
+  loadSettings({commit}) {
+    return http.get('/api/v1/setting').then(res => {
+      commit('CHANGE_SETTING', {key: 'title', value: res.navName});
+      commit('CHANGE_SETTING', {key: 'cutOverSpeed', value: res.cutOverSpeed});
+      commit('CHANGE_SETTING', {key: 'logoPath', value: res.logoPath});
+      commit('CHANGE_SETTING', {key: 'logoToFavicon', value: res.logoToFavicon});
+      return res;
+    });
   }
 }
 

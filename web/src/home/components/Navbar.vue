@@ -25,7 +25,7 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <ivu-avatar src="/assets/images/header.png"></ivu-avatar>
+          <header-avatar></header-avatar>
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -33,9 +33,9 @@
             <el-dropdown-item>后台管理</el-dropdown-item>
           </router-link>
           <el-dropdown-item @click.native="setting = true">布局设置</el-dropdown-item>
-          <el-dropdown-item @click.native="openChangePassword">修改密码</el-dropdown-item>
-          <el-dropdown-item>卡片申请</el-dropdown-item>
-          <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+          <el-dropdown-item v-if="loginUser.id" @click.native="openChangePassword">修改密码</el-dropdown-item>
+          <el-dropdown-item v-if="loginUser.id">卡片申请</el-dropdown-item>
+          <el-dropdown-item v-if="loginUser.id" divided @click.native="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
 
@@ -52,6 +52,7 @@ export default {
     'hamburger': () => import('@/components/Hamburger'),
     'screenfull': () => import('@/components/Screenfull'),
     'change-password': () => import('@/home/components/change-password'),
+    'header-avatar': () => import('@/components/header-avatar'),
   },
   data(){
     return {
@@ -61,8 +62,8 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar',
-      'device'
+      'device',
+      'loginUser',
     ]),
     setting: {
       get() {
@@ -92,7 +93,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$store.dispatch('LogOut').then(() => {
+        this.$store.dispatch('user/LogOut').then(() => {
           location.href = '/';
         })
       }).catch(() => {

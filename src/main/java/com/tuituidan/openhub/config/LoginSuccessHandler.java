@@ -31,6 +31,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
+        user.setPassword(null);
         user.setRoleIds(roleUserRepository.findByUserId(user.getId()).stream()
                 .map(RoleUser::getRoleId).collect(Collectors.toSet()));
         super.onAuthenticationSuccess(request, response, authentication);

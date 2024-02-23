@@ -55,7 +55,7 @@ public class LoginController {
      *
      * @return User
      */
-    @GetMapping("/getInfo")
+    @GetMapping("/login/user")
     public User getUser() {
         return SecurityUtils.getUserInfo();
     }

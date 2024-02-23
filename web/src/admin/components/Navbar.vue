@@ -7,7 +7,7 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <ivu-avatar src="/assets/images/header.png"></ivu-avatar>
+          <header-avatar></header-avatar>
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -33,6 +33,7 @@ import {mapGetters} from 'vuex'
 export default {
   components: {
     Hamburger: () => import('@/components/Hamburger'),
+    'header-avatar': () => import('@/components/header-avatar'),
   },
   data() {
     return {
@@ -42,7 +43,6 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar',
     ]),
   },
   created() {
@@ -61,7 +61,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$store.dispatch('LogOut').then(() => {
+        this.$store.dispatch('user/LogOut').then(() => {
           location.href = `${process.env.VUE_APP_PROXY_URL}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
         })
       }).catch(() => {

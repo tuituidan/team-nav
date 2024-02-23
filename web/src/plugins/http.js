@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
+import {Message} from 'element-ui'
 import QS from 'qs';
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
@@ -26,7 +26,7 @@ service.interceptors.response.use(res => {
     return res.data;
   },
   err => {
-    let { message } = err;
+    let {message} = err;
     if (message === "Network Error") {
       Message.error('后端接口连接异常');
       return Promise.reject(err)
@@ -36,8 +36,8 @@ service.interceptors.response.use(res => {
       return Promise.reject(err)
     }
     if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-      location.href =  `${process.env.VUE_APP_PROXY_URL}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
-      return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+      location.href = `${process.env.VUE_APP_PROXY_URL}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
+      return Promise.reject(err)
     }
     Message.error(err.response.data);
     return Promise.reject(err)
