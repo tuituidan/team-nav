@@ -5,14 +5,6 @@ server:
 # 服务名，用于页面logo显示
 nav-name: 团队服务导航
 
-# 是否开启登录功能
-login:
-  enable: true
-
-# 是否开启页面上进行密码修改，用户只有一个，请谨慎开启
-change-password:
-  enable: false
-
 # 账号密码
 spring:
   security:

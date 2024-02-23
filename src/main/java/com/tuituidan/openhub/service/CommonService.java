@@ -1,7 +1,6 @@
 package com.tuituidan.openhub.service;
 
 import com.tuituidan.openhub.bean.dto.CardIconDto;
-import com.tuituidan.openhub.bean.dto.LoginDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.consts.Consts;
@@ -11,7 +10,6 @@ import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.HttpUtils;
 import com.tuituidan.openhub.util.QrCodeUtils;
 import com.tuituidan.openhub.util.RequestUtils;
-import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -40,10 +38,6 @@ import org.jsoup.select.Elements;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,9 +59,6 @@ public class CommonService implements ApplicationRunner {
 
     @Resource
     private CardRepository cardRepository;
-
-    @Resource
-    private AuthenticationManager authenticationManager;
 
     /**
      * 初始化
@@ -303,24 +294,6 @@ public class CommonService implements ApplicationRunner {
         } catch (Exception ex) {
             throw new ResourceWriteException("二维码写入失败");
         }
-    }
-
-    /**
-     * quickLogin
-     *
-     * @param loginDto loginDto
-     * @return boolean
-     */
-    public boolean quickLogin(LoginDto loginDto) {
-        if (SecurityUtils.getUserInfo() != null) {
-            return false;
-        }
-        UsernamePasswordAuthenticationToken token
-                = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
-        Authentication authenticate = authenticationManager.authenticate(token);
-        Assert.notNull(authenticate, "登录失败");
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
-        return SecurityUtils.getUserInfo() != null;
     }
 
 }

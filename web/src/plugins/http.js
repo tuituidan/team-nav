@@ -2,9 +2,6 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import QS from 'qs';
 
-// 是否显示重新登录
-export let isRelogin = { show: false };
-
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建axios实例
 const service = axios.create({
@@ -38,7 +35,7 @@ service.interceptors.response.use(res => {
       Message.error('系统接口请求超时');
       return Promise.reject(err)
     }
-    if (err.response && err.response.status === 401) {
+    if (err.response && (err.response.status === 401 || err.response.status === 403)) {
       location.href =  `${process.env.VUE_APP_PROXY_URL}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     }

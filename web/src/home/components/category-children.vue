@@ -34,9 +34,6 @@ export default {
       type: Array
     }
   },
-  components: {
-    'ivu-avatar': () => import('@/components/ivu-avatar/index.vue'),
-  },
   methods: {
     cardClickHandler(card){
       if (card.url) {

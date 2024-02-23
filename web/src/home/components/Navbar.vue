@@ -25,8 +25,7 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img v-if="avatar" :src="avatar" class="user-avatar">
-          <svg-icon v-else icon-class="user"/>
+          <ivu-avatar src="/assets/images/header.png"></ivu-avatar>
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">

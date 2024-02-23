@@ -33,12 +33,10 @@
           <com-tip tip="配置首页多个通知公告的自动切换间隔时间"></com-tip>
         </div>
       </el-form-item>
-      <el-form-item label="Nginx访问原型" prop="nginxOpen">
+      <el-form-item label="Nginx访问网站" prop="nginxOpen">
         <div class="multi-form-item">
           <div>
             <el-switch v-model="settingItem.nginxOpen">
-              <!--              <span slot="open">开启</span>-->
-              <!--              <span slot="close">关闭</span>-->
             </el-switch>
           </div>
           <el-input type="text"
@@ -47,7 +45,7 @@
                     class="multi-form-item-input"
                     v-model.trim="settingItem.nginxUrl"
                     placeholder="Nginx地址"></el-input>
-          <com-tip tip="可以配置通过Nginx来访问原型文件，避免本服务挂了影响原型访问，Nginx配置可参考README.md，开启后访问原型时将跳转Nginx地址"></com-tip>
+          <com-tip tip="可以配置通过Nginx来访问上传的静态网站，Nginx配置可参考README.md，开启后访问网站时将跳转Nginx地址"></com-tip>
         </div>
       </el-form-item>
     </el-form>

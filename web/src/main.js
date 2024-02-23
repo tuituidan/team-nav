@@ -13,13 +13,9 @@ import router from './router'
 import plugins from './plugins' // plugins
 import '@/plugins/directive/table-btn-control'
 import './assets/icons' // icon
-// 分页组件
-import Pagination from "@/components/Pagination";
+import '@/components'
 // 头部标签组件
 import VueMeta from 'vue-meta'
-
-// 全局组件挂载
-Vue.component('Pagination', Pagination)
 
 Vue.use(plugins)
 Vue.use(VueMeta)

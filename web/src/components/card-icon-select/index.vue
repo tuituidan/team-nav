@@ -57,7 +57,6 @@ export default {
   name: "card-icon-select-index",
   components: {
     'icon-select': () => import('@/components/card-icon-select/card-icon-select.vue'),
-    'ivu-avatar': () => import('@/components/ivu-avatar/index.vue'),
     'ivu-badge': () => import('@/components/ivu-badge/index.vue'),
   },
   data() {

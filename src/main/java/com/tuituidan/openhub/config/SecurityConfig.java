@@ -4,7 +4,6 @@ import com.tuituidan.openhub.service.UserService;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,8 +29,8 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${spring.security.permit-url:}")
-    private String[] permitUrl;
+    @Resource
+    private SecurityProperties securityProperties;
 
     @Resource
     private UserService userService;
@@ -55,8 +54,8 @@ public class SecurityConfig {
         setLogin(http.formLogin());
         setLogout(http.logout());
 
-        http.authorizeRequests().antMatchers(permitUrl).permitAll();
-        http.authorizeRequests().antMatchers("/api/v1/**").authenticated()
+        http.authorizeRequests().antMatchers(securityProperties.getPermitUrl()).permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/**").hasAuthority("admin")
                 .anyRequest()
                 .permitAll();
         http.exceptionHandling().defaultAuthenticationEntryPointFor((request, response, ex) ->

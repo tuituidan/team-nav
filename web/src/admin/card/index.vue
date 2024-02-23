@@ -111,7 +111,6 @@ export default {
   components: {
     'edit-dialog': () => import("@/admin/card/dialog/index.vue"),
     'category-select': () => import('@/components/category-select/index.vue'),
-    'ivu-avatar': () => import('@/components/ivu-avatar/index.vue'),
     'sort-dialog': () => import('@/admin/components/sort-dialog'),
   },
   data() {

@@ -42,9 +42,6 @@
 
 export default {
   name: "com-icon-index",
-  components: {
-    'ivu-avatar': () => import('@/components/ivu-avatar/index.vue')
-  },
   props: {
     value: {
       type: [String, Array]
