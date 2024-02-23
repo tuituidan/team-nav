@@ -17,6 +17,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityUtils {
 
     /**
+     * isAdmin
+     *
+     * @param userInfo userInfo
+     * @return boolean
+     */
+    public static boolean isAdmin(User userInfo) {
+        return userInfo != null && ("1".equals(userInfo.getId())
+                || userInfo.getRoleIds().contains("1"));
+    }
+
+    /**
      * 获取当前登录用户
      *
      * @return UserInfoVo

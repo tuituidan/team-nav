@@ -2,6 +2,7 @@ package com.tuituidan.openhub.bean.vo;
 
 import com.tuituidan.openhub.bean.entity.Role;
 import java.util.List;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -39,6 +40,8 @@ public class CategoryVo implements TreeData<CategoryVo> {
     private String flatSort;
 
     private List<Role> roles;
+
+    private Set<String> roleIds;
 
     private List<CardVo> cards;
 

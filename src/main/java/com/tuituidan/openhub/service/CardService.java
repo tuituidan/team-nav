@@ -5,6 +5,8 @@ import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
+import com.tuituidan.openhub.bean.entity.Role;
+import com.tuituidan.openhub.bean.entity.User;
 import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.bean.vo.HomeDataVo;
@@ -79,15 +81,10 @@ public class CardService {
      * @return List
      */
     public HomeDataVo tree(String keywords) {
-        List<Category> categories = categoryRepository.findByValidTrueOrderBySort();
-        if (CollectionUtils.isEmpty(categories)) {
+        List<CategoryVo> categoryList = getCategoryWithCard(keywords);
+        if (CollectionUtils.isEmpty(categoryList)) {
             return new HomeDataVo(Collections.emptyList(), Collections.emptyList());
         }
-        Map<String, List<CardVo>> cardMap = getCardMap(keywords);
-        if (MapUtils.isEmpty(cardMap)) {
-            return new HomeDataVo(Collections.emptyList(), Collections.emptyList());
-        }
-        List<CategoryVo> categoryList = collectCards(categories, cardMap);
         List<CategoryVo> rightList = new ArrayList<>();
         Map<String, CategoryVo> lowMap = new HashMap<>();
         for (CategoryVo item : categoryList) {
@@ -109,17 +106,55 @@ public class CardService {
         return new HomeDataVo(ListUtils.buildTree(menus), rightList);
     }
 
-    private List<CategoryVo> collectCards(List<Category> categories, Map<String, List<CardVo>> cardMap) {
-        return categories.stream().filter(item -> cardMap.containsKey(item.getId()))
-                .map(item -> {
-                    CategoryVo vo = BeanExtUtils.convert(item, CategoryVo::new);
-                    List<CardVo> cardList = cardMap.get(vo.getId());
-                    cardList.sort(Comparator.comparing(CardVo::getSort));
-                    vo.setCards(cardList);
-                    vo.setCardCount((long) cardList.size());
-                    vo.setFlatSort(StringUtils.leftPad(item.getSort().toString(), 2, '0'));
-                    return vo;
-                }).collect(Collectors.toList());
+    private List<CategoryVo> getCategoryWithCard(String keywords) {
+        List<CategoryVo> categories = getCategoryByLoginUser();
+        if (CollectionUtils.isEmpty(categories)) {
+            return Collections.emptyList();
+        }
+        Map<String, List<CardVo>> cardMap = getCategoryCardMap(keywords);
+        if (MapUtils.isEmpty(cardMap)) {
+            return Collections.emptyList();
+        }
+        return setCardsToCategory(categories, cardMap);
+    }
+
+    private List<CategoryVo> getCategoryByLoginUser() {
+        List<Category> categories = categoryRepository.findByValidTrueOrderBySort();
+        if (CollectionUtils.isEmpty(categories)) {
+            return Collections.emptyList();
+        }
+        User userInfo = SecurityUtils.getUserInfo();
+        if (SecurityUtils.isAdmin(userInfo)) {
+            return categories.stream()
+                    .map(item -> BeanExtUtils.convert(item, CategoryVo::new))
+                    .collect(Collectors.toList());
+        }
+        List<CategoryVo> list = categories.stream()
+                .map(item -> BeanExtUtils.convert(item, CategoryVo::new)
+                        .setRoleIds(cacheService.getRolesByCategoryId(item.getId())
+                                .stream().map(Role::getId).collect(Collectors.toSet())))
+                .collect(Collectors.toList());
+        if (userInfo == null) {
+            return list.stream().filter(item -> CollectionUtils.isEmpty(item.getRoleIds()))
+                    .collect(Collectors.toList());
+        }
+        return list.stream().filter(item ->
+                CollectionUtils.isEmpty(item.getRoleIds())
+                        || CollectionUtils.containsAny(item.getRoleIds(), userInfo.getRoleIds())
+        ).collect(Collectors.toList());
+    }
+
+    private List<CategoryVo> setCardsToCategory(List<CategoryVo> categories, Map<String, List<CardVo>> cardMap) {
+        categories = categories.stream().filter(item -> cardMap.containsKey(item.getId()))
+                .collect(Collectors.toList());
+        for (CategoryVo item : categories) {
+            List<CardVo> cardList = cardMap.get(item.getId());
+            cardList.sort(Comparator.comparing(CardVo::getSort));
+            item.setCards(cardList);
+            item.setCardCount((long) cardList.size());
+            item.setFlatSort(StringUtils.leftPad(item.getSort().toString(), 2, '0'));
+        }
+        return categories;
     }
 
     private Collection<CategoryVo> buildMenus(List<CategoryVo> highList) {
@@ -137,7 +172,7 @@ public class CardService {
         return menus.values();
     }
 
-    private Map<String, List<CardVo>> getCardMap(String keywords) {
+    private Map<String, List<CardVo>> getCategoryCardMap(String keywords) {
         List<Card> cards = StringUtils.isBlank(keywords)
                 ? cardRepository.findAll() : cardRepository.findByKeywords(keywords.toLowerCase());
         if (CollectionUtils.isEmpty(cards)) {

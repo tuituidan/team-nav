@@ -45,7 +45,7 @@
       <el-table-column label="角色名称" align="center" prop="roleName"
                        :show-overflow-tooltip="true"/>
       <el-table-column label="操作" align="center" width="140" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
+        <template slot-scope="scope" v-if="scope.row.id !== '1'">
           <el-button
             size="mini"
             type="text"

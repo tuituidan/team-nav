@@ -8,9 +8,9 @@
          <span slot="label">
           <el-tooltip placement="top">
             <div slot="content">
-              普通：普通内容卡片，通过添加链接跳转<br/>
-              静态网站：上传静态网站的zip压缩包，自动生成可访问链接<br/>
-              文件：上传后能进行在线浏览（暂不可用，开发中...）
+              普通类型：普通内容卡片，通过添加链接跳转<br/>
+              静态网站类型：上传静态网站的zip压缩包，自动生成可访问链接<br/>
+              文件类型：上传后能进行在线浏览（暂不可用，开发中...）
             </div>
             <i class="el-icon-question"></i>
           </el-tooltip>

@@ -13,7 +13,7 @@
               plain
               icon="el-icon-document"
               size="mini"
-              :disabled="!Boolean(roleDetail.id)"
+              :disabled="!Boolean(roleDetail.id) || roleDetail.id === '1'"
               @click="roleCategorySave()"
             >保存
             </el-button>
@@ -122,6 +122,9 @@ export default {
       this.$http.get(`/api/v1/role/${row.id}`)
         .then(res => {
           this.roleDetail = res;
+          if (this.roleDetail.id === '1') {
+            this.roleDetail.categoryIds = [];
+          }
           this.table.dataList.filter(it => this.roleDetail.userIds.includes(it.id)).forEach(it => {
             this.$refs.dataTable.toggleRowSelection(it);
           })
