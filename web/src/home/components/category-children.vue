@@ -20,7 +20,12 @@
             </div>
           </div>
         </el-card>
-        <div slot="default" v-html="card.tip"></div>
+        <div slot="default">
+          <div v-html="card.tip"></div>
+          <div v-if="card.showQrcode">
+            <img :src="showQrcodeHandler(card.url)" alt=""/>
+          </div>
+        </div>
       </el-popover>
     </div>
   </div>
@@ -39,6 +44,9 @@ export default {
       if (card.url) {
         window.open(card.url);
       }
+    },
+    showQrcodeHandler(url){
+      return `${process.env.VUE_APP_BASE_API}/api/v1/qrcode?url=${url}`;
     }
   }
 }

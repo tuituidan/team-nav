@@ -1,6 +1,5 @@
 <img src="assets/images/logo.png" alt="logo" style="zoom:60%;" />
 
-## 推推蛋 ([tuituidan](https://github.com/tuituidan))
 # 团队导航服务
 
 - 前后端完整的团队导航服务

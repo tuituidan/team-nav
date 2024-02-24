@@ -17,6 +17,7 @@ import com.tuituidan.openhub.util.TransactionUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +106,8 @@ public class CategoryService {
      * @return List
      */
     public List<CategoryVo> getCategoryByLoginUser() {
-        List<Category> categories = categoryRepository.findByValidTrue();
+        List<Category> categories = categoryRepository.findByValidTrue()
+                .stream().sorted(Comparator.comparingInt(Category::getSort)).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(categories)) {
             return Collections.emptyList();
         }

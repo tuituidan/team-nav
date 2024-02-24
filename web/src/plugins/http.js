@@ -35,8 +35,12 @@ service.interceptors.response.use(res => {
       Message.error('系统接口请求超时');
       return Promise.reject(err)
     }
-    if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+    if (err.response && err.response.status === 401) {
       location.href = `${process.env.VUE_APP_PROXY_URL}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
+      return Promise.reject(err)
+    }
+    if (err.response && err.response.status === 403) {
+      location.href = '/';
       return Promise.reject(err)
     }
     Message.error(err.response.data);
