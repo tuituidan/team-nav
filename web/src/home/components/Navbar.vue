@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <div class="navbar" style="display: flex">
     <hamburger id="hamburger-container"
                :is-active="sidebar.opened"
                class="hamburger-container" @toggleClick="toggleSideBar"/>
@@ -13,6 +13,7 @@
       @clear="searchHandler"
       suffix-icon="el-icon-search">
     </el-input>
+    <carousel-flip-notice class="carousel-flip-notice"></carousel-flip-notice>
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <screenfull class="right-menu-item hover-effect"/>
@@ -33,7 +34,9 @@
           </router-link>
           <el-dropdown-item @click.native="setting = true">布局设置</el-dropdown-item>
           <el-dropdown-item v-if="loginUser.id" @click.native="openChangePassword">修改密码</el-dropdown-item>
-          <el-dropdown-item v-if="loginUser.id && !loginUser.isAdmin"><card-apply>卡片申请</card-apply></el-dropdown-item>
+          <el-dropdown-item v-if="loginUser.id && !loginUser.isAdmin">
+            <card-apply>卡片申请</card-apply>
+          </el-dropdown-item>
           <el-dropdown-item v-if="loginUser.id" divided @click.native="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -53,6 +56,7 @@ export default {
     'header-avatar': () => import('@/components/header-avatar'),
     'doc': () => import('@/home/components/doc'),
     'card-apply': () => import('@/home/components/card-apply'),
+    'carousel-flip-notice': () => import('@/home/components/carousel-flip-notice'),
   },
   data() {
     return {
@@ -108,6 +112,7 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
+  display: flex;
   height: 60px;
   overflow: hidden;
   position: relative;
@@ -131,6 +136,11 @@ export default {
     float: left;
     line-height: 60px;
     width: 250px;
+  }
+
+  .carousel-flip-notice {
+    flex: auto;
+    margin: 0 20px;
   }
 
   .errLog-container {
