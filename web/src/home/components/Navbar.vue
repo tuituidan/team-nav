@@ -15,12 +15,8 @@
     </el-input>
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <screenfull id="screenfull" class="right-menu-item hover-effect"/>
-        <el-tooltip content="文档地址">
-          <div class="right-menu-item hover-effect">
-            <svg-icon icon-class="question" @click="gotoDocs" />
-          </div>
-        </el-tooltip>
+        <screenfull class="right-menu-item hover-effect"/>
+        <doc class="right-menu-item hover-effect"/>
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -29,16 +25,18 @@
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/admin/category">
+          <a v-if="!loginUser.id" :href="loginUrl">
+            <el-dropdown-item>登录</el-dropdown-item>
+          </a>
+          <router-link v-if="loginUser.id && loginUser.isAdmin" to="/admin/category">
             <el-dropdown-item>后台管理</el-dropdown-item>
           </router-link>
           <el-dropdown-item @click.native="setting = true">布局设置</el-dropdown-item>
           <el-dropdown-item v-if="loginUser.id" @click.native="openChangePassword">修改密码</el-dropdown-item>
-          <el-dropdown-item v-if="loginUser.id">卡片申请</el-dropdown-item>
+          <el-dropdown-item v-if="loginUser.id && !loginUser.isAdmin"><card-apply>卡片申请</card-apply></el-dropdown-item>
           <el-dropdown-item v-if="loginUser.id" divided @click.native="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-
       <change-password ref="changePassword"></change-password>
     </div>
   </div>
@@ -50,11 +48,13 @@ import {mapGetters} from 'vuex'
 export default {
   components: {
     'hamburger': () => import('@/components/Hamburger'),
-    'screenfull': () => import('@/components/Screenfull'),
+    'screenfull': () => import('@/home/components/Screenfull'),
     'change-password': () => import('@/home/components/change-password'),
     'header-avatar': () => import('@/components/header-avatar'),
+    'doc': () => import('@/home/components/doc'),
+    'card-apply': () => import('@/home/components/card-apply'),
   },
-  data(){
+  data() {
     return {
       keywords: ''
     }
@@ -65,6 +65,9 @@ export default {
       'device',
       'loginUser',
     ]),
+    loginUrl() {
+      return `${process.env.VUE_APP_PROXY_URL}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
+    },
     setting: {
       get() {
         return this.$store.state.settings.showSettings
@@ -78,11 +81,8 @@ export default {
     },
   },
   methods: {
-    searchHandler(){
+    searchHandler() {
       this.$emit('search', this.keywords)
-    },
-    gotoDocs(){
-      window.open(`${process.env.VUE_APP_PROXY_URL}/docs/`)
     },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')

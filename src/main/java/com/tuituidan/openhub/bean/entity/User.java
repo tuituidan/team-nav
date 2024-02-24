@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.bean.entity;
 
+import com.tuituidan.openhub.util.SecurityUtils;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -66,7 +67,7 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if ("1".equals(id) || roleIds.contains("1")) {
+        if (SecurityUtils.isAdmin(this)) {
             return Collections.singletonList(new SimpleGrantedAuthority("admin"));
         }
         return Collections.emptyList();

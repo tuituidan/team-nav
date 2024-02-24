@@ -4,11 +4,14 @@ import com.tuituidan.openhub.bean.dto.CategoryDto;
 import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
+import com.tuituidan.openhub.bean.entity.Role;
+import com.tuituidan.openhub.bean.entity.User;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.ListUtils;
+import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import com.tuituidan.openhub.util.TransactionUtils;
 import java.util.ArrayList;
@@ -90,11 +93,41 @@ public class CategoryService {
      * @return List
      */
     public List<CategoryVo> selectTree(Integer level) {
-        List<CategoryVo> categoryList = categoryRepository
-                .findByValidTrueAndLevelLessThanEqual(level == null ? 3 : level).stream()
-                .map(item -> BeanExtUtils.convert(item, CategoryVo::new))
+        List<CategoryVo> categoryList = getCategoryByLoginUser().stream()
+                .filter(item -> item.getLevel() <= (level == null ? 3 : level))
                 .collect(Collectors.toList());
         return ListUtils.buildTree(categoryList);
+    }
+
+    /**
+     * getCategoryByLoginUser
+     *
+     * @return List
+     */
+    public List<CategoryVo> getCategoryByLoginUser() {
+        List<Category> categories = categoryRepository.findByValidTrue();
+        if (CollectionUtils.isEmpty(categories)) {
+            return Collections.emptyList();
+        }
+        User userInfo = SecurityUtils.getUserInfo();
+        if (SecurityUtils.isAdmin(userInfo)) {
+            return categories.stream()
+                    .map(item -> BeanExtUtils.convert(item, CategoryVo::new))
+                    .collect(Collectors.toList());
+        }
+        List<CategoryVo> list = categories.stream()
+                .map(item -> BeanExtUtils.convert(item, CategoryVo::new)
+                        .setRoleIds(cacheService.getRolesByCategoryId(item.getId())
+                                .stream().map(Role::getId).collect(Collectors.toSet())))
+                .collect(Collectors.toList());
+        if (userInfo == null) {
+            return list.stream().filter(item -> CollectionUtils.isEmpty(item.getRoleIds()))
+                    .collect(Collectors.toList());
+        }
+        return list.stream().filter(item ->
+                CollectionUtils.isEmpty(item.getRoleIds())
+                        || CollectionUtils.containsAny(item.getRoleIds(), userInfo.getRoleIds())
+        ).collect(Collectors.toList());
     }
 
     /**

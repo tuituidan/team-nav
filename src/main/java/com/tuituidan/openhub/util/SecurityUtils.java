@@ -24,7 +24,7 @@ public class SecurityUtils {
      */
     public static boolean isAdmin(User userInfo) {
         return userInfo != null && ("1".equals(userInfo.getId())
-                || userInfo.getRoleIds().contains("1"));
+                || (userInfo.getRoleIds() != null && userInfo.getRoleIds().contains("1")));
     }
 
     /**

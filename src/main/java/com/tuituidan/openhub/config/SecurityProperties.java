@@ -19,4 +19,6 @@ import org.springframework.context.annotation.Configuration;
 public class SecurityProperties {
 
     private String[] permitUrl;
+
+    private String[] applyUrl;
 }

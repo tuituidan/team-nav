@@ -54,8 +54,10 @@ public class SecurityConfig {
         setLogin(http.formLogin());
         setLogout(http.logout());
 
-        http.authorizeRequests().antMatchers(securityProperties.getPermitUrl()).permitAll();
-        http.authorizeRequests().antMatchers("/api/v1/**").hasAuthority("admin")
+        http.authorizeRequests()
+                .antMatchers(securityProperties.getPermitUrl()).permitAll()
+                .antMatchers(securityProperties.getApplyUrl()).authenticated()
+                .antMatchers("/api/v1/**").hasAuthority("admin")
                 .anyRequest()
                 .permitAll();
         http.exceptionHandling().defaultAuthenticationEntryPointFor((request, response, ex) ->

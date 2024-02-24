@@ -17,6 +17,7 @@ export default {
       // 是否显示弹出层
       show: false,
       showFaviconLoading: false,
+      isApply: false,
       // 菜单树选项
       categoryOptions: [],
       // 表单参数
@@ -69,17 +70,21 @@ export default {
     }
   },
   methods: {
-    open(item) {
+    open(item = {}) {
       if (item.id) {
         this.title = '编辑卡片';
         this.form = {...item};
         if (item.zip) {
           this.zipFileList = [item.zip];
         }
-      } else {
+      } else if(item.category) {
         this.form.type = 'default';
         this.form.category = item.category;
         this.title = '新增卡片';
+      } else {
+        this.form.type = 'default';
+        this.title = '申请卡片';
+        this.isApply = true;
       }
       this.show = true;
       this.$nextTick(() => {

@@ -46,8 +46,9 @@ public class CategoryController {
     }
 
     /**
-     * 查询有效列表
+     * 查询树结构
      *
+     * @param level 级别
      * @return List
      */
     @GetMapping("/tree")

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="right-menu-item hover-effect">
     <svg-icon :icon-class="isFullscreen?'exit-fullscreen':'fullscreen'" @click="click" />
   </div>
 </template>

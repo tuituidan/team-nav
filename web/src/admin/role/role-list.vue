@@ -84,7 +84,7 @@ export default {
       loading: true,
       // 查询参数
       queryParam: {
-        pageIndex: 0,
+        pageIndex: 1,
         pageSize: 10,
         keywords: ''
       },

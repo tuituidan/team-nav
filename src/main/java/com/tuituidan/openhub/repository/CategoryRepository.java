@@ -44,19 +44,11 @@ public interface CategoryRepository extends JpaRepository<Category, String>, Jpa
     Integer getMaxSort(String id, String pid, Boolean valid);
 
     /**
-     * 根据级别查询
-     *
-     * @param level level
-     * @return List
-     */
-    List<Category> findByValidTrueAndLevelLessThanEqual(Integer level);
-
-    /**
      * findByValidTrue
      *
      * @return List
      */
-    List<Category> findByValidTrueOrderBySort();
+    List<Category> findByValidTrue();
 
     /**
      * findByPidAndValidTrueOrderBySort
