@@ -68,8 +68,9 @@
       v-loading="loading"
       :data="table.dataList"
       @selection-change="selections = $refs.dataTable.selection">
-      <el-table-column label="序号" type="index" width="55" align="center" />
-      <el-table-column type="selection" width="50" align="center" :selectable="tableSelectable"/>
+      <el-table-column label="序号" type="index" width="55" align="center" :index="table.index"/>
+      <el-table-column type="selection" width="50" align="center"
+                       :selectable="tableSelectable"/>
       <el-table-column label="登录账号" align="center" prop="username"
                        :show-overflow-tooltip="true"/>
       <el-table-column label="用户姓名" align="center" prop="nickname"
@@ -144,6 +145,7 @@ export default {
       },
       table: {
         total: 0,
+        index: 1,
         dataList: []
       }
     };
@@ -158,6 +160,7 @@ export default {
         .then(res => {
           this.table.dataList = res.content;
           this.table.total = res.totalElements;
+          this.table.index = res.pageable.offset + 1;
           this.loading = false;
         });
     },
@@ -165,7 +168,7 @@ export default {
     openEditDialog(row) {
       this.$refs.refUser.open(row);
     },
-    tableSelectable(row){
+    tableSelectable(row) {
       return row.username !== 'admin'
     },
     /** 重置密码按钮操作 */

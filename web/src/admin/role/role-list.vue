@@ -37,6 +37,7 @@
       @row-click="roleRowClickHandler"
       @current-change="roleRowChange"
       :data="table.dataList">
+      <el-table-column label="序号" type="index" width="50" align="center" :index="table.index"/>
       <el-table-column label="选择" width="50" align="center">
         <template slot-scope="scope">
           <el-radio v-model="selectRow" :label="scope.row.id"><i></i></el-radio>
@@ -90,6 +91,7 @@ export default {
       },
       table: {
         total: 0,
+        index: 1,
         dataList: []
       },
       selectRow: '',
@@ -105,6 +107,7 @@ export default {
         .then(res => {
           this.table.dataList = res.content;
           this.table.total = res.totalElements;
+          this.table.index = res.pageable.offset + 1;
           this.loading = false;
         });
     },

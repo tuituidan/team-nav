@@ -47,7 +47,7 @@
       v-loading="loading"
       @selection-change="selections = $refs.dataTable.selection"
       :data="table.dataList">
-      <el-table-column label="序号" type="index" width="55" align="center"/>
+      <el-table-column label="序号" type="index" width="55" align="center" :index="table.index"/>
       <el-table-column type="selection" align="center" width="55"></el-table-column>
       <el-table-column label="分类" prop="name" show-overflow-tooltip/>
       <el-table-column prop="icon" label="图标" align="center" width="100">
@@ -116,6 +116,7 @@ export default {
       },
       table: {
         total: 0,
+        index: 1,
         dataList: []
       }
     };
@@ -130,6 +131,7 @@ export default {
         .then(res => {
           this.table.dataList = res.content;
           this.table.total = res.totalElements;
+          this.table.index = res.pageable.offset + 1;
           this.loading = false;
         });
     },

@@ -48,6 +48,7 @@
             ref="dataTable"
             v-loading="loading"
             :data="table.dataList">
+            <el-table-column label="序号" type="index" width="50" align="center" :index="table.index"/>
             <el-table-column type="selection" width="50" align="center"/>
             <el-table-column label="用户姓名" align="center" prop="nickname"
                              :show-overflow-tooltip="true"/>
@@ -85,6 +86,7 @@ export default {
       },
       table: {
         total: 0,
+        index: 1,
         dataList: []
       },
       categories: [],
@@ -113,6 +115,7 @@ export default {
         .then(res => {
           this.table.dataList = res.content;
           this.table.total = res.totalElements;
+          this.table.index = res.pageable.offset + 1;
           this.loading = false;
         });
     },
