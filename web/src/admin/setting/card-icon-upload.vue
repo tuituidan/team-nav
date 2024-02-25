@@ -9,7 +9,7 @@
       <com-icon-uploader :action="uploadUrl"
                     show-name
                     show-edit
-                    v-model.trim="iconPaths"
+                    v-model="iconPaths"
                     @remove="onRemoveCardIcon"
                     @edit-name="onEditIconName"
                     :max-count="500"></com-icon-uploader>

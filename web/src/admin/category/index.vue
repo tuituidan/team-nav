@@ -37,7 +37,8 @@ export default {
 
 <style lang="scss" scoped>
 .app-container {
-  padding-top: 5px;
+  padding-top: 10px;
+  padding-bottom: 15px;
 }
 
 //.tree-header-container {

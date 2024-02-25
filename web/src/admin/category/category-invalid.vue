@@ -158,6 +158,6 @@ export default {
 
 <style scoped lang="scss">
 .app-container {
-  padding: 0;
+  padding: 10px;
 }
 </style>

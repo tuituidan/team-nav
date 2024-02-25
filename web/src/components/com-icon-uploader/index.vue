@@ -111,13 +111,13 @@ export default {
       this.$modal.msgError(`文件【${file.name}】上传错误，${error}。`);
     },
     handlePaste(event) {
-      const items = event.clipboardData && event.clipboardData.items;
-      if (!(items && items.length)) {
+      const files = event.clipboardData && event.clipboardData.files;
+      if (!(files && files.length)) {
         this.$notify.error('当前浏览器不支持粘贴上传，请点击文件选择按钮进行上传！');
         return;
       }
-      for (const element of items) {
-        this.$refs.uploader.handleStart(element.getAsFile());
+      for (const file of files) {
+        this.$refs.uploader.handleStart(file);
       }
       this.$refs.uploader.submit();
     },
