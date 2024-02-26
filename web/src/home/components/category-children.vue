@@ -46,7 +46,7 @@ export default {
       }
     },
     showQrcodeHandler(url){
-      return `${process.env.VUE_APP_PROXY_URL}/api/v1/qrcode?url=${encodeURIComponent(url)}`;
+      return `${process.env.VUE_APP_BASE_API}/api/v1/qrcode?url=${encodeURIComponent(url)}`;
     }
   }
 }

@@ -11,7 +11,7 @@ export default {
   name: "doc-index",
   methods: {
     gotoDocs() {
-      window.open(`${process.env.VUE_APP_PROXY_URL}/docs/`)
+      window.open(`${process.env.VUE_APP_BASE_API}/docs/`)
     },
   }
 }

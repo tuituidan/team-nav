@@ -70,7 +70,7 @@ export default {
       'loginUser',
     ]),
     loginUrl() {
-      return `${process.env.VUE_APP_PROXY_URL}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
+      return `${process.env.VUE_APP_BASE_API}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
     },
     setting: {
       get() {

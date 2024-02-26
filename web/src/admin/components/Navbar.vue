@@ -62,7 +62,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('user/LogOut').then(() => {
-          location.href = `${process.env.VUE_APP_PROXY_URL}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
+          location.href = `${process.env.VUE_APP_BASE_API}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
         })
       }).catch(() => {
       });
