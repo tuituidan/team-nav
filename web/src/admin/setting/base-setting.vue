@@ -16,7 +16,7 @@
       </el-form-item>
       <el-form-item label="网站LOGO" prop="logoPath">
         <div class="multi-form-item">
-          <com-icon-uploader v-model.trim="settingItem.logoPath" @remove="onRemoveLogo"></com-icon-uploader>
+          <com-icon-uploader v-model="settingItem.logoPath" @remove="onRemoveLogo"></com-icon-uploader>
           <div>
             <el-checkbox v-model="settingItem.logoToFavicon">同步修改favicon</el-checkbox>
             <com-tip tip="勾选时网站的favicon也将使用此logo图片"></com-tip>

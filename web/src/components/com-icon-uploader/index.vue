@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="demo-upload-list" v-for="item in uploadList" :key="item.uid">
+    <div class="demo-upload-list" v-for="item in uploadList" :key="item.url">
       <template v-if="item.status === 'success'">
         <div v-if="showName" class="uploader-picture-content">
           <ivu-avatar :title="item.name"
@@ -21,7 +21,6 @@
     <el-upload v-show="showAdd"
                ref="uploader"
                :show-file-list="false"
-               :file-list="fileList"
                accept="image/x-icon,image/png,image/jpeg,image/jpg,image/gif,image/bmp"
                :on-success="handleSuccess"
                :on-error="handleError"
@@ -65,7 +64,6 @@ export default {
   },
   data() {
     return {
-      fileList: [],
       uploadList: [],
     }
   },
@@ -74,8 +72,20 @@ export default {
       return this.uploadList.length < this.maxCount;
     }
   },
+  mounted() {
+    if (this.value) {
+      console.log('mounted', JSON.stringify(this.value))
+      this.init(this.value);
+    }
+  },
   watch: {
     value(newVals) {
+      console.log('watchvalue', JSON.stringify(newVals))
+      this.init(newVals);
+    },
+  },
+  methods: {
+    init(newVals) {
       if (!newVals) {
         return;
       }
@@ -83,25 +93,21 @@ export default {
       if (!Array.isArray(newVals)) {
         vals = [newVals];
       }
-      this.fileList = vals.map(val => ({
+      this.uploadList = vals.map(val => ({
         name: val.substring(val.lastIndexOf('/') + 1, val.lastIndexOf('.')),
-        url: val
-      }))
-      this.$nextTick(() => {
-        this.uploadList = this.$refs.uploader.uploadFiles;
-      })
+        url: val,
+        status: 'success',
+      }));
     },
-  },
-  methods: {
     handleRemove(file) {
-      const fileList = this.$refs.uploader.uploadFiles;
-      this.$refs.uploader.uploadFiles.splice(fileList.indexOf(file), 1);
+      this.uploadList.splice(this.uploadList.indexOf(file), 1);
       this.$emit('remove', file.url);
     },
-    handleSuccess(res, file, fileList) {
-      file.url = res;
+    handleSuccess(res, file) {
       if (this.maxCount > 1) {
-        this.$emit('input', fileList.map(item => (item.url)));
+        const urls = this.uploadList.map(item => item.url);
+        urls.push(res);
+        this.$emit('input', urls);
         this.$modal.msgSuccess(`文件【${file.name}】上传成功。`);
       } else {
         this.$emit('input', res);
@@ -113,7 +119,7 @@ export default {
     handlePaste(event) {
       const files = event.clipboardData && event.clipboardData.files;
       if (!(files && files.length)) {
-        this.$notify.error('当前浏览器不支持粘贴上传，请点击文件选择按钮进行上传！');
+        this.$modal.msgError('未获取到需要粘贴的图片，确保您已进行图片复制操作，且浏览器支持粘贴上传，否则请点击文件选择按钮进行上传！');
         return;
       }
       for (const file of files) {
@@ -125,6 +131,7 @@ export default {
       this.$prompt('', '', {
         inputPlaceholder: '请输入要修改的图标名称...',
         inputValue: file.name,
+        closeOnClickModal: false,
       }).then(({value}) => {
         this.$emit('edit-name', file.url, value);
       });

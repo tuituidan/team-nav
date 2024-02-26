@@ -7,12 +7,12 @@
     </div>
     <div style="max-height: 325px;overflow: auto">
       <com-icon-uploader :action="uploadUrl"
-                    show-name
-                    show-edit
-                    v-model="iconPaths"
-                    @remove="onRemoveCardIcon"
-                    @edit-name="onEditIconName"
-                    :max-count="500"></com-icon-uploader>
+                         show-name
+                         show-edit
+                         v-model="iconPaths"
+                         @remove="onRemoveCardIcon"
+                         @edit-name="onEditIconName"
+                         :max-count="500"></com-icon-uploader>
     </div>
   </el-card>
 </template>
