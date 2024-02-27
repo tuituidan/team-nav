@@ -3,7 +3,7 @@
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container"
                @toggleClick="toggleSideBar"/>
 
-    <div class="right-menu">
+    <div class="right-menu" v-if="version.currentVersion">
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
@@ -11,10 +11,10 @@
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <a v-if="version" href="https://github.com/tuituidan/team-nav" target="_blank">
+          <a href="https://github.com/tuituidan/team-nav" target="_blank">
             <el-badge is-dot :hidden="!version.hasNewVersion"
                       :title="'最新版本：'+version.remoteVersion">
-              <el-dropdown-item>版本：{{version.currentVersion}}</el-dropdown-item>
+              <el-dropdown-item>版本：{{ version.currentVersion }}</el-dropdown-item>
             </el-badge>
           </a>
           <a target="_blank" href="https://github.com/tuituidan/team-nav/issues">
@@ -35,34 +35,27 @@ export default {
     Hamburger: () => import('@/components/Hamburger'),
     'header-avatar': () => import('@/components/header-avatar'),
   },
-  data() {
-    return {
-      version: null
-    }
-  },
   computed: {
     ...mapGetters([
       'sidebar',
+      'version',
     ]),
   },
-  created() {
-    this.$http.get('/api/v1/app/version')
-      .then(res => {
-        this.version = res;
-      })
+  mounted() {
+    this.$store.dispatch('settings/loadVersion');
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      this.$confirm('确定注销并退出系统吗？', '提示', {
+      this.$confirm('确定要退出登录吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('user/LogOut').then(() => {
-          location.href = `${process.env.VUE_APP_BASE_API}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
+          this.$store.dispatch('settings/loadVersion');
         })
       }).catch(() => {
       });

@@ -45,7 +45,9 @@ const actions = {
 
   // 退出系统
   LogOut({commit, state}) {
-    return http.post('/logout')
+    return http.post('/logout').then(()=>{
+      window.localStorage.userLogout = true;
+    })
   },
 }
 

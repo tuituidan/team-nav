@@ -8,12 +8,16 @@ const state = {
   cutOverSpeed: 10,
   logoPath: '/assets/images/logo.png',
   logoToFavicon: false,
+  version: {},
 }
 const mutations = {
   CHANGE_SETTING: (state, {key, value}) => {
     if (state.hasOwnProperty(key)) {
       state[key] = value
     }
+  },
+  CHANGE_VERSION: (state, version) => {
+    state.version = version;
   }
 }
 
@@ -29,6 +33,13 @@ const actions = {
       commit('CHANGE_SETTING', {key: 'cutOverSpeed', value: res.cutOverSpeed});
       commit('CHANGE_SETTING', {key: 'logoPath', value: res.logoPath});
       commit('CHANGE_SETTING', {key: 'logoToFavicon', value: res.logoToFavicon});
+      return res;
+    });
+  },
+  // 加载版本信息
+  loadVersion({commit}) {
+    return http.get('/api/v1/app/version').then(res => {
+      commit('CHANGE_VERSION', res);
       return res;
     });
   }

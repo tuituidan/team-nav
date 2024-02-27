@@ -26,9 +26,9 @@
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <a v-if="!loginUser.id" :href="loginUrl">
-            <el-dropdown-item>登录</el-dropdown-item>
-          </a>
+          <el-dropdown-item v-if="!loginUser.id"
+                            @click.native="$store.dispatch('settings/loadVersion')"
+          >登录</el-dropdown-item>
           <router-link v-if="loginUser.id && loginUser.isAdmin" to="/admin/category">
             <el-dropdown-item>后台管理</el-dropdown-item>
           </router-link>
@@ -69,9 +69,6 @@ export default {
       'device',
       'loginUser',
     ]),
-    loginUrl() {
-      return `${process.env.VUE_APP_BASE_API}/login?returnUrl=${encodeURIComponent(window.location.href)}`;
-    },
     setting: {
       get() {
         return this.$store.state.settings.showSettings
@@ -92,13 +89,13 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      this.$confirm('确定注销并退出系统吗？', '提示', {
+      this.$confirm('确定要退出登录吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('user/LogOut').then(() => {
-          location.href = '/';
+          this.$store.dispatch('settings/loadVersion');
         })
       }).catch(() => {
       });

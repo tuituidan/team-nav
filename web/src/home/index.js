@@ -35,6 +35,12 @@ export default {
     }
   },
   mounted() {
+    if(localStorage.username
+      && localStorage.password
+      && localStorage.autoLogin === 'true'
+      && !localStorage.userLogout){
+      this.$store.dispatch('settings/loadVersion');
+    }
     this.loadDatas('');
   },
   data() {
