@@ -50,7 +50,7 @@ public class VersionCheckTask {
     /**
      * check
      */
-    @Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 30 1 * * ?")
     public void check() {
         Document doc = HttpUtils.getJsoupDoc(remoteVersionUrl);
         if (Objects.isNull(doc)) {

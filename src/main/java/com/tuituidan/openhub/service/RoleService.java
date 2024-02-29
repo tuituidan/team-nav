@@ -117,7 +117,8 @@ public class RoleService {
         List<RoleCategory> saveList = new ArrayList<>();
         for (String categoryId : categoryIds) {
             for (String roleId : roleIds) {
-                saveList.add(new RoleCategory().setCategoryId(categoryId).setRoleId(roleId));
+                saveList.add(new RoleCategory().setId(StringExtUtils.getUuid())
+                        .setCategoryId(categoryId).setRoleId(roleId));
             }
         }
         roleCategoryRepository.saveAll(saveList);
@@ -136,6 +137,7 @@ public class RoleService {
         if (ArrayUtils.isNotEmpty(categoryIds)) {
             roleCategoryRepository.saveAll(Arrays.stream(categoryIds)
                     .map(categoryId -> new RoleCategory()
+                            .setId(StringExtUtils.getUuid())
                             .setCategoryId(categoryId)
                             .setRoleId(roleId))
                     .collect(Collectors.toList()));
@@ -153,6 +155,7 @@ public class RoleService {
         if (ArrayUtils.isNotEmpty(roleUserDto.getCheckIds())) {
             roleUserRepository.saveAll(Arrays.stream(roleUserDto.getCheckIds())
                     .map(checkId -> new RoleUser()
+                            .setId(StringExtUtils.getUuid())
                             .setUserId(checkId)
                             .setRoleId(roleId))
                     .collect(Collectors.toList()));

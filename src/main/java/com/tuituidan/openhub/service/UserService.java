@@ -141,7 +141,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
             roleUserRepository.deleteByUserId(user.getId());
         }
         roleUserRepository.saveAll(Arrays.stream(userDto.getRoleIds())
-                .map(roleId -> new RoleUser().setRoleId(roleId)
+                .map(roleId -> new RoleUser().setId(StringExtUtils.getUuid()).setRoleId(roleId)
                         .setUserId(user.getId())).collect(Collectors.toList()));
         userRepository.save(user);
     }
