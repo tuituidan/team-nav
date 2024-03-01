@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -62,35 +61,31 @@ public class ListUtils {
      * @param after after
      * @param <T> T
      */
-    public <T extends ISortEntity<T>> void changeSort(Supplier<List<T>> getFunc,
-            Consumer<List<T>> saveFunc,
+    public <T extends ISortEntity<T>> List<T> changeSort(Supplier<List<T>> getFunc,
             int before, int after) {
         if (before == after) {
-            return;
+            return Collections.emptyList();
         }
         LinkedList<T> list = new LinkedList<>(getFunc.get());
         if (CollectionUtils.isEmpty(list) || list.size() == 1) {
-            return;
+            return Collections.emptyList();
         }
         list.add(after, list.remove(before));
-        sortListSave(saveFunc, list);
+        return buildSortList(list);
     }
 
     /**
      * element-ui的el-tree的拖拽排序后端实现
      *
-     * @param getFunc getFunc
-     * @param saveFunc saveFunc
+     * @param sourceList sourceList
      * @param sortDto sortDto
      * @param <T> T
      */
-    public <T extends ISortEntity<T>> void changeSort(Supplier<List<T>> getFunc,
-            Consumer<List<T>> saveFunc,
-            SortDto sortDto) {
-        LinkedList<T> list = new LinkedList<>(getFunc.get());
-        if (CollectionUtils.isEmpty(list) || list.size() == 1) {
-            return;
+    public <T extends ISortEntity<T>> List<T> changeSort(List<T> sourceList, SortDto sortDto) {
+        if (CollectionUtils.isEmpty(sourceList) || sourceList.size() == 1) {
+            return Collections.emptyList();
         }
+        LinkedList<T> list = new LinkedList<>(sourceList);
         T draggingNode = list.stream().filter(item -> Objects.equals(item.getId(), sortDto.getDraggingId()))
                 .findFirst().orElseThrow(NullPointerException::new);
         T dropNode = list.stream().filter(item -> Objects.equals(item.getId(), sortDto.getDropId()))
@@ -101,10 +96,10 @@ public class ListUtils {
         } else {
             list.add(list.indexOf(dropNode) + 1, draggingNode);
         }
-        sortListSave(saveFunc, list);
+        return buildSortList(list);
     }
 
-    private <T extends ISortEntity<T>> void sortListSave(Consumer<List<T>> saveFunc, LinkedList<T> list) {
+    private <T extends ISortEntity<T>> List<T> buildSortList(LinkedList<T> list) {
         List<T> updateList = new ArrayList<>();
         int index = 1;
         for (T item : list) {
@@ -114,9 +109,9 @@ public class ListUtils {
             index++;
         }
         if (CollectionUtils.isEmpty(updateList)) {
-            return;
+            return Collections.emptyList();
         }
-        saveFunc.accept(updateList);
+        return updateList;
     }
 
     /**

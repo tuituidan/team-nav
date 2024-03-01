@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
@@ -80,9 +81,11 @@ public class NoticeService {
      * @param sortDto sortDto
      */
     public void changeSort(SortDto sortDto) {
-        ListUtils.changeSort(() -> noticeRepository.findAll(Sort.by("sort")),
-                noticeRepository::saveAll,
-                sortDto);
+        List<Notice> saveList = ListUtils.changeSort(noticeRepository.findAll(Sort.by("sort")), sortDto);
+        if (CollectionUtils.isEmpty(saveList)) {
+            return;
+        }
+        noticeRepository.saveAll(saveList);
     }
 
     /**

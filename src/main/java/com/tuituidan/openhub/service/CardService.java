@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -238,11 +237,13 @@ public class CardService {
      * @param sortDto sortDto
      */
     public void changeSort(String category, SortDto sortDto) {
-        Supplier<List<Card>> supplier = () -> cardRepository.findByCategory(category).stream()
+        List<Card> cards = cardRepository.findByCategory(category).stream()
                 .sorted(Comparator.comparing(Card::getSort)).collect(Collectors.toList());
-        ListUtils.changeSort(supplier,
-                cardRepository::saveAll,
-                sortDto);
+        List<Card> saveList = ListUtils.changeSort(cards, sortDto);
+        if (CollectionUtils.isEmpty(saveList)) {
+            return;
+        }
+        cardRepository.saveAll(saveList);
     }
 
     /**

@@ -122,7 +122,6 @@ public class RoleService {
             }
         }
         roleCategoryRepository.saveAll(saveList);
-        cacheService.getCategoryCache().invalidateAll(categoryIds);
         cacheService.getCategoryRolesCache().invalidateAll(categoryIds);
     }
 
@@ -142,6 +141,8 @@ public class RoleService {
                             .setRoleId(roleId))
                     .collect(Collectors.toList()));
         }
+        cacheService.getCategoryRolesCache().invalidateAll(Arrays.stream(categoryIds)
+                .collect(Collectors.toSet()));
     }
 
     /**
@@ -160,7 +161,6 @@ public class RoleService {
                             .setRoleId(roleId))
                     .collect(Collectors.toList()));
         }
-        // todo 清理缓存role-users
     }
 
     /**
