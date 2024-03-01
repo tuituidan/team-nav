@@ -61,6 +61,9 @@ public class Card implements ISortEntity<Card> {
     @Column(name = "zip", length = 600)
     private CardZipDto zip;
 
+    @Column(name = "has_attachment")
+    private Boolean hasAttachment;
+
     @Column(name = "sort")
     private Integer sort;
 }

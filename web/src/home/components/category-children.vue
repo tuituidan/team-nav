@@ -15,8 +15,8 @@
                         :style="{background: card.icon.color}">{{ card.icon.text }}
             </ivu-avatar>
             <div class="nav-card-content">
-              <div v-text="card.title" class="card-title"></div>
-              <div v-text="card.content" class="card-content"></div>
+              <div v-text="card.title" class="card-title text-ellipsis"></div>
+              <div v-text="card.content" class="card-content text-ellipsis"></div>
             </div>
           </div>
         </el-card>
@@ -24,6 +24,14 @@
           <div v-html="card.tip"></div>
           <div v-if="card.showQrcode">
             <img :src="showQrcodeHandler(card.url)" alt=""/>
+          </div>
+          <div v-if="Array.isArray(card.attachments) && card.attachments.length > 0">
+            <el-row type="flex" justify="space-between" v-for="item in card.attachments" :key="item.id">
+              <el-link icon="el-icon-download"
+                       @click.native="downloadAttachment(item.id)"
+                       type="warning">{{item.name}}</el-link>
+              <span style="text-align: right; min-width: 50px;" v-text="item.size"></span>
+            </el-row>
           </div>
         </div>
       </el-popover>
@@ -47,6 +55,9 @@ export default {
     },
     showQrcodeHandler(url){
       return `${process.env.VUE_APP_BASE_API}/api/v1/qrcode?url=${encodeURIComponent(url)}`;
+    },
+    downloadAttachment(id){
+      window.open(`${process.env.VUE_APP_BASE_API}/api/v1/attachment/${id}/actions/download`);
     }
   }
 }
@@ -82,19 +93,19 @@ export default {
     .card-title {
       font-size: 14px;
       font-weight: bold;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .card-content {
       font-size: 13px;
       color: #0366d6;
       display: block;
+      margin-top: 4px;
+    }
+
+    .text-ellipsis {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-top: 4px;
     }
   }
 
@@ -164,7 +175,7 @@ export default {
 .my-popover {
   background-color: rgba(70, 76, 91, .9);
   color: white;
-  max-width: 350px;
+  max-width: 400px;
 
   .popper__arrow {
     border-bottom-color: rgba(70, 76, 91, .9) !important;

@@ -132,6 +132,7 @@ export default {
             this.show = false;
             this.getList();
           });
+      }).catch(() => {
       });
     },
     /** 删除按钮操作 */

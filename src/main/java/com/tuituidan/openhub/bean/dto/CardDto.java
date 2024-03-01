@@ -43,4 +43,6 @@ public class CardDto {
 
     private Integer sort;
 
+    private String[] attachmentIds;
+
 }

@@ -4,12 +4,13 @@ import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.consts.UploadTypeEnum;
 import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.HttpUtils;
 import com.tuituidan.openhub.util.QrCodeUtils;
-import com.tuituidan.openhub.util.RequestUtils;
+import com.tuituidan.openhub.util.ResponseUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -60,6 +61,9 @@ public class CommonService implements ApplicationRunner {
     @Resource
     private CardRepository cardRepository;
 
+    @Resource
+    private AttachmentService attachmentService;
+
     /**
      * 初始化
      */
@@ -107,15 +111,18 @@ public class CommonService implements ApplicationRunner {
         } catch (Exception ex) {
             throw new ResourceWriteException("文件写入失败", ex);
         }
-        if (CardTypeEnum.DEFAULT.getType().equals(type)) {
+        if (UploadTypeEnum.DEFAULT.getType().equals(type)) {
             CARD_ICONS.add(file.getOriginalFilename());
+        }
+        if (UploadTypeEnum.ATTACHMENTS.getType().equals(type)) {
+            return attachmentService.saveAttachment(savePath, file);
         }
         return savePath;
     }
 
     private String formatSavePath(String type, MultipartFile file) {
         String fileName = file.getOriginalFilename();
-        if (CardTypeEnum.DEFAULT.getType().equals(type)) {
+        if (UploadTypeEnum.DEFAULT.getType().equals(type)) {
             String path = CARD_ICON_PATH + fileName;
             Assert.isTrue(!new File(Consts.ROOT_DIR + path).exists(), "文件名已经存在");
             return path;
@@ -286,7 +293,7 @@ public class CommonService implements ApplicationRunner {
      * @param url url
      */
     public void generateQrCode(String url) {
-        HttpServletResponse response = RequestUtils.getResponse();
+        HttpServletResponse response = ResponseUtils.getHttpResponse();
         response.setContentType(MediaType.IMAGE_PNG_VALUE);
         try (OutputStream outputStream = response.getOutputStream()) {
             BufferedImage image = QrCodeUtils.generate(url, 200);

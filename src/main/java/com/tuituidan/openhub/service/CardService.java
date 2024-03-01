@@ -5,18 +5,19 @@ import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
+import com.tuituidan.openhub.bean.vo.AttachmentVo;
 import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.bean.vo.HomeDataVo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
-import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
+import com.tuituidan.openhub.util.TransactionUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,6 +44,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -67,10 +69,10 @@ public class CardService {
     private CacheService cacheService;
 
     @Resource
-    private CategoryRepository categoryRepository;
+    private CardTypeServiceFactory cardTypeServiceFactory;
 
     @Resource
-    private CardTypeServiceFactory cardTypeServiceFactory;
+    private AttachmentService attachmentService;
 
     /**
      * 首页查询
@@ -116,7 +118,6 @@ public class CardService {
         return setCardsToCategory(categories, cardMap);
     }
 
-
     private List<CategoryVo> setCardsToCategory(List<CategoryVo> categories, Map<String, List<CardVo>> cardMap) {
         categories = categories.stream().filter(item -> cardMap.containsKey(item.getId()))
                 .collect(Collectors.toList());
@@ -138,7 +139,8 @@ public class CardService {
                 continue;
             }
             Category parent = cacheService.getCategory(item.getPid());
-            item.setFlatSort(StringUtils.leftPad(parent.getSort().toString(), 2, '0') + item.getFlatSort());
+            item.setFlatSort(StringUtils.leftPad(parent.getSort().toString(), 2, '0')
+                    + item.getFlatSort());
             item.setName(parent.getName() + " / " + item.getName());
             menus.computeIfAbsent(item.getPid(), key -> BeanExtUtils.convert(parent, CategoryVo::new));
         }
@@ -158,12 +160,14 @@ public class CardService {
             tipsFunc.add(CardVo::getPrivateContent);
         }
         tipsFunc.add(CardVo::getUrl);
+        Map<String, List<AttachmentVo>> attachmentMap = attachmentService.getCardAttachmentMap(cards);
         return cards.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new);
             cardTypeServiceFactory.getService(item.getType()).formatCardVo(vo);
             vo.setTip(tipsFunc.stream().map(func -> func.apply(vo))
                     .filter(StringUtils::isNotBlank).distinct()
                     .collect(Collectors.joining("<br/>")));
+            vo.setAttachments(attachmentMap.get(item.getId()));
             return vo;
         }).collect(Collectors.groupingBy(CardVo::getCategory));
     }
@@ -176,9 +180,11 @@ public class CardService {
      */
     public List<CardVo> select(String category) {
         List<Card> list = cardRepository.findByCategory(category);
+        Map<String, List<AttachmentVo>> attachmentMap = attachmentService.getCardAttachmentMap(list);
         return list.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new);
             vo.setCategoryName(categoryService.buildCategoryName(item.getCategory()));
+            vo.setAttachments(attachmentMap.get(item.getId()));
             return vo;
         }).sorted(Comparator.comparing(CardVo::getSort)).collect(Collectors.toList());
     }
@@ -197,7 +203,11 @@ public class CardService {
         if (card.getSort() == null) {
             card.setSort(cardRepository.getMaxSort(card.getCategory()) + 1);
         }
-        cardRepository.save(card);
+        TransactionUtils.execute(() -> {
+            card.setHasAttachment(ArrayUtils.isNotEmpty(cardDto.getAttachmentIds()));
+            cardRepository.save(card);
+            attachmentService.saveAttachment(card.getId(), cardDto.getAttachmentIds());
+        });
     }
 
     private void saveIcon(CardIconDto cardIconDto) {
@@ -243,7 +253,10 @@ public class CardService {
     public void delete(String[] id) {
         List<String> ids = Arrays.asList(id);
         List<Card> cards = cardRepository.findAllById(ids);
-        cardRepository.deleteAllById(ids);
+        TransactionUtils.execute(() -> {
+            cardRepository.deleteAllById(ids);
+            attachmentService.deleteByBusinessIds(ids);
+        });
         for (Card card : cards) {
             cardTypeServiceFactory.getService(card.getType()).supplyDelete(card);
         }

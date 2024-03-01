@@ -2,6 +2,7 @@ package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.vo.VersionInfo;
 import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.service.AttachmentService;
 import com.tuituidan.openhub.service.CommonService;
 import com.tuituidan.openhub.task.VersionCheckTask;
 import java.io.IOException;
@@ -33,6 +34,19 @@ public class CommonController {
 
     @Resource
     private VersionCheckTask versionCheckTask;
+
+    @Resource
+    private AttachmentService attachmentService;
+
+    /**
+     * downloadAttachment
+     *
+     * @param id id
+     */
+    @GetMapping("/attachment/{id}/actions/download")
+    public void downloadAttachment(@PathVariable("id") String id) {
+        attachmentService.downloadFile(id);
+    }
 
     /**
      * 文件上传

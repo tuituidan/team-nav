@@ -2,6 +2,7 @@ package com.tuituidan.openhub.bean.vo;
 
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -43,4 +44,6 @@ public class CardVo {
     private CardZipDto zip;
 
     private Integer sort;
+
+    private List<AttachmentVo> attachments;
 }

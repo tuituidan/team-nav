@@ -2,7 +2,6 @@ package com.tuituidan.openhub.util;
 
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -17,18 +16,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @UtilityClass
 public class RequestUtils {
-
-    /**
-     * 得到reponse.
-     *
-     * @return HttpServletResponse
-     */
-    public static HttpServletResponse getResponse() {
-        ServletRequestAttributes attrs = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
-        return Optional.ofNullable(attrs)
-                .map(ServletRequestAttributes::getResponse)
-                .orElseThrow(() -> new UnsupportedOperationException("请在web上下文中获取HttpServletResponse"));
-    }
 
     /**
      * 得到request
