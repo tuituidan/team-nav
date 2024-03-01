@@ -34,7 +34,7 @@
           </router-link>
           <el-dropdown-item @click.native="setting = true">布局设置</el-dropdown-item>
           <el-dropdown-item v-if="loginUser.id" @click.native="openChangePassword">修改密码</el-dropdown-item>
-          <el-dropdown-item v-if="loginUser.id && !loginUser.isAdmin">
+          <el-dropdown-item disabled v-if="loginUser.id && !loginUser.isAdmin">
             <card-apply>卡片申请</card-apply>
           </el-dropdown-item>
           <el-dropdown-item v-if="loginUser.id" divided @click.native="logout">退出登录</el-dropdown-item>
