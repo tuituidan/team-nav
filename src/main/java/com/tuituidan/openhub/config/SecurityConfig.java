@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 /**
@@ -34,9 +35,6 @@ public class SecurityConfig {
 
     @Resource
     private UserService userService;
-
-    @Resource
-    private LoginSuccessHandler loginSuccessHandler;
 
     /**
      * filterChain
@@ -67,8 +65,10 @@ public class SecurityConfig {
     }
 
     private void setLogin(FormLoginConfigurer<HttpSecurity> login) {
-        loginSuccessHandler.setTargetUrlParameter("returnUrl");
-        login.loginPage("/login").loginProcessingUrl("/login").successHandler(loginSuccessHandler);
+        SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
+        handler.setTargetUrlParameter("returnUrl");
+        login.loginPage("/login").loginProcessingUrl("/login")
+                .successHandler(handler);
     }
 
     private void setLogout(LogoutConfigurer<HttpSecurity> logout) {
