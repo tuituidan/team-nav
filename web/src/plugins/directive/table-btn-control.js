@@ -2,9 +2,7 @@
  * @author tuituidan
  * @date 2024/2/18
  */
-import Vue from 'vue';
-
-Vue.directive('btn-single', {
+export const btnSingle = {
   componentUpdated(el, binding) {
     const datas = binding.value;
     if (Array.isArray(datas) && datas.length === 1) {
@@ -15,8 +13,8 @@ Vue.directive('btn-single', {
     el.setAttribute('disabled', 'disabled');
     el.classList.add('is-disabled');
   }
-});
-Vue.directive('btn-multiple', {
+}
+export const btnMultiple = {
   componentUpdated(el, binding) {
     const datas = binding.value;
     if (Array.isArray(datas) && datas.length > 0) {
@@ -27,4 +25,4 @@ Vue.directive('btn-multiple', {
     el.setAttribute('disabled', 'disabled');
     el.classList.add('is-disabled');
   }
-});
+}
