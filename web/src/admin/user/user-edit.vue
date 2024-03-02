@@ -78,6 +78,7 @@ export default {
       if (item) {
         this.title = '编辑用户';
         this.form = {...item};
+        this.form.roleIds = item.roles.map(role => role.id);
       } else {
         this.title = '新增用户';
       }
@@ -91,6 +92,9 @@ export default {
         roleIds: [],
         status: '1',
       };
+      this.$nextTick(() => {
+        this.$refs.form.clearValidate();
+      })
     },
     submitForm() {
       this.$refs["form"].validate(valid => {

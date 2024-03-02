@@ -85,6 +85,7 @@
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <el-switch
+            @change="statusChange(scope.row, $event)"
             v-if="scope.row.username!=='admin'"
             v-model="scope.row.status"
             active-value="1"
@@ -180,6 +181,11 @@ export default {
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("密码重置成功");
+      });
+    },
+    statusChange({id}, status){
+      this.$http.patch(`/api/v1/user/${id}/status/${status}`).then(()=>{
+        this.$modal.msgSuccess("状态修改成功");
       });
     },
     /** 删除按钮操作 */

@@ -89,7 +89,6 @@ export default {
       }
       this.show = true;
       this.$nextTick(() => {
-        this.$refs.form.clearValidate()
         this.$refs.refCategory.init();
         this.$refs.refCardIcon.init(this.form.icon);
       })
@@ -108,6 +107,9 @@ export default {
         attachmentIds: [],
         attachments: [],
       };
+      this.$nextTick(() => {
+        this.$refs.form.clearValidate();
+      })
     },
     zipFileChange(fileList) {
       if (fileList.length <= 0) {

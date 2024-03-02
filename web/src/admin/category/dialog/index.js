@@ -53,6 +53,9 @@ export default {
         icon: 'dashboard',
         roleIds: [],
       };
+      this.$nextTick(() => {
+        this.$refs.form.clearValidate();
+      })
     },
     /** 提交按钮 */
     submitForm: function () {

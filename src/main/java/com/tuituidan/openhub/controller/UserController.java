@@ -108,4 +108,18 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * changeStatus
+     *
+     * @param id id
+     * @param status status
+     * @return Void
+     */
+    @PatchMapping("/{id}/status/{status}")
+    public ResponseEntity<Void> changeStatus(@PathVariable("id") String id,
+            @PathVariable("status") String status) {
+        userService.changeStatus(id, status);
+        return ResponseEntity.noContent().build();
+    }
+
 }

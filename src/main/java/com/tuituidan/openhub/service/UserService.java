@@ -190,4 +190,15 @@ public class UserService implements UserDetailsService, ApplicationRunner {
         userRepository.saveAll(users);
     }
 
+    /**
+     * changeStatus
+     *
+     * @param id id
+     * @param status status
+     */
+    public void changeStatus(String id, String status) {
+        User user = userRepository.getReferenceById(id).setStatus(status);
+        userRepository.save(user);
+    }
+
 }
