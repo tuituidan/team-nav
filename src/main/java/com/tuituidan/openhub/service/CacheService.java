@@ -53,7 +53,7 @@ public class CacheService implements ApplicationRunner {
      * @return Category
      */
     public Category getCategory(String id) {
-        return categoryCache.get(id, key -> categoryRepository.getReferenceById(key));
+        return categoryCache.get(id, key -> categoryRepository.findById(key).orElseThrow(NullPointerException::new));
     }
 
     /**
@@ -63,7 +63,7 @@ public class CacheService implements ApplicationRunner {
      * @return Role
      */
     public Role getRole(String id) {
-        return roleCache.get(id, key -> roleRepository.getReferenceById(key));
+        return roleCache.get(id, key -> roleRepository.findById(key).orElseThrow(NullPointerException::new));
     }
 
     /**

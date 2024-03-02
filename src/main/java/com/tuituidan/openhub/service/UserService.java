@@ -138,7 +138,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
             user.setId(StringExtUtils.getUuid());
             user.setPassword(new BCryptPasswordEncoder().encode(defPassword));
         } else {
-            user = userRepository.getReferenceById(id);
+            user = userRepository.findById(id).orElseThrow(NullPointerException::new);
             Assert.isTrue(StringUtils.equals(exitUser.getId(), id), "登录账号已存在");
             BeanExtUtils.copyNotNullProperties(userDto, user);
             roleUserRepository.deleteByUserId(user.getId());
@@ -170,7 +170,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
      * @param changePassword changePassword
      */
     public void changePassword(ChangePassword changePassword) {
-        User user = userRepository.getReferenceById(changePassword.getId());
+        User user = userRepository.findById(changePassword.getId()).orElseThrow(NullPointerException::new);
         Assert.notNull(user, "用户获取失败");
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Assert.isTrue(passwordEncoder.matches(changePassword.getOldPassword(),
@@ -197,7 +197,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
      * @param status status
      */
     public void changeStatus(String id, String status) {
-        User user = userRepository.getReferenceById(id).setStatus(status);
+        User user = userRepository.findById(id).orElseThrow(NullPointerException::new).setStatus(status);
         userRepository.save(user);
     }
 

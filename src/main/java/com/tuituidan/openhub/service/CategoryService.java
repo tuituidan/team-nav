@@ -202,7 +202,7 @@ public class CategoryService {
             category.setValid(true);
             category.setSort(categoryRepository.getMaxSort(category.getId(), category.getPid(), true) + 1);
         } else {
-            category = categoryRepository.getReferenceById(id);
+            category = categoryRepository.findById(id).orElseThrow(NullPointerException::new);
             BeanExtUtils.copyNotNullProperties(dto, category);
         }
 

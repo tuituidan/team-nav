@@ -25,7 +25,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "nav_role", schema = "team_nav")
 public class Role implements Serializable {
 
-    private static final long serialVersionUID = -5465691309103060628L;
+    private static final long serialVersionUID = 5210879308812671741L;
 
     @Id
     @Column(name = "id", length = 32)

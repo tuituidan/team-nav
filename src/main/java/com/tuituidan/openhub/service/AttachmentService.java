@@ -140,7 +140,7 @@ public class AttachmentService {
      * @param id id
      */
     public void downloadFile(String id) {
-        Attachment attachment = attachmentRepository.getReferenceById(id);
+        Attachment attachment = attachmentRepository.findById(id).orElseThrow(NullPointerException::new);
         ResponseUtils.download(attachment.getName(), Consts.ROOT_DIR + attachment.getPath());
     }
 

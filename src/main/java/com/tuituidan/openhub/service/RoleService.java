@@ -84,7 +84,8 @@ public class RoleService {
      * @return RoleVo
      */
     public RoleVo getRoleDetail(String id) {
-        RoleVo role = BeanExtUtils.convert(roleRepository.getReferenceById(id), RoleVo::new);
+        RoleVo role = BeanExtUtils.convert(roleRepository.findById(id)
+                .orElseThrow(NullPointerException::new), RoleVo::new);
         role.setCategoryIds(roleCategoryRepository.findByRoleId(id).stream()
                 .map(RoleCategory::getCategoryId).distinct().collect(Collectors.toList()));
         role.setUserIds(roleUserRepository.findByRoleId(id).stream()

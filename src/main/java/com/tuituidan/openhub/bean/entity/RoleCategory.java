@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
                 @Index(name = "idx_category_role_id", columnList = "role_id")})
 public class RoleCategory implements Serializable {
 
-    private static final long serialVersionUID = -5465691309103060628L;
+    private static final long serialVersionUID = 4640061239824810070L;
 
     @Id
     @Column(name = "id", length = 32)
