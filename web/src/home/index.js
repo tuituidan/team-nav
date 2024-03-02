@@ -35,10 +35,11 @@ export default {
     }
   },
   mounted() {
-    if(localStorage.username
+    if (localStorage.username
       && localStorage.password
       && localStorage.autoLogin === 'true'
-      && !localStorage.userLogout){
+      && !localStorage.userLogout
+      && !this.$store.getters.loginUser.id) {
       this.$store.dispatch('settings/loadVersion');
     }
     this.loadDatas('');

@@ -56,7 +56,7 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .antMatchers(securityProperties.getPermitUrl()).permitAll()
-                .antMatchers(securityProperties.getApplyUrl()).authenticated()
+                .antMatchers(securityProperties.getGeneralUserUrl()).authenticated()
                 .antMatchers("/api/v1/**").hasAuthority("admin")
                 .anyRequest()
                 .permitAll();

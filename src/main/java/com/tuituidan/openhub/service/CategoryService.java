@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
@@ -123,10 +124,19 @@ public class CategoryService {
             return list.stream().filter(item -> CollectionUtils.isEmpty(item.getRoleIds()))
                     .collect(Collectors.toList());
         }
-        return list.stream().filter(item ->
-                CollectionUtils.isEmpty(item.getRoleIds())
-                        || CollectionUtils.containsAny(item.getRoleIds(), userInfo.getRoleIds())
-        ).collect(Collectors.toList());
+        return list.stream()
+                .filter(item -> crossRoleCards(item.getRoleIds(), userInfo.getRoleIds()))
+                .collect(Collectors.toList());
+    }
+
+    private boolean crossRoleCards(Set<String> categoryRoleIds, Set<String> userRoleIds) {
+        if (CollectionUtils.isEmpty(categoryRoleIds)) {
+            return true;
+        }
+        if (CollectionUtils.isEmpty(userRoleIds)) {
+            return false;
+        }
+        return CollectionUtils.containsAny(categoryRoleIds, userRoleIds);
     }
 
     /**

@@ -28,12 +28,14 @@ spring:
       name: admin
       roles: admin
       password: 123456
-    apply-url:
+    general-user-url:
       - /api/v1/card/icons
       - /api/v1/card/icon
       - /api/v1/card
       - /api/v1/upload/*
       - /api/v1/category/tree
+      - /api/v1/app/version
+      - /api/v1/user/password
     permit-url:
       - /docs/**
       - /assets/**

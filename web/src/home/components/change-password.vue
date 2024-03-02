@@ -47,7 +47,7 @@ export default {
           {required: true, message: "确认密码不能为空", trigger: "blur"},
           {
             required: true, validator: (rule, value, callback) => {
-              if (this.user.newPassword !== value) {
+              if (this.form.newPassword !== value) {
                 callback(new Error("两次输入的密码不一致"));
               } else {
                 callback();
@@ -61,20 +61,29 @@ export default {
   methods: {
     open() {
       this.show = true;
-      this.$refs.form.resetFields();
+      this.resetForm();
     },
     // 取消按钮
     cancel() {
       this.show = false;
-      this.$refs.form.resetFields();
+      this.resetForm();
+    },
+    resetForm(){
+      this.form = {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      };
     },
     /** 提交按钮 */
-    submitForm: function () {
+    submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          this.$http.save('/api/v1/user/password', this.form)
+          this.form.id = this.$store.getters.loginUser.id;
+          this.$http.patch('/api/v1/user/password', this.form)
             .then(() => {
-
+              this.$modal.msgSuccess('密码修改成功');
+              this.show = false;
             })
         }
       });

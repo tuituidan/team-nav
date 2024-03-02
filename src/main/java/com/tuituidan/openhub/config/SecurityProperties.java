@@ -20,5 +20,5 @@ public class SecurityProperties {
 
     private String[] permitUrl;
 
-    private String[] applyUrl;
+    private String[] generalUserUrl;
 }

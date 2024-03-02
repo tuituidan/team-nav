@@ -17,7 +17,7 @@ export default {
         pid: null,
         name: '',
         icon: 'dashboard',
-        roleIds: []
+        roleIds: [],
       },
       // 表单校验
       rules: {
@@ -29,9 +29,13 @@ export default {
   },
   methods: {
     open(item) {
+      this.resetForm();
       if (item) {
         this.title = '编辑分类';
         this.form = {...item, roleIds: Array.isArray(item.roles) ? item.roles.map(it => (it.id)) : []};
+        if(!this.form.icon){
+          this.form.icon = 'dashboard';
+        }
       } else {
         this.title = '新增分类';
       }
@@ -41,14 +45,14 @@ export default {
       })
     },
     // 表单重置
-    reset() {
+    resetForm() {
       this.form = {
         id: null,
-        pid: '',
+        pid: null,
         name: '',
         icon: 'dashboard',
+        roleIds: [],
       };
-      this.$refs.form.resetFields();
     },
     /** 提交按钮 */
     submitForm: function () {
@@ -69,7 +73,7 @@ export default {
     // 取消按钮
     cancel() {
       this.show = false;
-      this.reset();
+      this.resetForm();
     },
   }
 }

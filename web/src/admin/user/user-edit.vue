@@ -18,7 +18,8 @@
             v-for="dict in statusOptions"
             :key="dict.id"
             :label="dict.id"
-          >{{dict.name}}</el-radio>
+          >{{ dict.name }}
+          </el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -56,7 +57,7 @@ export default {
         nickname: '',
         username: '',
         roleIds: [],
-        status: '1'
+        status: '1',
       },
       rules: {
         nickname: [
@@ -72,7 +73,8 @@ export default {
     }
   },
   methods: {
-    open(item){
+    open(item) {
+      this.resetForm();
       if (item) {
         this.title = '编辑用户';
         this.form = {...item};
@@ -80,6 +82,15 @@ export default {
         this.title = '新增用户';
       }
       this.show = true;
+    },
+    resetForm() {
+      this.form = {
+        id: '',
+        nickname: '',
+        username: '',
+        roleIds: [],
+        status: '1',
+      };
     },
     submitForm() {
       this.$refs["form"].validate(valid => {
