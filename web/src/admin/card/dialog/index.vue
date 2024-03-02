@@ -33,10 +33,10 @@
                          placeholder="请选择所属分类"></category-select>
       </el-form-item>
       <el-form-item label="标题" prop="title">
-        <el-input v-model.trim="form.title" placeholder="标题"/>
+        <el-input v-model="form.title" placeholder="标题" v-trim />
       </el-form-item>
       <el-form-item label="内容" prop="content">
-        <el-input v-model.trim="form.content" type="textarea"
+        <el-input v-model="form.content" type="textarea" v-trim
                   maxlength="200"
                   show-word-limit
                   clearable
@@ -50,7 +50,7 @@
           </el-tooltip>
           私密信息
         </span>
-        <el-input v-model.trim="form.privateContent" type="textarea"
+        <el-input v-model="form.privateContent" type="textarea" v-trim
                   maxlength="200"
                   show-word-limit
                   clearable
@@ -63,7 +63,7 @@
                     prop="url">
         <el-row>
           <el-col :span="18">
-            <el-input v-model.trim="form.url" placeholder="链接" @blur="getFavicons"/>
+            <el-input v-model="form.url" placeholder="链接" @blur="getFavicons" v-trim/>
           </el-col>
           <el-col :span="5" :offset="1">
             <el-checkbox v-model="form.showQrcode">显示二维码</el-checkbox>

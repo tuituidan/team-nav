@@ -9,7 +9,7 @@
              label-width="120px"
              :rules="settingItemRules" @submit.native.prevent>
       <el-form-item label="网站标题" prop="navName">
-        <el-input v-model.trim="settingItem.navName"
+        <el-input v-model="settingItem.navName" v-trim
                   clearable
                   maxlength="50"
                   placeholder="网站标题"></el-input>
@@ -43,7 +43,8 @@
                     maxlength="100"
                     clearable
                     class="multi-form-item-input"
-                    v-model.trim="settingItem.nginxUrl"
+                    v-model="settingItem.nginxUrl"
+                    v-trim
                     placeholder="Nginx地址"></el-input>
           <com-tip tip="可以配置通过Nginx来访问上传的静态网站，Nginx配置可参考README.md，开启后访问网站时将跳转Nginx地址"></com-tip>
         </div>

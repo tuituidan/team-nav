@@ -12,6 +12,7 @@ import store from './store'
 import router from './router'
 import plugins from './plugins' // plugins
 import '@/plugins/directive/table-btn-control'
+import '@/plugins/directive/el-input-trim'
 import './assets/icons' // icon
 import '@/components'
 // 头部标签组件

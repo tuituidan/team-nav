@@ -14,7 +14,7 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="" prop="username">
-            <el-input clearable v-model.trim="form.username" placeholder="请输入账户">
+            <el-input clearable v-model="form.username" placeholder="请输入账户" v-trim>
               <template slot="prepend">
                 <i class="el-icon-user"></i>
               </template>
@@ -25,7 +25,8 @@
           <el-form-item label="" prop="password">
             <el-input clearable
                       show-password
-                      v-model.trim="form.password"
+                      v-model="form.password"
+                      v-trim
                       placeholder="请输入密码">
               <template slot="prepend">
                 <i class="el-icon-lock"></i>

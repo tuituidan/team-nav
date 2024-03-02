@@ -8,7 +8,8 @@
       size="small"
       clearable
       placeholder="请输入关键字回车搜索..."
-      v-model.trim="keywords"
+      v-model="keywords"
+      v-trim
       @change="searchHandler"
       @clear="searchHandler"
       suffix-icon="el-icon-search">

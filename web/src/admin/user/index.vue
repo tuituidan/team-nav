@@ -5,7 +5,8 @@
                @submit.native.prevent>
         <el-form-item>
           <el-input
-            v-model.trim="queryParam.keywords"
+            v-model="queryParam.keywords"
+            v-trim
             placeholder="请输入登录账号或用户姓名进行搜索"
             clearable
             style="width: 300px"

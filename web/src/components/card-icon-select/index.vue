@@ -25,7 +25,7 @@
                   maxlength="8"
                   placeholder="图标文字"
                   @input="setTextIcon"
-                  v-model.trim="textIcon.text">
+                  v-model="textIcon.text" v-trim>
           <el-color-picker slot="suffix"
                            :predefine="predefineColors"
                            v-model="textIcon.color"
