@@ -2,8 +2,6 @@
  * @author tuituidan
  * @date 2024/2/18
  */
-import Vue from 'vue';
-
 // 获取元素
 function getInput(el) {
   let inputEle;
@@ -20,20 +18,14 @@ function getInput(el) {
   return inputEle;
 }
 
-// 创建自定义事件
-function dispatchEvent(el, type) {
-  const evt = new Event(type);
-  el.dispatchEvent(evt);
-}
-
-Vue.directive('trim', {
-  inserted: (el) => {
+export default {
+  bind: (el) => {
     let inputEle = getInput(el);
     const handler = event =>  {
       const newVal = event.target.value.trim();
       if (event.target.value !== newVal) {
         event.target.value = newVal;
-        dispatchEvent(inputEle, "input");
+        inputEle.dispatchEvent(new Event('input'));
       }
     };
     el.inputEle = inputEle;
@@ -45,4 +37,4 @@ Vue.directive('trim', {
     const {inputEle} = el;
     inputEle.removeEventListener("blur", el._blurHandler);
   },
-});
+}

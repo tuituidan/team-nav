@@ -77,8 +77,7 @@ export default {
       this.resetForm();
       if (item) {
         this.title = '编辑用户';
-        this.form = {...item};
-        this.form.roleIds = item.roles.map(role => role.id);
+        this.form = {...item, roleIds: Array.isArray(item.roles) ? item.roles.map(it => (it.id)) : []};
       } else {
         this.title = '新增用户';
       }

@@ -11,8 +11,7 @@ import App from './App'
 import store from './store'
 import router from './router'
 import plugins from './plugins' // plugins
-import '@/plugins/directive/table-btn-control'
-import '@/plugins/directive/el-input-trim'
+import directive from '@/plugins/directive'
 import './assets/icons' // icon
 import '@/components'
 // 头部标签组件
@@ -20,7 +19,7 @@ import VueMeta from 'vue-meta'
 
 Vue.use(plugins)
 Vue.use(VueMeta)
-
+Vue.use(directive)
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
