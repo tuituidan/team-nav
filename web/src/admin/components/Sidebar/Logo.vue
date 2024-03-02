@@ -1,13 +1,14 @@
 <template>
-  <div class="sidebar-logo-container" :class="{'collapse':collapse}" :style="{ backgroundColor: menuBackground }">
+  <div class="sidebar-logo-container" :class="{'collapse':collapse}"
+       :style="{ backgroundColor: variables.menuBackground }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <img :src="logoPath" class="sidebar-logo" />
-        <h1 class="sidebar-title" :style="{ color: logoTitleColor }">{{ title }} </h1>
+        <h1 class="sidebar-title" :style="{ color: variables.logoTitleColor }">{{ title }} </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img :src="logoPath" class="sidebar-logo" />
-        <h1 class="sidebar-title" :style="{ color: logoTitleColor }">{{ title }} </h1>
+        <h1 class="sidebar-title" :style="{ color: variables.logoTitleColor }">{{ title }} </h1>
       </router-link>
     </transition>
   </div>
@@ -33,12 +34,6 @@ export default {
     },
     logoPath(){
       return this.$store.state.settings.logoPath;
-    },
-    menuBackground(){
-      return this.$store.state.settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground
-    },
-    logoTitleColor(){
-      return this.$store.state.settings.sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor
     },
     title() {
       return this.$store.state.settings.title;

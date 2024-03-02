@@ -71,6 +71,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
         }
         userRepository.save(new User().setId(Consts.DEFAULT_ID)
                 .setUsername(defUsername)
+                .setStatus(Consts.DEFAULT_ID)
                 .setNickname("管理员")
                 .setAvatar("/assets/images/header.png")
                 .setPassword(new BCryptPasswordEncoder().encode(defPassword)));

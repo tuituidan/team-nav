@@ -39,9 +39,18 @@ public class SettingService implements ApplicationRunner {
             setting.setNavName(navName);
             settingRepository.save(setting);
         }
+        if (setting.getCutOverSpeed() == null) {
+            setting.setCutOverSpeed(10 * 1000);
+        }
         if (StringUtils.isBlank(setting.getLogoPath())) {
             setting.setLogoPath(Consts.DEFAULT_LOGO_PATH);
             settingRepository.save(setting);
+        }
+        if (setting.getLogoToFavicon() == null) {
+            setting.setLogoToFavicon(false);
+        }
+        if (setting.getNginxOpen() == null) {
+            setting.setNginxOpen(false);
         }
         this.settingChange(setting);
     }

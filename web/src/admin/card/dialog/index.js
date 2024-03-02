@@ -118,10 +118,8 @@ export default {
       }
     },
     attachmentChange(fileList) {
-      console.log(fileList);
       this.form.attachmentIds = Array.isArray(fileList)
         ? fileList.map(item => item.path) : [];
-      console.log(this.form.attachmentIds);
     },
     /** 提交按钮 */
     submitForm: function () {

@@ -74,13 +74,11 @@ export default {
   },
   mounted() {
     if (this.value) {
-      console.log('mounted', JSON.stringify(this.value))
       this.init(this.value);
     }
   },
   watch: {
     value(newVals) {
-      console.log('watchvalue', JSON.stringify(newVals))
       this.init(newVals);
     },
   },
