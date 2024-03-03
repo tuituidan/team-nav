@@ -21,6 +21,12 @@
           </div>
         </el-card>
         <div slot="default">
+          <i v-if="card.star" class="el-icon-star-on card-star"
+             @click="starHandler(card)"
+             title="移除常用"></i>
+          <i v-else class="el-icon-star-off card-star"
+             @click="starHandler(card)"
+             title="置为常用"></i>
           <div v-html="card.tip"></div>
           <div v-if="card.showQrcode">
             <img :src="showQrcodeHandler(card.url)" alt=""/>
@@ -29,7 +35,8 @@
             <el-row type="flex" justify="space-between" v-for="item in card.attachments" :key="item.id">
               <el-link icon="el-icon-download"
                        @click.native="downloadAttachment(item.id)"
-                       type="warning">{{item.name}}</el-link>
+                       type="warning">{{ item.name }}
+              </el-link>
               <span style="text-align: right; min-width: 50px;" v-text="item.size"></span>
             </el-row>
           </div>
@@ -48,17 +55,23 @@ export default {
     }
   },
   methods: {
-    cardClickHandler(card){
+    cardClickHandler(card) {
       if (card.url) {
         window.open(card.url);
       }
     },
-    showQrcodeHandler(url){
+    showQrcodeHandler(url) {
       return `${process.env.VUE_APP_BASE_API}/api/v1/qrcode?url=${encodeURIComponent(url)}`;
     },
-    downloadAttachment(id){
+    downloadAttachment(id) {
       window.open(`${process.env.VUE_APP_BASE_API}/api/v1/attachment/${id}/actions/download`);
-    }
+    },
+    starHandler(card) {
+      this.$http.patch(`/api/v1/user/card/${card.id}/actions/star`).then(star => {
+        this.$modal.msgSuccess(star ? '已添加到个人常用' : '已移出个人常用');
+        this.$store.dispatch('home/loadHomeCards', '');
+      });
+    },
   }
 }
 </script>
@@ -107,6 +120,7 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
   }
 
   .nav-card:hover {
@@ -183,6 +197,19 @@ export default {
 
   .popper__arrow::after {
     border-bottom-color: rgba(70, 76, 91, .9) !important;
+  }
+
+  .card-star {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    padding: 3px;
+    cursor: pointer;
+  }
+
+  .card-star.el-icon-star-on {
+    color: gold;
+    font-weight: bolder;
   }
 }
 </style>

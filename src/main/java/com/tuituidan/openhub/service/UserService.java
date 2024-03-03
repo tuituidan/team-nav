@@ -5,10 +5,12 @@ import com.tuituidan.openhub.bean.dto.UserDto;
 import com.tuituidan.openhub.bean.entity.Role;
 import com.tuituidan.openhub.bean.entity.RoleUser;
 import com.tuituidan.openhub.bean.entity.User;
+import com.tuituidan.openhub.bean.entity.UserStar;
 import com.tuituidan.openhub.bean.vo.UserVo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.repository.RoleUserRepository;
 import com.tuituidan.openhub.repository.UserRepository;
+import com.tuituidan.openhub.repository.UserStarRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.util.Arrays;
@@ -50,6 +52,9 @@ public class UserService implements UserDetailsService, ApplicationRunner {
 
     @Resource
     private RoleUserRepository roleUserRepository;
+
+    @Resource
+    private UserStarRepository userStarRepository;
 
     @Resource
     private CacheService cacheService;
@@ -167,10 +172,11 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     /**
      * changePassword
      *
+     * @param userId userId
      * @param changePassword changePassword
      */
-    public void changePassword(ChangePassword changePassword) {
-        User user = userRepository.findById(changePassword.getId()).orElseThrow(NullPointerException::new);
+    public void changePassword(String userId, ChangePassword changePassword) {
+        User user = userRepository.findById(userId).orElseThrow(NullPointerException::new);
         Assert.notNull(user, "用户获取失败");
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Assert.isTrue(passwordEncoder.matches(changePassword.getOldPassword(),
@@ -199,6 +205,26 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     public void changeStatus(String id, String status) {
         User user = userRepository.findById(id).orElseThrow(NullPointerException::new).setStatus(status);
         userRepository.save(user);
+    }
+
+    /**
+     * userStarCard
+     *
+     * @param userId userId
+     * @param cardId cardId
+     * @return boolean
+     */
+    public boolean userStarCard(String userId, String cardId) {
+        List<UserStar> list = userStarRepository.findByUserIdAndCardId(userId, cardId);
+        if (CollectionUtils.isNotEmpty(list)) {
+            userStarRepository.deleteByUserIdAndCardId(userId, cardId);
+            cacheService.getUserStarCardIdsCache().invalidate(userId);
+            return false;
+        }
+        userStarRepository.save(new UserStar().setId(StringExtUtils.getUuid())
+                .setUserId(userId).setCardId(cardId));
+        cacheService.getUserStarCardIdsCache().invalidate(userId);
+        return true;
     }
 
 }

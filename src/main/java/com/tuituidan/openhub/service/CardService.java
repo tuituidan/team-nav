@@ -33,7 +33,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -118,16 +117,30 @@ public class CardService {
     }
 
     private List<CategoryVo> setCardsToCategory(List<CategoryVo> categories, Map<String, List<CardVo>> cardMap) {
-        categories = categories.stream().filter(item -> cardMap.containsKey(item.getId()))
-                .collect(Collectors.toList());
+        List<CategoryVo> result = new ArrayList<>();
         for (CategoryVo item : categories) {
             List<CardVo> cardList = cardMap.get(item.getId());
+            if (CollectionUtils.isEmpty(cardList)) {
+                continue;
+            }
             cardList.sort(Comparator.comparing(CardVo::getSort));
             item.setCards(cardList);
             item.setCardCount((long) cardList.size());
             item.setFlatSort(StringUtils.leftPad(item.getSort().toString(), 2, '0'));
+            result.add(item);
         }
-        return categories;
+        List<CardVo> cardList = cardMap.get(Consts.DEFAULT_ID);
+        if (CollectionUtils.isNotEmpty(cardList)) {
+            result.add(new CategoryVo()
+                    .setId(Consts.DEFAULT_ID)
+                    .setCards(cardList).setCardCount((long) cardList.size())
+                    .setFlatSort("0")
+                    .setSort(0).setName("个人常用")
+                    .setIcon("star")
+                    .setLevel(1)
+                    .setValid(true).setPid("0"));
+        }
+        return result;
     }
 
     private Collection<CategoryVo> buildMenus(List<CategoryVo> highList) {
@@ -155,20 +168,32 @@ public class CardService {
         List<Function<CardVo, String>> tipsFunc = new ArrayList<>();
         tipsFunc.add(CardVo::getTitle);
         tipsFunc.add(CardVo::getContent);
-        if (Objects.nonNull(SecurityUtils.getUserInfo())) {
+        boolean isLogin = SecurityUtils.isLogin();
+        if (isLogin) {
             tipsFunc.add(CardVo::getPrivateContent);
         }
         tipsFunc.add(CardVo::getUrl);
         Map<String, List<AttachmentVo>> attachmentMap = attachmentService.getCardAttachmentMap(cards);
-        return cards.stream().map(item -> {
+        List<String> starIds = isLogin ? cacheService.getStarCardIds(SecurityUtils.getId()) : new ArrayList<>();
+        List<CardVo> starCards = new ArrayList<>();
+        Map<String, List<CardVo>> result = cards.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new);
             cardTypeServiceFactory.getService(item.getType()).formatCardVo(vo);
             vo.setTip(tipsFunc.stream().map(func -> func.apply(vo))
                     .filter(StringUtils::isNotBlank).distinct()
                     .collect(Collectors.joining("<br/>")));
             vo.setAttachments(attachmentMap.get(item.getId()));
+            if (starIds.contains(item.getId())) {
+                vo.setStar(starIds.contains(item.getId()));
+                starCards.add(BeanExtUtils.convert(vo, CardVo::new));
+            }
             return vo;
         }).collect(Collectors.groupingBy(CardVo::getCategory));
+        if (CollectionUtils.isEmpty(starCards)) {
+            return result;
+        }
+        result.put(Consts.DEFAULT_ID, starCards);
+        return result;
     }
 
     /**

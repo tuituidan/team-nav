@@ -1,12 +1,12 @@
 <template>
   <div :class="classObj" class="app-wrapper" :style="{'--current-color': '#409EFF'}">
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
-    <sidebar :menus="menus" v-if="!sidebar.hide" class="sidebar-container"/>
+    <sidebar v-if="!sidebar.hide" class="sidebar-container"/>
     <div :class="{sidebarHide:sidebar.hide}" class="main-container">
       <div class="fixed-header">
-        <navbar @search="loadDatas"/>
+        <navbar/>
       </div>
-      <app-main :datas="datas"/>
+      <app-main />
       <right-panel>
         <settings/>
       </right-panel>

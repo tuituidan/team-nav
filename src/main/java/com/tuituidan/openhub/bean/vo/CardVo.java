@@ -46,4 +46,6 @@ public class CardVo {
     private Integer sort;
 
     private List<AttachmentVo> attachments;
+
+    private Boolean star;
 }

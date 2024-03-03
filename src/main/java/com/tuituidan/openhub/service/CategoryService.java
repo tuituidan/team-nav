@@ -225,7 +225,6 @@ public class CategoryService {
             cacheService.getCategoryCache().invalidate(category.getPid());
         }
         cacheService.getCategoryCache().invalidate(category.getId());
-        cacheService.getCategoryRolesCache().invalidate(category.getId());
         return category;
     }
 

@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.util;
 
 import com.tuituidan.openhub.bean.entity.User;
+import java.util.Objects;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 @UtilityClass
 public class SecurityUtils {
+
+    /**
+     * isLogin
+     *
+     * @return boolean
+     */
+    public boolean isLogin() {
+        return Objects.nonNull(getUserInfo());
+    }
+
+    /**
+     * getId
+     *
+     * @return String
+     */
+    public String getId() {
+        return Objects.requireNonNull(getUserInfo()).getId();
+    }
 
     /**
      * isAdmin

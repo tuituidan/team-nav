@@ -42,22 +42,9 @@ export default {
       && !this.$store.getters.loginUser.id) {
       this.$store.dispatch('settings/loadVersion');
     }
-    this.loadDatas('');
-  },
-  data() {
-    return {
-      menus: [],
-      datas: [],
-    }
+    this.$store.dispatch('home/loadHomeCards', '');
   },
   methods: {
-    loadDatas(keywords) {
-      this.$http.get('/api/v1/card/tree?keywords=' + keywords)
-        .then(res => {
-          this.menus = res.menus;
-          this.datas = res.datas;
-        })
-    },
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', {withoutAnimation: false})
     }

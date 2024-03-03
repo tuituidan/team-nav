@@ -14,7 +14,7 @@
         mode="vertical"
       >
         <sidebar-item
-          v-for="item in menus"
+          v-for="item in homeMenus"
           :key="item.id"
           :item="item"
         />
@@ -31,14 +31,12 @@ import variables from "@/assets/styles/variables.scss";
 
 export default {
   components: {SidebarItem, Logo},
-  props: {
-    menus: {
-      type: Array,
-    }
-  },
   computed: {
     ...mapState(["settings"]),
-    ...mapGetters(["sidebar"]),
+    ...mapGetters([
+      'sidebar',
+      'homeMenus',
+    ]),
     activeMenu() {
       const route = this.$route;
       const {meta, path} = route;

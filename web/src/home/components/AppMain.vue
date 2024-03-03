@@ -1,6 +1,6 @@
 <template>
   <section class="app-main">
-    <div class="category-main" v-for="(category, index) in datas" :key="category.id">
+    <div class="category-main" v-for="(category, index) in homeCards" :key="category.id">
       <div class="anchor-point" :class="{'anchor-point-first':index===0}" :id="category.id"></div>
       <div class="category-title" v-if="Array.isArray(category.children)&&category.children.length===1">
         <span v-text="category.name + ' / ' + category.children[0].name"></span>
@@ -17,22 +17,24 @@
                          :datas="category.children[0].cards"></category-children>
       <category-children v-else :datas="category.cards"></category-children>
     </div>
-    <el-empty v-if="datas.length<=0" description="没有任何数据"></el-empty>
+    <el-empty v-if="homeCards.length<=0" description="没有任何数据"></el-empty>
     <el-backtop target=".app-main"></el-backtop>
   </section>
 </template>
 
 <script>
 
+import {mapGetters} from "vuex";
+
 export default {
   name: 'AppMain',
   components: {
     'category-children': () => import('@/home/components/category-children.vue'),
   },
-  props: {
-    datas: {
-      type: Array,
-    }
+  computed: {
+    ...mapGetters([
+      'homeCards',
+    ]),
   },
 }
 </script>

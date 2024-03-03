@@ -18,7 +18,7 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <screenfull class="right-menu-item hover-effect"/>
-        <doc class="right-menu-item hover-effect"/>
+<!--        <doc class="right-menu-item hover-effect"/>-->
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -35,9 +35,9 @@
           </router-link>
           <el-dropdown-item @click.native="setting = true">布局设置</el-dropdown-item>
           <el-dropdown-item v-if="loginUser.id" @click.native="openChangePassword">修改密码</el-dropdown-item>
-          <el-dropdown-item disabled v-if="loginUser.id && !loginUser.isAdmin">
-            <card-apply>卡片申请</card-apply>
-          </el-dropdown-item>
+<!--          <el-dropdown-item disabled v-if="loginUser.id && !loginUser.isAdmin">-->
+<!--            <card-apply>卡片申请</card-apply>-->
+<!--          </el-dropdown-item>-->
           <el-dropdown-item v-if="loginUser.id" divided @click.native="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     searchHandler() {
-      this.$emit('search', this.keywords)
+      this.$store.dispatch('home/loadHomeCards', this.keywords);
     },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')

@@ -79,8 +79,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          this.form.id = this.$store.getters.loginUser.id;
-          this.$http.patch('/api/v1/user/password', this.form)
+          this.$http.patch(`/api/v1/user/password`, this.form)
             .then(() => {
               this.$modal.msgSuccess('密码修改成功');
               this.show = false;

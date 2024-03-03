@@ -4,5 +4,7 @@ const getters = {
   loginUser: state => state.user.userInfo,
   cutOverSpeed: state => state.settings.cutOverSpeed,
   version: state => state.settings.version,
+  homeMenus: state => state.home.menus,
+  homeCards: state => state.home.datas,
 }
 export default getters

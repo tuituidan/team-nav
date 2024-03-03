@@ -4,6 +4,7 @@ import com.tuituidan.openhub.bean.dto.ChangePassword;
 import com.tuituidan.openhub.bean.dto.UserDto;
 import com.tuituidan.openhub.bean.vo.UserVo;
 import com.tuituidan.openhub.service.UserService;
+import com.tuituidan.openhub.util.SecurityUtils;
 import javax.annotation.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -92,7 +93,7 @@ public class UserController {
      */
     @PatchMapping("/password")
     public ResponseEntity<Void> changePassword(@RequestBody ChangePassword changePassword) {
-        userService.changePassword(changePassword);
+        userService.changePassword(SecurityUtils.getId(), changePassword);
         return ResponseEntity.noContent().build();
     }
 
@@ -120,6 +121,17 @@ public class UserController {
             @PathVariable("status") String status) {
         userService.changeStatus(id, status);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * changePassword
+     *
+     * @param cardId cardId
+     * @return Void
+     */
+    @PatchMapping("/card/{cardId}/actions/star")
+    public ResponseEntity<Boolean> userStarCard(@PathVariable String cardId) {
+        return ResponseEntity.ok(userService.userStarCard(SecurityUtils.getId(), cardId));
     }
 
 }
