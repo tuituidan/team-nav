@@ -116,43 +116,43 @@ location /ext-resources/modules {
 
 #### 首页
 
-![首页](https://foruda.gitee.com/images/1709445668038273822/644e5636_1328008.png)
+![首页](https://github.com/tuituidan/team-nav/assets/20398244/d272556d-d841-4303-9a3e-c1d2c46d7ca3)
 
 #### 首页-主题切换
 
-![主题切换](https://foruda.gitee.com/images/1709445840141463714/6c5e9ba7_1328008.png)
+![主题切换](https://github.com/tuituidan/team-nav/assets/20398244/d82720fe-e6e1-4439-9459-493414a433a5)
 
 #### 首页-未登录
 
-![首页-未登录](https://foruda.gitee.com/images/1709446255059253546/653b13bd_1328008.png)
+![首页-未登录](https://github.com/tuituidan/team-nav/assets/20398244/fa06e4d1-3f3c-4a8e-849e-8825f7da4c62)
 
 #### 后台管理-分类管理
 
-![后台管理-分类管理](https://foruda.gitee.com/images/1709441201387869176/a2fc3355_1328008.png)
+![后台管理-分类管理](https://github.com/tuituidan/team-nav/assets/20398244/328de0d3-2f63-4638-a57e-ec9095f6ba39)
 
 #### 后台管理-卡片管理
 
-![后台管理-卡片管理](https://foruda.gitee.com/images/1709441461074335354/20636f21_1328008.png)
+![后台管理-卡片管理](https://github.com/tuituidan/team-nav/assets/20398244/f0638ea5-64e7-45cd-8a30-9b2740e748d3)
 
 #### 后台管理-卡片添加
 
-![后台管理-卡片添加](https://foruda.gitee.com/images/1709441684575369344/acecda32_1328008.png)
+![后台管理-卡片添加](https://github.com/tuituidan/team-nav/assets/20398244/bc171c00-4257-4adb-948e-165980e686a7)
 
 #### 后台管理-角色管理
 
-![后台管理-角色管理](https://foruda.gitee.com/images/1709443211009499049/48363dd3_1328008.png)
+![后台管理-角色管理](https://github.com/tuituidan/team-nav/assets/20398244/7d3a1160-522b-4a7c-a995-a0888b4b4039)
 
 #### 后台管理-用户管理
 
-![后台管理-用户管理](https://foruda.gitee.com/images/1709443284770116166/9f9d7595_1328008.png)
+![后台管理-用户管理](https://github.com/tuituidan/team-nav/assets/20398244/63c389bc-251f-44d5-a768-99105448a47b)
 
 #### 后台管理-通知公告
 
-![后台管理-通知公告](https://foruda.gitee.com/images/1709443517587203132/bf24c888_1328008.png)
+![后台管理-通知公告](https://github.com/tuituidan/team-nav/assets/20398244/42a872c3-60d1-4245-be5f-1a78aa1e3dbd)
 
 #### 后台管理-系统设置
 
-![后台管理-系统设置](https://foruda.gitee.com/images/1709443607160259449/fb9d9520_1328008.png)
+![后台管理-系统设置](https://github.com/tuituidan/team-nav/assets/20398244/61645259-7523-42f6-ab08-b2860cb807ae)
 
 
 
