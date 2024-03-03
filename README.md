@@ -59,7 +59,7 @@
 
 #### 前端主要技术
 
-vue2+ElementUI，前后端分离开发，合并部署。
+vue2+ElementUI，前后端分离开发，合并部署（1.x版本UI框架是ViewUI，升级有分类图标不兼容，需要重新设置一下）。
 
 #### 后端主要技术
 
@@ -68,6 +68,8 @@ Springboot、SpringDataJpa、SpringSecurity、h2database
 ## 部署说明
 
 通过常规maven命令构建，打包执行命令`mvn clean package -Dmaven.npm.skip=false`，会自动将前端构建到后端的jar包中，这样整个服务就一个jar包（当然如果想前后端分离部署也是可以的，这里不再赘述），再无其他依赖服务，仅需要jdk环境即可启动。
+
+> 如果已经部署了1.X版本的也是直接用2.0版本的jar启动，或者重新拉取镜像启动即可，数据会自动矫正
 
 #### 方式一：手动部署
 
@@ -112,7 +114,47 @@ location /ext-resources/modules {
 
 ## 页面展示
 
-#### 首页图
+#### 首页
+
+![首页](https://foruda.gitee.com/images/1709445668038273822/644e5636_1328008.png)
+
+#### 首页-主题切换
+
+![主题切换](https://foruda.gitee.com/images/1709445840141463714/6c5e9ba7_1328008.png)
+
+#### 首页-未登录
+
+![首页-未登录](https://foruda.gitee.com/images/1709446255059253546/653b13bd_1328008.png)
+
+#### 后台管理-分类管理
+
+![后台管理-分类管理](https://foruda.gitee.com/images/1709441201387869176/a2fc3355_1328008.png)
+
+#### 后台管理-卡片管理
+
+![后台管理-卡片管理](https://foruda.gitee.com/images/1709441461074335354/20636f21_1328008.png)
+
+#### 后台管理-卡片添加
+
+![后台管理-卡片添加](https://foruda.gitee.com/images/1709441684575369344/acecda32_1328008.png)
+
+#### 后台管理-角色管理
+
+![后台管理-角色管理](https://foruda.gitee.com/images/1709443211009499049/48363dd3_1328008.png)
+
+#### 后台管理-用户管理
+
+![后台管理-用户管理](https://foruda.gitee.com/images/1709443284770116166/9f9d7595_1328008.png)
+
+#### 后台管理-通知公告
+
+![后台管理-通知公告](https://foruda.gitee.com/images/1709443517587203132/bf24c888_1328008.png)
+
+#### 后台管理-系统设置
+
+![后台管理-系统设置](https://foruda.gitee.com/images/1709443607160259449/fb9d9520_1328008.png)
+
+
 
 ## 结语
 

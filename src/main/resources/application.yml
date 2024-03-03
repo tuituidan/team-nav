@@ -43,6 +43,7 @@ spring:
       - /api/v1/card/tree
       - /api/v1/notice
       - /api/v1/qrcode
+      - /api/v1/attachment/*/actions/download
       - /api/v1/setting
       - /api/v1/quick/login
       - /api/v1/login/user

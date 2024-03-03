@@ -1,16 +1,16 @@
 package com.tuituidan.openhub.task;
 
-import com.tuituidan.openhub.bean.entity.Role;
+import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.repository.RoleRepository;
 import com.tuituidan.openhub.service.CacheService;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.sql.Statement;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
@@ -38,21 +38,31 @@ public class UpgradeService implements ApplicationRunner {
     @Resource
     private CacheService cacheService;
 
+    private static final String SQL = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'T_USER'";
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        List<Role> roles = roleRepository.findAll();
-        if (CollectionUtils.isNotEmpty(roles)) {
+        if (roleRepository.findById(Consts.DEFAULT_ID).isPresent()) {
             return;
         }
-        EncodedResource resource = new EncodedResource(new ClassPathResource("sql/upgrade.sql"),
-                StandardCharsets.UTF_8);
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection();
+                Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(SQL);
+            //判断有没有1.X的表，没有就是全新安装
+            if (!resultSet.next()) {
+                EncodedResource resource = new EncodedResource(new ClassPathResource("sql/data.sql"),
+                        StandardCharsets.UTF_8);
+                ScriptUtils.executeSqlScript(connection, resource);
+                return;
+            }
+            EncodedResource resource = new EncodedResource(new ClassPathResource("sql/upgrade.sql"),
+                    StandardCharsets.UTF_8);
             ScriptUtils.executeSqlScript(connection, resource);
+            //非全新安装有历史数据，重新加载一下缓存
+            cacheService.run(null);
         } catch (SQLException e) {
             log.error("执行升级脚本脚本异常！", e);
         }
-        // 更新脚本重新加载缓存
-        cacheService.run(null);
     }
 
 }

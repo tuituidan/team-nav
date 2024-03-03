@@ -34,23 +34,30 @@ public class SettingService implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Setting setting = get();
+        boolean needSave = false;
         if (StringUtils.isBlank(setting.getNavName())) {
             // 加载默认配置，兼容老版本
             setting.setNavName(navName);
-            settingRepository.save(setting);
+            needSave = true;
         }
         if (setting.getCutOverSpeed() == null) {
             setting.setCutOverSpeed(10 * 1000);
+            needSave = true;
         }
         if (StringUtils.isBlank(setting.getLogoPath())) {
             setting.setLogoPath(Consts.DEFAULT_LOGO_PATH);
-            settingRepository.save(setting);
+            needSave = true;
         }
         if (setting.getLogoToFavicon() == null) {
             setting.setLogoToFavicon(false);
+            needSave = true;
         }
         if (setting.getNginxOpen() == null) {
             setting.setNginxOpen(false);
+            needSave = true;
+        }
+        if (needSave) {
+            settingRepository.save(setting);
         }
         this.settingChange(setting);
     }

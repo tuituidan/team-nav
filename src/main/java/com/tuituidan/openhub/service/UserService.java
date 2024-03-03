@@ -144,7 +144,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
             user.setPassword(new BCryptPasswordEncoder().encode(defPassword));
         } else {
             user = userRepository.findById(id).orElseThrow(NullPointerException::new);
-            Assert.isTrue(StringUtils.equals(exitUser.getId(), id), "登录账号已存在");
+            Assert.isTrue(exitUser == null || StringUtils.equals(exitUser.getId(), id), "登录账号已存在");
             BeanExtUtils.copyNotNullProperties(userDto, user);
             roleUserRepository.deleteByUserId(user.getId());
         }
