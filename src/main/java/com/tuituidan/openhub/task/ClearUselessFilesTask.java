@@ -4,6 +4,7 @@ import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.repository.AttachmentRepository;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.service.SettingService;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -42,11 +44,15 @@ public class ClearUselessFilesTask {
     @Resource
     private SettingService settingService;
 
+    @Resource
+    private AttachmentRepository attachmentRepository;
+
     @Scheduled(cron = "${clear-useless-files.cron}")
     private void clear() {
         Set<String> existFileIds = getExistFileIds();
         deleteUselessFiles("/ext-resources/images", existFileIds);
         deleteUselessFiles("/ext-resources/modules", existFileIds);
+        deleteUselessFiles("/ext-resources/attachments", getExistAttachment());
     }
 
     private void deleteUselessFiles(String path, Set<String> existFileIds) {
@@ -113,6 +119,12 @@ public class ClearUselessFilesTask {
         }
         fileIds.add(FilenameUtils.getBaseName(settingService.getSettingCache().getLogoPath()));
         return fileIds;
+    }
+
+    private Set<String> getExistAttachment() {
+        return attachmentRepository.findAll().stream()
+                .map(item -> FilenameUtils.getBaseName(item.getPath()))
+                .collect(Collectors.toSet());
     }
 
 }
