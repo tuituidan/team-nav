@@ -91,7 +91,7 @@ public class CommonService implements ApplicationRunner {
     }
 
     /**
-     * 文件上传，包括原型和图标的
+     * 文件上传，包括静态网站和图标的
      *
      * @param file 文件
      * @param type 文件类型 images 或者 modules

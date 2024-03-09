@@ -98,7 +98,7 @@ registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.0
 
 #### nginx部署（非必须）
 
-如果不希望因为本服务停掉导致上传的静态网站无法访问，可以在后台系统设置中设置原型通过nginx访问，nginx配置示例如下：
+如果不希望因为本服务停掉导致上传的静态网站无法访问，可以在后台系统设置中设置静态网站通过nginx访问，nginx配置示例如下：
 
 ```nginx
 # 将/ext-resources/modules的请求地址拦截并访问到目录/opt/team-nav/team-nav/ext-resources/modules

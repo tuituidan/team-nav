@@ -15,7 +15,7 @@ import lombok.Setter;
 public class CardDto {
 
     /**
-     * 判断是原型还是普通
+     * 判断是静态网站还是普通
      */
     private String type;
 

@@ -28,7 +28,7 @@ public class ZipUtils {
     private static final Charset CHARSET_GBK = Charset.forName("GBK");
 
     /**
-     * 解压原型，找到压缩包中的index.html，解压与index.html同级的所有文件和文件夹到根目录
+     * 解压静态网站，找到压缩包中的index.html，解压与index.html同级的所有文件和文件夹到根目录
      *
      * @param zipPath zipPath
      * @param id id
@@ -41,7 +41,7 @@ public class ZipUtils {
             List<String> indexPaths = fileHeaders.stream().map(FileHeader::getFileName)
                     .filter(fileName -> StringUtils.endsWith(fileName, "index.html"))
                     .collect(Collectors.toList());
-            Assert.notEmpty(indexPaths, "原型压缩包中缺少index.html");
+            Assert.notEmpty(indexPaths, "静态网站压缩包中缺少index.html");
             String[] indexPathArr = indexPaths.get(0).split("/");
             String savePath = StringExtUtils.format("{}/ext-resources/modules/{}/", Consts.ROOT_DIR, id);
             zipFile.extractAll(savePath);
@@ -54,9 +54,9 @@ public class ZipUtils {
             FileUtils.copyDirectory(new File(tempPath), new File(savePath));
             FileUtils.forceDelete(new File(savePath + indexPathArr[0]));
         } catch (ZipException ex) {
-            throw new UnzipException("原型解压失败", ex);
+            throw new UnzipException("静态网站解压失败", ex);
         } catch (IOException ex) {
-            throw new UnzipException("原型复制失败", ex);
+            throw new UnzipException("静态网站复制失败", ex);
         }
     }
 

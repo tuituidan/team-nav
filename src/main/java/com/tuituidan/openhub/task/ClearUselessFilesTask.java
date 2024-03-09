@@ -65,7 +65,7 @@ public class ClearUselessFilesTask {
             return;
         }
         for (File file : files) {
-            // 只删除文件名是日期类型的 images下的default和modules下的已解压的原型文件都忽略
+            // 只删除文件名是日期类型的 images下的default和modules下的已解压的网站文件都忽略
             if (file.isDirectory() && file.getName().length() == 8) {
                 deleteUselessFiles(file, existFileIds);
             }
@@ -99,7 +99,7 @@ public class ClearUselessFilesTask {
     }
 
     /**
-     * 获取正在使用的文件ID，每个上传的文件（不论是图标还是原型压缩包）都是new的新的uuid
+     * 获取正在使用的文件ID，每个上传的文件（不论是图标还是网站压缩包）都是new的新的uuid
      * 根据uuid的文件名即可唯一确定一个文件，不需要完整路径
      *
      * @return Set
