@@ -8,6 +8,8 @@ const state = {
   cutOverSpeed: 10,
   logoPath: '/assets/images/logo.png',
   logoToFavicon: false,
+  menuDefaultOpen: storageSetting.menuDefaultOpen === 'true',
+  menuAccordion: storageSetting.menuAccordion === 'true',
   version: {},
 }
 const mutations = {

@@ -3,11 +3,13 @@ import http from '@/plugins/http';
 const state = {
   menus: [],
   datas: [],
+  openIds: [],
 }
 const mutations = {
   CHANGE_DATA: (state, res) => {
     state.menus = res.menus;
     state.datas = res.datas;
+    state.openIds = res.menus.filter(it => Array.isArray(it.children) && it.children.length > 0).map(it => it.id);
   },
 }
 

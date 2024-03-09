@@ -8,8 +8,9 @@
         :collapse="isCollapse"
         :background-color="settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground"
         :text-color="settings.sideTheme === 'theme-dark' ? variables.menuColor : variables.menuLightColor"
-        :unique-opened="true"
+        :unique-opened="settings.menuAccordion"
         :active-text-color="settings.theme"
+        :default-openeds="openMenus"
         :collapse-transition="false"
         mode="vertical"
       >
@@ -37,6 +38,12 @@ export default {
       'sidebar',
       'homeMenus',
     ]),
+    openMenus() {
+      if (this.$store.state.settings.menuDefaultOpen) {
+        return this.$store.state.home.openIds;
+      }
+      return [];
+    },
     activeMenu() {
       const route = this.$route;
       const {meta, path} = route;
