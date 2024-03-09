@@ -10,6 +10,7 @@ const state = {
   logoToFavicon: false,
   menuDefaultOpen: storageSetting.menuDefaultOpen === 'true',
   menuAccordion: storageSetting.menuAccordion === 'true',
+  cardIconShape: storageSetting.cardIconShape || 'circle',
   version: {},
 }
 const mutations = {

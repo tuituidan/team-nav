@@ -1,6 +1,6 @@
 <template>
     <span class="ivu-avatar"
-          :class="{'ivu-avatar-image':Boolean(src)}"
+          :class="{'ivu-avatar-image':Boolean(src), 'ivu-avatar-square': this.shape === 'square'}"
           :style="styles">
         <img v-if="src" alt="" :src="src" @error="handleError">
         <span v-else ref="children" :style="childrenStyle"><slot></slot></span>
@@ -13,6 +13,13 @@
 export default {
   name: 'Avatar',
   props: {
+    shape: {
+      type: String,
+      validator (value) {
+        return ['circle', 'square'].includes(value);
+      },
+      default: 'circle'
+    },
     size: {
       type: Number,
     },
@@ -115,8 +122,13 @@ export default {
   background: 0 0
 }
 
+.ivu-avatar-square {
+  border-radius: 4px
+}
+
 .ivu-avatar > img {
   width: 100%;
   height: 100%
 }
+
 </style>

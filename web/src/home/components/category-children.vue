@@ -9,9 +9,11 @@
           <div style="display: flex">
             <ivu-avatar v-if="card.icon.src"
                         :src="card.icon.src"
+                        :shape="cardIconShape"
                         class="nav-card-icon"></ivu-avatar>
             <ivu-avatar v-else
                         class="nav-card-icon"
+                        :shape="cardIconShape"
                         :style="{background: card.icon.color}">{{ card.icon.text }}
             </ivu-avatar>
             <div class="nav-card-content">
@@ -47,12 +49,19 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: "category-children",
   props: {
     datas: {
       type: Array
     }
+  },
+  computed: {
+    ...mapGetters([
+      'cardIconShape',
+    ]),
   },
   methods: {
     cardClickHandler(card) {

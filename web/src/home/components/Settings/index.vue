@@ -45,6 +45,14 @@
             <el-checkbox label="accordion">手风琴</el-checkbox>
           </el-checkbox-group>
         </div>
+        <div class="drawer-item">
+          <span>卡片图标</span>
+          <el-radio-group v-model="cardIconShape">
+            <el-radio label="circle">圆形</el-radio>
+            <el-radio label="square">方形</el-radio>
+          </el-radio-group>
+
+        </div>
         <el-button size="small" type="primary" plain icon="el-icon-document-add" @click="saveSetting">保存配置</el-button>
         <el-button size="small" plain icon="el-icon-refresh" @click="resetSetting">重置配置</el-button>
       </div>
@@ -90,6 +98,17 @@ export default {
         });
       },
     },
+    cardIconShape: {
+      get() {
+        return this.$store.state.settings.cardIconShape
+      },
+      set(val) {
+        this.$store.dispatch('settings/changeSetting', {
+          key: 'cardIconShape',
+          value: val,
+        });
+      },
+    },
   },
   methods: {
     handleTheme(val) {
@@ -106,7 +125,8 @@ export default {
         `{
             "sideTheme":"${this.sideTheme}",
             "menuDefaultOpen":"${this.$store.state.settings.menuDefaultOpen}",
-            "menuAccordion":"${this.$store.state.settings.menuAccordion}"
+            "menuAccordion":"${this.$store.state.settings.menuAccordion}",
+            "cardIconShape":"${this.$store.state.settings.cardIconShape}"
           }`
       );
       setTimeout(() => this.$modal.closeLoading(), 1000)

@@ -6,5 +6,6 @@ const getters = {
   version: state => state.settings.version,
   homeMenus: state => state.home.menus,
   homeCards: state => state.home.datas,
+  cardIconShape: state => state.settings.cardIconShape,
 }
 export default getters
