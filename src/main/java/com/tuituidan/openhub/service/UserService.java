@@ -122,6 +122,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
         if (user == null) {
             throw new UsernameNotFoundException("用户名或密码错误");
         }
+        Assert.isTrue("1".equals(user.getStatus()), "用户已被禁用");
         user.setRoleIds(roleUserRepository.findByUserId(user.getId()).stream()
                 .map(RoleUser::getRoleId).collect(Collectors.toSet()));
         return user;
