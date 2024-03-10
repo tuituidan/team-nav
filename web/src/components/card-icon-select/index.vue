@@ -142,15 +142,22 @@ export default {
       ]
     }
   },
-  mounted() {
-    this.textIcon.color = this.randomColor[Math.floor(Math.random() * this.randomColor.length)]
-  },
   methods: {
     init(item) {
       this.icons = [];
       if (item) {
         this.icons.push({...item, checked: true});
+        if (item.text) {
+          this.textIcon.text = item.text;
+          this.textIcon.color = item.color;
+          return;
+        }
       }
+      this.textIcon.text = '';
+      this.textIcon.color = this.getRandomColor();
+    },
+    getRandomColor(){
+      return this.randomColor[Math.floor(Math.random() * this.randomColor.length)];
     },
     uploadSuccess(response) {
       this.iconSelect({src: response});

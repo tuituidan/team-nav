@@ -58,12 +58,6 @@ export default {
         title: [
           {required: true, message: "标题不能为空", trigger: "blur"}
         ],
-        content: [
-          {required: true, message: "内容不能为空", trigger: "blur"}
-        ],
-        icon: [
-          {required: true, message: "请添加一个图标", trigger: "change"},
-        ],
         zip: [
           {required: true, message: '请上传网站zip文件'}
         ]
@@ -126,10 +120,19 @@ export default {
     /** 提交按钮 */
     submitForm: function () {
       this.$refs.form.validate(valid => {
-        if (valid && this.form.icon) {
+        if (valid) {
           const newZip = this.form.type === 'zip' && this.form.zip && this.form.zip.isNew;
           if (newZip) {
             this.$modal.loading('压缩包解压时间较长，请耐心等待...');
+          }
+          if (!this.form.icon) {
+            this.form.icon = {
+              text: this.form.title.substr(0, 2),
+              color: this.$refs.refCardIcon.getRandomColor(),
+            };
+          }
+          if (!this.form.content) {
+            this.form.content = this.form.url || this.form.title;
           }
           this.$http.save('/api/v1/card', {...this.form})
             .then(() => {
@@ -148,10 +151,6 @@ export default {
     // 取消按钮
     cancel() {
       this.show = false;
-    },
-    iconChange() {
-      // 单个触发校验
-      this.$refs.form.validateField('icon');
     },
     getFavicons() {
       if (!(this.form.url && this.form.url.startsWith('http'))) {

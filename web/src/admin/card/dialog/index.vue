@@ -82,7 +82,7 @@
         <el-button loading type="text">正在尝试获取该地址的图标</el-button>
       </el-form-item>
       <el-form-item label="图标" prop="icon">
-        <card-icon-select ref="refCardIcon" v-model="form.icon" @input="iconChange"/>
+        <card-icon-select ref="refCardIcon" v-model="form.icon" />
       </el-form-item>
       <el-form-item label="附件" prop="attachment">
         <file-uploader type="attachments"
