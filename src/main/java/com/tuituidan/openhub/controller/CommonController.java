@@ -5,6 +5,7 @@ import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.AttachmentService;
 import com.tuituidan.openhub.service.CommonService;
 import com.tuituidan.openhub.task.VersionCheckTask;
+import com.tuituidan.openhub.util.StringExtUtils;
 import java.io.IOException;
 import java.util.List;
 import javax.annotation.Resource;
@@ -126,6 +127,16 @@ public class CommonController {
     @GetMapping("/app/version")
     public ResponseEntity<VersionInfo> getVersionInfo() {
         return ResponseEntity.ok(versionCheckTask.getVersionInfo());
+    }
+
+    /**
+     * toHanYuPinyin
+     *
+     * @return String
+     */
+    @GetMapping("/hanyu-to-pinyin")
+    public ResponseEntity<String> toHanYuPinyin(String hanyu) {
+        return ResponseEntity.ok(StringExtUtils.toHanYuPinyin(hanyu));
     }
 
 }
