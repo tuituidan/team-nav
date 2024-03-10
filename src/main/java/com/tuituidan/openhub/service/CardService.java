@@ -10,21 +10,14 @@ import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.bean.vo.HomeDataVo;
 import com.tuituidan.openhub.consts.Consts;
-import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.IconUtils;
 import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import com.tuituidan.openhub.util.TransactionUtils;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,9 +32,6 @@ import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -238,18 +228,8 @@ public class CardService {
         if (!StringUtils.startsWith(cardIconDto.getSrc(), "http")) {
             return;
         }
-        String path = StringExtUtils.format("/ext-resources/images/{}/{}.{}",
-                DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()),
-                StringExtUtils.getUuid(), FilenameUtils.getExtension(cardIconDto.getSrc()));
-        File saveFile = new File(Consts.ROOT_DIR + path);
         try {
-            FileUtils.forceMkdirParent(saveFile);
-        } catch (IOException ex) {
-            throw new ResourceWriteException("父目录生成失败", ex);
-        }
-        try (OutputStream outputStream = new FileOutputStream(saveFile)) {
-            IOUtils.copy(new URL(cardIconDto.getSrc()), outputStream);
-            cardIconDto.setSrc(path);
+            cardIconDto.setSrc(IconUtils.saveIcon(cardIconDto.getSrc()));
         } catch (Exception ex) {
             log.error("card icon 保存失败", ex);
         }

@@ -7,7 +7,6 @@ import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.consts.UploadTypeEnum;
 import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
-import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.HttpUtils;
 import com.tuituidan.openhub.util.QrCodeUtils;
 import com.tuituidan.openhub.util.ResponseUtils;
@@ -18,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,8 +32,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.http.MediaType;
@@ -210,81 +206,19 @@ public class CommonService implements ApplicationRunner {
      * @return List
      */
     public List<String> cardIcons(String url) {
-        String domainUrl = getDomainUrl(url);
-        String docUrl = getFromDocument(domainUrl);
+        String domainUrl = HttpUtils.getDomainUrl(url);
+        String docUrl = HttpUtils.getFromDocument(domainUrl);
         // 有时候从dom树的link icon中获取的和favicon图标样式并不一样，都返回给用户去选择
         // 但很多时候两个又是一样的，懒得处理了，所以一个地址获取到两个一样的图标的时候是正常的
         List<String> result = new ArrayList<>();
         if (StringUtils.isNotBlank(docUrl)) {
             result.add(docUrl);
         }
-        String favUrl = requestFavicon(domainUrl + "/favicon.ico");
+        String favUrl = HttpUtils.requestFavicon(domainUrl + "/favicon.ico");
         if (StringUtils.isNotBlank(favUrl)) {
             result.add(favUrl);
         }
         return result;
-    }
-
-    /**
-     * 获取url的根路径，如http://www.test.com/aa/xx.html -> http://www.test.com
-     *
-     * @param orgUrl 原始url
-     * @return url
-     */
-    private String getDomainUrl(String orgUrl) {
-        try {
-            URL url = new URL(orgUrl);
-            StringBuilder sb = new StringBuilder(url.getProtocol())
-                    .append("://").append(url.getHost());
-            if (url.getPort() != -1) {
-                sb.append(":").append(url.getPort());
-            }
-            return sb.toString();
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("url解析错误", ex);
-        }
-    }
-
-    private String getFromDocument(String domainUrl) {
-        Document doc = HttpUtils.getJsoupDoc(domainUrl);
-        if (Objects.isNull(doc)) {
-            return StringUtils.EMPTY;
-        }
-        Elements links = doc.head().children().select("link[rel~=icon]");
-        if (links.isEmpty()) {
-            return "";
-        }
-        String href = links.get(0).attr("href");
-        return requestFavicon(formatLinkIcon(domainUrl, href));
-    }
-
-    /**
-     * 从link拿到的格式很多种，这里统一格式化一下
-     *
-     * @param domainUrl domainUrl
-     * @param href href
-     * @return String
-     */
-    private String formatLinkIcon(String domainUrl, String href) {
-        if (StringUtils.startsWith(href, "http")) {
-            return href;
-        }
-        if (StringUtils.startsWith(href, "//")) {
-            return StringUtils.substringBefore(domainUrl, "//") + href;
-        }
-        if (StringUtils.startsWith(href, "/")) {
-            return domainUrl + href;
-        }
-        return domainUrl + "/" + href;
-    }
-
-    private String requestFavicon(String url) {
-        byte[] body = HttpUtils.toByteArray(url);
-        // 要能实际获取到favicon的数据，如果返回是一个html文件，往往是鉴权导致重定向了
-        if (body != null && !FileExtUtils.isHtml(body)) {
-            return url;
-        }
-        return "";
     }
 
     /**
