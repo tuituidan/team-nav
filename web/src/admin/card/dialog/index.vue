@@ -94,8 +94,9 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button v-if="isApply" type="primary" @click="submitForm">提交审核</el-button>
-      <el-button v-else type="primary" @click="submitForm">确 定</el-button>
+      <el-checkbox v-model="saveOption.saveKeepAdd">保存后不关闭</el-checkbox>
+      <el-checkbox v-model="saveOption.saveNotClear" style="margin-right: 25px">保存后不清空</el-checkbox>
+      <el-button type="primary" @click="submitForm">保 存</el-button>
       <el-button @click="cancel">取 消</el-button>
     </div>
   </el-dialog>

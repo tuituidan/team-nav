@@ -16,7 +16,6 @@ export default {
       // 是否显示弹出层
       show: false,
       showFaviconLoading: false,
-      isApply: false,
       // 菜单树选项
       categoryOptions: [],
       // 表单参数
@@ -61,7 +60,11 @@ export default {
         zip: [
           {required: true, message: '请上传网站zip文件'}
         ]
-      }
+      },
+      saveOption: {
+        saveNotClear: false,
+        saveKeepAdd: false,
+      },
     }
   },
   methods: {
@@ -72,14 +75,10 @@ export default {
         this.form = {...item};
         this.form.attachmentIds = Array.isArray(this.form.attachments)
           ? this.form.attachments.map(item => item.id) : [];
-      } else if (item.category) {
+      } else {
         this.form.type = 'default';
         this.form.category = item.category;
         this.title = '新增卡片';
-      } else {
-        this.form.type = 'default';
-        this.title = '申请卡片';
-        this.isApply = true;
       }
       this.show = true;
       this.$nextTick(() => {
@@ -118,7 +117,7 @@ export default {
         ? fileList.map(item => item.path) : [];
     },
     /** 提交按钮 */
-    submitForm: function () {
+    submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
           const newZip = this.form.type === 'zip' && this.form.zip && this.form.zip.isNew;
@@ -137,7 +136,16 @@ export default {
           this.$http.save('/api/v1/card', {...this.form})
             .then(() => {
               this.$modal.msgSuccess('保存成功');
-              this.show = false;
+              this.show = this.saveOption.saveKeepAdd;
+              if(!this.saveOption.saveNotClear){
+                this.form.title = '';
+                this.form.content = '';
+                this.form.privateContent = '';
+                this.form.showQrcode = false;
+                this.form.zip = null;
+                this.form.attachmentIds = [];
+                this.form.attachments = [];
+              }
               this.$emit('refresh', this.form.category);
             })
             .finally(() => {
