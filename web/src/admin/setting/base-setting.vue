@@ -49,6 +49,15 @@
           <com-tip tip="可以配置通过Nginx来访问上传的静态网站，Nginx配置可参考README.md，开启后访问网站时将跳转Nginx地址"></com-tip>
         </div>
       </el-form-item>
+      <el-form-item label="显示帮助文档" prop="showDoc">
+        <div class="multi-form-item">
+          <div>
+            <el-switch v-model="settingItem.showDoc">
+            </el-switch>
+          </div>
+          <com-tip tip="首页头部显示帮助文档"></com-tip>
+        </div>
+      </el-form-item>
     </el-form>
   </el-card>
 </template>
@@ -69,17 +78,8 @@ export default {
         cutOverSpeed: 10,
         nginxOpen: false,
         nginxUrl: '',
+        showDoc: false,
       },
-      layoutSizeList: [
-        {
-          id: 'small-layout',
-          name: '较小'
-        },
-        {
-          id: 'big-layout',
-          name: '较大'
-        }
-      ],
       settingItemRules: {
         navName: [
           {required: true, message: '网站标题不能为空'},
@@ -98,6 +98,7 @@ export default {
           this.settingItem.cutOverSpeed = res.cutOverSpeed || 10;
           this.settingItem.logoToFavicon = Boolean(res.logoToFavicon);
           this.settingItem.nginxOpen = Boolean(res.nginxOpen);
+          this.settingItem.showDoc = Boolean(res.showDoc);
         });
     },
     saveSetting() {

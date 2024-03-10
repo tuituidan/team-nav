@@ -18,7 +18,7 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <screenfull class="right-menu-item hover-effect"/>
-<!--        <doc class="right-menu-item hover-effect"/>-->
+        <doc v-if="showDoc" class="right-menu-item hover-effect"/>
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -69,6 +69,7 @@ export default {
       'sidebar',
       'device',
       'loginUser',
+      'showDoc'
     ]),
     setting: {
       get() {

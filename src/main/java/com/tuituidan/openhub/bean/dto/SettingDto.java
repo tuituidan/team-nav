@@ -28,4 +28,6 @@ public class SettingDto {
 
     private String layoutSize;
 
+    private Boolean showDoc;
+
 }

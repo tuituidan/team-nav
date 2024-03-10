@@ -8,6 +8,7 @@ const state = {
   cutOverSpeed: 10,
   logoPath: '/assets/images/logo.png',
   logoToFavicon: false,
+  showDoc: false,
   menuDefaultOpen: storageSetting.menuDefaultOpen === 'true',
   menuAccordion: storageSetting.menuAccordion === 'true',
   cardIconShape: storageSetting.cardIconShape || 'circle',
@@ -36,6 +37,7 @@ const actions = {
       commit('CHANGE_SETTING', {key: 'cutOverSpeed', value: res.cutOverSpeed});
       commit('CHANGE_SETTING', {key: 'logoPath', value: res.logoPath});
       commit('CHANGE_SETTING', {key: 'logoToFavicon', value: res.logoToFavicon});
+      commit('CHANGE_SETTING', {key: 'showDoc', value: res.showDoc});
       return res;
     });
   },

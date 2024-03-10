@@ -51,5 +51,6 @@ public class Setting implements Serializable {
     @Column(name = "logo_to_favicon")
     private Boolean logoToFavicon;
 
-
+    @Column(name = "show_doc")
+    private Boolean showDoc;
 }
