@@ -5,18 +5,15 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.bean.entity.Role;
 import com.tuituidan.openhub.bean.entity.RoleCategory;
-import com.tuituidan.openhub.bean.entity.UserStar;
 import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.repository.RoleCategoryRepository;
 import com.tuituidan.openhub.repository.RoleRepository;
-import com.tuituidan.openhub.repository.UserStarRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.Getter;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
@@ -40,9 +37,6 @@ public class CacheService implements ApplicationRunner {
     @Getter
     private final Cache<String, List<Role>> categoryRolesCache = Caffeine.newBuilder().build();
 
-    @Getter
-    private final Cache<String, List<String>> userStarCardIdsCache = Caffeine.newBuilder().build();
-
     @Resource
     private CategoryRepository categoryRepository;
 
@@ -51,9 +45,6 @@ public class CacheService implements ApplicationRunner {
 
     @Resource
     private RoleCategoryRepository roleCategoryRepository;
-
-    @Resource
-    private UserStarRepository userStarRepository;
 
     /**
      * getCategory
@@ -76,19 +67,6 @@ public class CacheService implements ApplicationRunner {
     }
 
     /**
-     * getStarCardIds
-     *
-     * @param userId userId
-     * @return List
-     */
-    public List<String> getStarCardIds(String userId) {
-        return userStarCardIdsCache.get(userId, key ->
-                userStarRepository.findByUserId(key).stream()
-                        .map(UserStar::getCardId).collect(Collectors.toList())
-        );
-    }
-
-    /**
      * getRolesByCategoryId
      *
      * @param categoryId categoryId
@@ -107,7 +85,6 @@ public class CacheService implements ApplicationRunner {
         loadCategoryCache();
         loadRoleCache();
         loadCategoryRolesCache();
-        loadUserStarCardIdsCache();
     }
 
     private void loadCategoryCache() {
@@ -131,16 +108,6 @@ public class CacheService implements ApplicationRunner {
         for (Entry<String, List<String>> entry : categoryRoleIdsMap.entrySet()) {
             categoryRolesCache.put(entry.getKey(), entry.getValue().stream()
                     .map(this::getRole).collect(Collectors.toList()));
-        }
-    }
-
-    private void loadUserStarCardIdsCache() {
-        List<UserStar> userStars = userStarRepository.findAll();
-        Map<String, List<String>> idsMap = userStars.stream().collect(Collectors.groupingBy(UserStar::getUserId,
-                Collectors.mapping(UserStar::getCardId, Collectors.toList())));
-        userStarCardIdsCache.invalidateAll();
-        if (MapUtils.isNotEmpty(idsMap)) {
-            userStarCardIdsCache.putAll(idsMap);
         }
     }
 

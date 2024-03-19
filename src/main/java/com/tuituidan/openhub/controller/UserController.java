@@ -2,6 +2,7 @@ package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.ChangePassword;
 import com.tuituidan.openhub.bean.dto.UserDto;
+import com.tuituidan.openhub.bean.entity.User;
 import com.tuituidan.openhub.bean.vo.UserVo;
 import com.tuituidan.openhub.service.UserService;
 import com.tuituidan.openhub.util.SecurityUtils;
@@ -124,14 +125,18 @@ public class UserController {
     }
 
     /**
-     * changePassword
+     * star
      *
-     * @param cardId cardId
+     * @param cardIds cardIds
      * @return Void
      */
-    @PatchMapping("/card/{cardId}/actions/star")
-    public ResponseEntity<Boolean> userStarCard(@PathVariable String cardId) {
-        return ResponseEntity.ok(userService.userStarCard(SecurityUtils.getId(), cardId));
+    @PatchMapping("/star/card")
+    public ResponseEntity<Void> star(@RequestBody String[] cardIds) {
+        User userInfo = SecurityUtils.getUserInfo();
+        if (userInfo != null) {
+            userService.userStarCard(userInfo.getId(), cardIds);
+        }
+        return ResponseEntity.noContent().build();
     }
 
 }

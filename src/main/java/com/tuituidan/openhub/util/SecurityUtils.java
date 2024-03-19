@@ -56,7 +56,7 @@ public class SecurityUtils {
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
             return null;
         }
-        return BeanExtUtils.convert(authentication.getPrincipal(), User::new).setPassword(null);
+        return (User) authentication.getPrincipal();
     }
 
 }

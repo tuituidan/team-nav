@@ -9,7 +9,6 @@ import com.tuituidan.openhub.bean.vo.AttachmentVo;
 import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.bean.vo.HomeDataVo;
-import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
@@ -119,17 +118,6 @@ public class CardService {
             item.setFlatSort(StringUtils.leftPad(item.getSort().toString(), 2, '0'));
             result.add(item);
         }
-        List<CardVo> cardList = cardMap.get(Consts.DEFAULT_ID);
-        if (CollectionUtils.isNotEmpty(cardList)) {
-            result.add(new CategoryVo()
-                    .setId(Consts.DEFAULT_ID)
-                    .setCards(cardList).setCardCount((long) cardList.size())
-                    .setFlatSort("0")
-                    .setSort(0).setName("个人常用")
-                    .setIcon("star")
-                    .setLevel(1)
-                    .setValid(true).setPid("0"));
-        }
         return result;
     }
 
@@ -164,26 +152,16 @@ public class CardService {
         }
         tipsFunc.add(CardVo::getUrl);
         Map<String, List<AttachmentVo>> attachmentMap = attachmentService.getCardAttachmentMap(cards);
-        List<String> starIds = isLogin ? cacheService.getStarCardIds(SecurityUtils.getId()) : new ArrayList<>();
-        List<CardVo> starCards = new ArrayList<>();
-        Map<String, List<CardVo>> result = cards.stream().map(item -> {
+        return cards.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new);
             cardTypeServiceFactory.getService(item.getType()).formatCardVo(vo);
             vo.setTip(tipsFunc.stream().map(func -> func.apply(vo))
                     .filter(StringUtils::isNotBlank).distinct()
                     .collect(Collectors.joining("<br/>")));
             vo.setAttachments(attachmentMap.get(item.getId()));
-            if (starIds.contains(item.getId())) {
-                vo.setStar(starIds.contains(item.getId()));
-                starCards.add(BeanExtUtils.convert(vo, CardVo::new));
-            }
+            vo.setStar(false);
             return vo;
         }).collect(Collectors.groupingBy(CardVo::getCategory));
-        if (CollectionUtils.isEmpty(starCards)) {
-            return result;
-        }
-        result.put(Consts.DEFAULT_ID, starCards);
-        return result;
     }
 
     /**

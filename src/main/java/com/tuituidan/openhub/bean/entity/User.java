@@ -65,6 +65,9 @@ public class User implements UserDetails, Serializable {
     @Transient
     private Set<String> roleIds;
 
+    @Transient
+    private Set<String> starCardIds;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (SecurityUtils.isAdmin(this)) {

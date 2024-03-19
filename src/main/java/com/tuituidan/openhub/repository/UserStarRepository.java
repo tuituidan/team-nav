@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.repository;
 
 import com.tuituidan.openhub.bean.entity.UserStar;
+import java.util.Collection;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,5 +40,14 @@ public interface UserStarRepository extends JpaRepository<UserStar, String> {
      */
     @Transactional(rollbackFor = Exception.class)
     void deleteByUserIdAndCardId(String userId, String cardId);
+
+    /**
+     * deleteByUserIdAndCardId
+     *
+     * @param userId userId
+     * @param cardIds cardIds
+     */
+    @Transactional(rollbackFor = Exception.class)
+    void deleteByUserIdAndCardIdIn(String userId, Collection<String> cardIds);
 
 }

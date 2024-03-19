@@ -2,9 +2,15 @@ package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.LoginDto;
 import com.tuituidan.openhub.bean.entity.User;
+import com.tuituidan.openhub.config.LoginSuccessHandler;
 import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.service.UserService;
+import com.tuituidan.openhub.util.RequestUtils;
+import com.tuituidan.openhub.util.ResponseUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
+import java.io.IOException;
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +37,12 @@ public class LoginController {
     @Resource
     private AuthenticationManager authenticationManager;
 
+    @Resource
+    private LoginSuccessHandler loginSuccessHandler;
+
+    @Resource
+    private UserService userService;
+
     /**
      * quickLogin
      *
@@ -38,7 +50,7 @@ public class LoginController {
      * @return boolean
      */
     @PostMapping("/quick/login")
-    public ResponseEntity<User> quickLogin(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<User> quickLogin(@RequestBody LoginDto loginDto) throws ServletException, IOException {
         if (SecurityUtils.getUserInfo() != null) {
             return ResponseEntity.ok(SecurityUtils.getUserInfo());
         }
@@ -47,6 +59,12 @@ public class LoginController {
         Authentication authenticate = authenticationManager.authenticate(token);
         Assert.notNull(authenticate, "登录失败");
         SecurityContextHolder.getContext().setAuthentication(authenticate);
+        if (loginDto.getCardIds() != null) {
+            User userInfo = SecurityUtils.getUserInfo();
+            userService.userStarCard(userInfo.getId(), loginDto.getCardIds());
+        }
+        loginSuccessHandler.onAuthenticationSuccess(RequestUtils.getRequest(), ResponseUtils.getHttpResponse(),
+                authenticate);
         return ResponseEntity.ok(SecurityUtils.getUserInfo());
     }
 

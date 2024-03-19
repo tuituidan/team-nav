@@ -84,7 +84,6 @@ export default {
         if (this.$store.state.settings.menuAccordion) {
           val.push('accordion');
         }
-        console.log(val);
         return val;
       },
       set(val) {

@@ -45,7 +45,8 @@
             <el-button type="primary"
                        :loading="loading"
                        class="login-button"
-                       round @click="loginHandler">登 录</el-button>
+                       round @click="loginHandler">登 录
+            </el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -55,6 +56,7 @@
 
 <script>
 // 是否显示登录弹窗
+
 export let isRelogin = {show: false};
 
 export default {
@@ -98,7 +100,7 @@ export default {
         this.rememberMe = true;
         if (localStorage.autoLogin === 'true') {
           this.autoLogin = true;
-          if(!localStorage.userLogout){
+          if (!localStorage.userLogout) {
             this.$nextTick(() => {
               this.loginHandler();
             })
@@ -127,12 +129,20 @@ export default {
           delete localStorage.password;
           delete localStorage.rememberMe;
         }
-        this.$http.post('/api/v1/quick/login', this.form).then(()=>{
+        let cardIds = null;
+        if (localStorage.hasOwnProperty('starCardIds')) {
+          if (localStorage.starCardIds) {
+            cardIds = localStorage.starCardIds.split(',');
+          } else {
+            cardIds = [];
+          }
+        }
+        this.$http.post('/api/v1/quick/login', {...this.form, cardIds: cardIds}).then(() => {
           window.location.reload();
           isRelogin.show = false;
           this.show = false;
           delete localStorage.userLogout;
-        }).finally(()=>{
+        }).finally(() => {
           this.loading = false;
         })
       });

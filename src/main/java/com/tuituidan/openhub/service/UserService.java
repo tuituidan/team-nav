@@ -15,6 +15,7 @@ import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -123,8 +125,6 @@ public class UserService implements UserDetailsService, ApplicationRunner {
             throw new UsernameNotFoundException("用户名或密码错误");
         }
         Assert.isTrue("1".equals(user.getStatus()), "用户已被禁用");
-        user.setRoleIds(roleUserRepository.findByUserId(user.getId()).stream()
-                .map(RoleUser::getRoleId).collect(Collectors.toSet()));
         return user;
     }
 
@@ -212,20 +212,33 @@ public class UserService implements UserDetailsService, ApplicationRunner {
      * userStarCard
      *
      * @param userId userId
-     * @param cardId cardId
-     * @return boolean
+     * @param cardIds cardIds
      */
-    public boolean userStarCard(String userId, String cardId) {
-        List<UserStar> list = userStarRepository.findByUserIdAndCardId(userId, cardId);
-        if (CollectionUtils.isNotEmpty(list)) {
-            userStarRepository.deleteByUserIdAndCardId(userId, cardId);
-            cacheService.getUserStarCardIdsCache().invalidate(userId);
-            return false;
+    public void userStarCard(String userId, String[] cardIds) {
+        List<UserStar> exists = userStarRepository.findByUserId(userId);
+        if (CollectionUtils.isEmpty(exists)) {
+            if (ArrayUtils.isEmpty(cardIds)) {
+                return;
+            }
+            userStarRepository.saveAll(Arrays.stream(cardIds).map(cardId -> new UserStar().setUserId(userId)
+                    .setCardId(cardId).setId(StringExtUtils.getUuid())).collect(Collectors.toList()));
+            return;
         }
-        userStarRepository.save(new UserStar().setId(StringExtUtils.getUuid())
-                .setUserId(userId).setCardId(cardId));
-        cacheService.getUserStarCardIdsCache().invalidate(userId);
-        return true;
+        Set<String> existIds = exists.stream().map(UserStar::getCardId).collect(Collectors.toSet());
+        Set<String> saveIds = ArrayUtils.isEmpty(cardIds)
+                ? new HashSet<>() : Arrays.stream(cardIds).collect(Collectors.toSet());
+
+        Set<String> deleteIds = new HashSet<>(existIds);
+        deleteIds.removeAll(saveIds);
+        if (CollectionUtils.isNotEmpty(deleteIds)) {
+            userStarRepository.deleteByUserIdAndCardIdIn(userId, deleteIds);
+        }
+        // 要保存的去掉现有的，就是要新增的
+        saveIds.removeAll(existIds);
+        if (CollectionUtils.isNotEmpty(saveIds)) {
+            userStarRepository.saveAll(saveIds.stream().map(cardId -> new UserStar().setUserId(userId)
+                    .setCardId(cardId).setId(StringExtUtils.getUuid())).collect(Collectors.toList()));
+        }
     }
 
 }

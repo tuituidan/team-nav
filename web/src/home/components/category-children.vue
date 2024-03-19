@@ -76,9 +76,9 @@ export default {
       window.open(`${process.env.VUE_APP_BASE_API}/api/v1/attachment/${id}/actions/download`);
     },
     starHandler(card) {
-      this.$http.patch(`/api/v1/user/card/${card.id}/actions/star`).then(star => {
+      this.$store.dispatch('home/setStarCard', card).then(star => {
+        card.star = star;
         this.$modal.msgSuccess(star ? '已添加到个人常用' : '已移出个人常用');
-        this.$store.dispatch('home/loadHomeCards', '');
       });
     },
   }

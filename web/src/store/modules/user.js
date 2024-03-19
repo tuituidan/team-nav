@@ -1,4 +1,5 @@
 import http from '@/plugins/http';
+import {saveStarCard} from '@/utils';
 
 const state = {
   userInfo: {
@@ -36,6 +37,10 @@ const actions = {
           avatar: '',
         }
       }
+      // 只初始拉取一次，以后都以本地为准
+      if(!localStorage.hasOwnProperty('starCardIds')){
+        saveStarCard(user.starCardIds);
+      }
       user.firstname = user.nickname.substring(user.nickname.length - 3);
       user.isAdmin = user.id === '1' || (Array.isArray(user.roleIds) && user.roleIds.includes('1'));
       commit('SET_USER_INFO', user)
@@ -45,7 +50,7 @@ const actions = {
 
   // 退出系统
   LogOut({commit, state}) {
-    return http.post('/logout').then(()=>{
+    return http.post('/logout').then(() => {
       window.localStorage.userLogout = true;
     })
   },
