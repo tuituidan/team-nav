@@ -198,7 +198,7 @@ export default {
 .my-popover {
   background-color: rgba(70, 76, 91, .9);
   color: white;
-  max-width: 400px;
+  max-width: 500px;
 
   .popper__arrow {
     border-bottom-color: rgba(70, 76, 91, .9) !important;

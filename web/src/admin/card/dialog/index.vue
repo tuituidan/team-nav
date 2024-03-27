@@ -33,7 +33,7 @@
                          placeholder="请选择所属分类"></category-select>
       </el-form-item>
       <el-form-item label="标题" prop="title">
-        <el-input v-model="form.title" placeholder="标题" v-trim />
+        <el-input v-model="form.title" placeholder="标题" clearable v-trim />
       </el-form-item>
       <el-form-item label="内容" prop="content">
         <el-input v-model="form.content" type="textarea" v-trim
