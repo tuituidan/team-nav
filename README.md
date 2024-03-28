@@ -85,7 +85,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.0
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.1
 
 ```
 

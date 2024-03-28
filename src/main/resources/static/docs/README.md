@@ -59,7 +59,7 @@
 
 #### 前端主要技术
 
-vue2+ElementUI，前后端分离开发，合并部署。
+vue2+ElementUI，前后端分离开发，合并部署（1.x版本UI框架是ViewUI，升级有分类图标不兼容，需要重新设置一下）。
 
 #### 后端主要技术
 
@@ -68,6 +68,8 @@ Springboot、SpringDataJpa、SpringSecurity、h2database
 ## 部署说明
 
 通过常规maven命令构建，打包执行命令`mvn clean package -Dmaven.npm.skip=false`，会自动将前端构建到后端的jar包中，这样整个服务就一个jar包（当然如果想前后端分离部署也是可以的，这里不再赘述），再无其他依赖服务，仅需要jdk环境即可启动。
+
+> 如果已经部署了1.X版本的也是直接用2.0版本的jar启动，或者重新拉取镜像启动即可，数据会自动矫正
 
 #### 方式一：手动部署
 
@@ -83,7 +85,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.0
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.1
 
 ```
 
@@ -112,7 +114,47 @@ location /ext-resources/modules {
 
 ## 页面展示
 
-#### 首页图
+#### 首页
+
+![首页](https://github.com/tuituidan/team-nav/assets/20398244/d272556d-d841-4303-9a3e-c1d2c46d7ca3)
+
+#### 首页-主题切换
+
+![主题切换](https://github.com/tuituidan/team-nav/assets/20398244/d82720fe-e6e1-4439-9459-493414a433a5)
+
+#### 首页-未登录
+
+![首页-未登录](https://github.com/tuituidan/team-nav/assets/20398244/fa06e4d1-3f3c-4a8e-849e-8825f7da4c62)
+
+#### 后台管理-分类管理
+
+![后台管理-分类管理](https://github.com/tuituidan/team-nav/assets/20398244/328de0d3-2f63-4638-a57e-ec9095f6ba39)
+
+#### 后台管理-卡片管理
+
+![后台管理-卡片管理](https://github.com/tuituidan/team-nav/assets/20398244/f0638ea5-64e7-45cd-8a30-9b2740e748d3)
+
+#### 后台管理-卡片添加
+
+![后台管理-卡片添加](https://github.com/tuituidan/team-nav/assets/20398244/bc171c00-4257-4adb-948e-165980e686a7)
+
+#### 后台管理-角色管理
+
+![后台管理-角色管理](https://github.com/tuituidan/team-nav/assets/20398244/7d3a1160-522b-4a7c-a995-a0888b4b4039)
+
+#### 后台管理-用户管理
+
+![后台管理-用户管理](https://github.com/tuituidan/team-nav/assets/20398244/63c389bc-251f-44d5-a768-99105448a47b)
+
+#### 后台管理-通知公告
+
+![后台管理-通知公告](https://github.com/tuituidan/team-nav/assets/20398244/42a872c3-60d1-4245-be5f-1a78aa1e3dbd)
+
+#### 后台管理-系统设置
+
+![后台管理-系统设置](https://github.com/tuituidan/team-nav/assets/20398244/61645259-7523-42f6-ab08-b2860cb807ae)
+
+
 
 ## 结语
 
