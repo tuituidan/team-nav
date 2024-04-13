@@ -1,3 +1,9 @@
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true
 spring:
   profiles:
     active: local

@@ -16,6 +16,8 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(config => {
   config.headers['X-Requested-With'] = 'XMLHttpRequest';
+  // 带上cookie
+  config.withCredentials=true
   config.paramsSerializer = param => QS.stringify(param, {indices: false});
   return config;
 }, error => {

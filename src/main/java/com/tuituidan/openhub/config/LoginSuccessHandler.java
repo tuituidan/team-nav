@@ -6,18 +6,19 @@ import com.tuituidan.openhub.bean.entity.UserStar;
 import com.tuituidan.openhub.repository.RoleUserRepository;
 import com.tuituidan.openhub.repository.UserStarRepository;
 import com.tuituidan.openhub.util.SecurityUtils;
-import java.io.IOException;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.stream.Collectors;
 
 /**
  * LoginSuccessHandler.
@@ -46,14 +47,16 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         user.setRoleIds(roleUserRepository.findByUserId(user.getId()).stream()
                 .map(RoleUser::getRoleId).collect(Collectors.toSet()));
         if (!SecurityUtils.isAdmin(user)) {
-            super.onAuthenticationSuccess(request, response, authentication);
+//            super.onAuthenticationSuccess(request, response, authentication);
+            // 不执行重定向
+            super.clearAuthenticationAttributes(request);
             return;
         }
         Authentication newAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(),
                 authentication.getCredentials(),
                 AuthorityUtils.createAuthorityList("admin"));
         SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-        super.onAuthenticationSuccess(request, response, newAuthentication);
+//        super.onAuthenticationSuccess(request, response, newAuthentication);
     }
 
 }

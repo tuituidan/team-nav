@@ -1,8 +1,6 @@
 package com.tuituidan.openhub.config;
 
 import com.tuituidan.openhub.service.UserService;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
+import org.springframework.web.filter.CorsFilter;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * SecurityConfig.
@@ -38,6 +40,9 @@ public class SecurityConfig {
     @Resource
     private LoginSuccessHandler loginSuccessHandler;
 
+    @Resource
+    private CorsFilter corsFilter;
+
     /**
      * filterChain
      *
@@ -50,6 +55,7 @@ public class SecurityConfig {
         http.headers().frameOptions().disable();
         http.csrf().disable();
         http.userDetailsService(userService);
+        http.addFilter(corsFilter);
 
         setLogin(http.formLogin());
         setLogout(http.logout());
