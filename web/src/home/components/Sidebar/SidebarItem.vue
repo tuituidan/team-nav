@@ -25,6 +25,7 @@
 <script>
 import Item from './Item'
 import FixiOSBug from './FixiOSBug'
+import { scrollTo } from '@/utils/scroll-to'
 
 export default {
   name: 'SidebarItem',
@@ -50,8 +51,9 @@ export default {
     return {}
   },
   methods: {
-    menuItemClickHandler(id) {
+    scrollTo(id){
       const rows = document.getElementById(id);
+      console.log(rows);
       rows.scrollIntoView(
         {behavior: 'smooth', block: 'start'});
       const classList = rows.nextSibling.firstChild.classList;
@@ -60,6 +62,16 @@ export default {
         classList.remove('blink-box');
       }, 3200);
     },
+    menuItemClickHandler(id) {
+      if(this.$route.path!=='/card-list'){
+        this.$router.push({path:`/card-list`}).then(
+          scrollTo(id)
+        )
+      }else{
+        scrollTo(id);
+      }
+    },
+
     hasOneShowingChild(children = [], parent) {
       if (!children) {
         children = [];

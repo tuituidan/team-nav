@@ -31,7 +31,20 @@ export const routeList = [
     path: '',
     name: 'home',
     component: () => import('@/home/index.vue'),
+    redirect: '/card-list',
+    children: [
+      {
+        path: '/card-list',
+        component: () => import('@/home/components/card-list/index.vue'),
+      },
+      {
+        path: '/card-introduction',
+        name: 'card-introduction',
+        component: () => import('@/home/components/card-introduction/index.vue'),
+      }
+    ]
   },
+
   {
     path: '/admin',
     name: 'admin',
@@ -53,6 +66,7 @@ export const routeList = [
         path: 'card/apply',
         component: () => import('@/admin/card/apply.vue'),
       },
+
       {
         path: 'role',
         component: () => import('@/admin/role/index.vue'),

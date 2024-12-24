@@ -53,6 +53,9 @@ import {mapGetters} from "vuex";
 
 export default {
   name: "category-children",
+  components: {
+
+  },
   props: {
     datas: {
       type: Array
@@ -66,9 +69,8 @@ export default {
   },
   methods: {
     cardClickHandler(card) {
-      if (card.url) {
-        window.open(card.url);
-      }
+      let params = JSON.stringify(card)
+      this.$router.push({name:'card-introduction',query:{id:card.id},params:{list:params}});
     },
     showQrcodeHandler(url) {
       return `${process.env.VUE_APP_BASE_API}/api/v1/qrcode?url=${encodeURIComponent(url)}`;

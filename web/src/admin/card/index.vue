@@ -138,7 +138,7 @@ export default {
   },
   methods: {
     getList() {
-      this.loading = true;
+      this.loading = true
       if (this.queryParams.category==='') {
         this.loading = false;
         return;
