@@ -32,7 +32,7 @@
     "quill-emoji": "^0.2.0",
     "screenfull": "5.0.2",
     "sortablejs": "1.10.2",
-    "vue": "2.6.12",
+    "vue": "3.0.0",
     "vue-meta": "2.4.0",
     "vue-router": "3.4.9",
     "vuex": "3.6.0"
