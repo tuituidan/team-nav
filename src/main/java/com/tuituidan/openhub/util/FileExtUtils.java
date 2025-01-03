@@ -99,14 +99,4 @@ public class FileExtUtils {
         Files.createDirectories(fp.getParent());
         Files.createFile(fp);
     }
-    public static String getTemplateDirectoryFullPath(){
-        String res = Strings.EMPTY;
-        try {
-            res= ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX+"templates").getPath();
-            return res;
-        } catch (FileNotFoundException ex) {
-            log.error("template directory not found");
-        }
-        return res;
-    }
 }

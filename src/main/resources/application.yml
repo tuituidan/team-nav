@@ -20,7 +20,7 @@ spring:
   thymeleaf:
     cache: true
     encoding: UTF-8 # 模板编码
-    prefix: classpath:/templates/template1/
+    prefix: file:templates/template1/
     suffix: .html # 构建URL时附加到查看名称的后缀
     mode: HTML # 模板模式
     enabled: true

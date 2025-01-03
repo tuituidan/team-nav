@@ -259,18 +259,29 @@ public class CardService {
     }
 
     private void staticPageSave(CardDto cardDto,String finalUrl) {
+        String indexFileSavePath = createPage(cardDto,finalUrl);
+        copyStaticAssets(indexFileSavePath);
+    }
+
+    private String createPage(CardDto cardDto,String finalUrl){
         String templateName = "template.html";
         Map<String, Object> pageContent = new HashMap<String, Object>() {{
             put("title", cardDto.getTitle());
             put("content", cardDto.getContent());
             put("url",cardDto.getUrl());
         }};
-        String indexFileSavePath = generator.createHTML(pageContent, finalUrl, templateName);
+        //创建静态网页
+        return generator.createHTML(pageContent, finalUrl, templateName);
+    }
+
+    private void copyStaticAssets(String  indexFileSavePath){
         File destination = Paths.get(indexFileSavePath).getParent().toFile();
-        String sourceStr = FileExtUtils.getTemplateDirectoryFullPath() + File.separator + "template1" + File.separator + "assets";
-        File source = new File(sourceStr);
+        File sourceFile= FileUtils.getFile("./"+"templates"
+                +File.separator + "template1" + File.separator + "assets");
+        log.info("准备从{}复制资源文件",sourceFile.getPath());
+        log.info("文件将被复制到{}",destination);
         try {
-            FileUtils.copyDirectoryToDirectory(source, destination);
+            FileUtils.copyDirectoryToDirectory(sourceFile, destination);
         } catch (IOException ex) {
             log.error("复制静态网页的资源文件时发生问题:", ex);
         }
