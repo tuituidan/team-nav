@@ -38,7 +38,6 @@
           <el-form-item label="">
             <el-checkbox v-model="rememberMe">记住密码</el-checkbox>
             <el-checkbox v-model="autoLogin" :disabled="!rememberMe">自动登录</el-checkbox>
-            <wechat-login></wechat-login>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -50,6 +49,9 @@
             </el-button>
           </el-form-item>
         </el-col>
+        <hr>
+        <wechat-login></wechat-login>
+
       </el-row>
     </el-form>
   </el-dialog>
