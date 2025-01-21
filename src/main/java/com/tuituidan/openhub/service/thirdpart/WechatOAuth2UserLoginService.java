@@ -96,17 +96,19 @@ public class WechatOAuth2UserLoginService extends DefaultOAuth2UserService {
         //查找本地用户
         User user = userRepository.findByUsername(userName);
         ThirdPartUser currenUser = null;
-        if (thirdPartyUser.isPresent()) {
+        if (thirdPartyUser.isPresent() && null!= user) {
             user = thirdPartyUser.get().getUser();
-        } else {
+        } else if(!thirdPartyUser.isPresent() && null!=user) {
             currenUser = new ThirdPartUser();
             currenUser.setNickname(nickname);
-            //关联user
             currenUser.setUser(user);
             currenUser.setUniqueId(openId);
             currenUser.setProviderId(registrationId);
-        }
-        if (null == user) {
+            //关联user
+            user.getThirdPartUsers().add(currenUser);
+            saveUser(user);
+        }else if (null == user && thirdPartyUser.isPresent()) {
+            user = new User();
             user.setUsername(userName);
             user.setNickname(nickname);
             user.setAvatar(avatar);
@@ -115,9 +117,26 @@ public class WechatOAuth2UserLoginService extends DefaultOAuth2UserService {
             Set<String> roleId = new HashSet<>();
             roleId.add("平台游客");
             user.setRoleIds(roleId);
-            if (null != currenUser) {
-                user.getThirdPartUsers().add(currenUser);
-            }
+            currenUser = thirdPartyUser.get();
+            //关联用户
+            user.getThirdPartUsers().add(currenUser);
+            saveUser(user);
+        }else if (null==user && !thirdPartyUser.isPresent()){
+            user = new User();
+            user.setUsername(userName);
+            user.setNickname(nickname);
+            user.setAvatar(avatar);
+            user.setPassword(new BCryptPasswordEncoder().encode(defPassword));
+            user.setId(StringExtUtils.getUuid());
+            Set<String> roleId = new HashSet<>();
+            roleId.add("平台游客");
+            user.setRoleIds(roleId);
+            currenUser = new ThirdPartUser();
+            currenUser.setNickname(nickname);
+            currenUser.setUser(user);
+            currenUser.setUniqueId(openId);
+            currenUser.setProviderId(registrationId);
+            user.getThirdPartUsers().add(currenUser);
             saveUser(user);
         }
 
