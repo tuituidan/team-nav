@@ -3,11 +3,13 @@ package com.tuituidan.openhub.service.thirdpart;
 import com.tuituidan.openhub.bean.entity.RoleUser;
 import com.tuituidan.openhub.bean.entity.ThirdPartUser;
 import com.tuituidan.openhub.bean.entity.User;
+import com.tuituidan.openhub.repository.RoleRepository;
 import com.tuituidan.openhub.repository.RoleUserRepository;
 import com.tuituidan.openhub.repository.ThirdPartUserRepository;
 import com.tuituidan.openhub.repository.UserRepository;
 import com.tuituidan.openhub.util.StringExtUtils;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -75,6 +77,8 @@ public class WechatOAuth2UserLoginService extends DefaultOAuth2UserService {
         return nickname + "_" + suffix;
     }
 
+    @Resource
+    RoleRepository roleRepository;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oauth2User = super.loadUser(userRequest);
@@ -95,6 +99,12 @@ public class WechatOAuth2UserLoginService extends DefaultOAuth2UserService {
         Optional<ThirdPartUser> thirdPartyUser = thirdPartUserRepository.findByUniqueIdAndProviderId(uniqueId, registrationId);
         //查找本地用户
         User user = userRepository.findByUsername(userName);
+        //根据角色名称查找角色Id
+        var role = roleRepository.findByRoleName("平台游客");
+        String roleId=null;
+        if (role.isPresent()){
+            roleId = role.get().getId();
+        }
         ThirdPartUser currenUser = null;
         if (thirdPartyUser.isPresent() && null!= user) {
             user = thirdPartyUser.get().getUser();
@@ -108,29 +118,13 @@ public class WechatOAuth2UserLoginService extends DefaultOAuth2UserService {
             user.getThirdPartUsers().add(currenUser);
             saveUser(user);
         }else if (null == user && thirdPartyUser.isPresent()) {
-            user = new User();
-            user.setUsername(userName);
-            user.setNickname(nickname);
-            user.setAvatar(avatar);
-            user.setPassword(new BCryptPasswordEncoder().encode(defPassword));
-            user.setId(StringExtUtils.getUuid());
-            Set<String> roleId = new HashSet<>();
-            roleId.add("平台游客");
-            user.setRoleIds(roleId);
+            user = createUser(nickname, avatar, userName, roleId);
             currenUser = thirdPartyUser.get();
             //关联用户
             user.getThirdPartUsers().add(currenUser);
             saveUser(user);
         }else if (null==user && !thirdPartyUser.isPresent()){
-            user = new User();
-            user.setUsername(userName);
-            user.setNickname(nickname);
-            user.setAvatar(avatar);
-            user.setPassword(new BCryptPasswordEncoder().encode(defPassword));
-            user.setId(StringExtUtils.getUuid());
-            Set<String> roleId = new HashSet<>();
-            roleId.add("平台游客");
-            user.setRoleIds(roleId);
+            user = createUser(nickname, avatar, userName, roleId);
             currenUser = new ThirdPartUser();
             currenUser.setNickname(nickname);
             currenUser.setUser(user);
@@ -144,13 +138,32 @@ public class WechatOAuth2UserLoginService extends DefaultOAuth2UserService {
 
     }
 
+    private User createUser(String nickname, String avatar, String userName, String roleId) {
+        User user;
+        user = new User();
+        user.setUsername(userName);
+        user.setNickname(nickname);
+        user.setAvatar(avatar);
+        user.setPassword(new BCryptPasswordEncoder().encode(defPassword));
+        user.setId(StringExtUtils.getUuid());
+        if (null!=roleId){
+            Set<String> roleIds = new HashSet<>();
+            roleIds.add(roleId);
+            user.setRoleIds(roleIds);
+        }
+        return user;
+    }
+
     public void saveUser(User localUser) {
 
         userRepository.save(localUser);
-        roleUserRepository.saveAll(Arrays.stream(localUser.getRoleIds().toArray())
-                .map(roleId -> new RoleUser().setId(StringExtUtils.getUuid())
-                        .setRoleId((String) roleId)
-                        .setUserId(localUser.getId())).collect(Collectors.toList()));
+        if (null!= localUser.getRoleIds() && !localUser.getRoleIds().isEmpty()){
+            roleUserRepository.saveAll(Arrays.stream(localUser.getRoleIds().toArray())
+                    .map(roleId -> new RoleUser().setId(StringExtUtils.getUuid())
+                            .setRoleId((String) roleId)
+                            .setUserId(localUser.getId())).collect(Collectors.toList()));
+        }
+
     }
 
 

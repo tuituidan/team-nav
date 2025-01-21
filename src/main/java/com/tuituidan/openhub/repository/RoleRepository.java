@@ -4,6 +4,8 @@ import com.tuituidan.openhub.bean.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.Optional;
+
 /**
  * UserRepository.
  *
@@ -12,5 +14,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @date 2020/10/2
  */
 public interface RoleRepository extends JpaRepository<Role, String>, JpaSpecificationExecutor<Role> {
-
+    Optional<Role> findByRoleName(String roleName);
 }

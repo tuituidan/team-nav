@@ -69,7 +69,7 @@ public class User implements UserDetails, OAuth2User, Serializable {
     private Set<String> starCardIds;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ThirdPartUser> thirdPartUsers=new HashSet<>();
 
 
