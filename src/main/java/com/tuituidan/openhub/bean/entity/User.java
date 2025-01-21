@@ -1,16 +1,12 @@
 package com.tuituidan.openhub.bean.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tuituidan.openhub.util.SecurityUtils;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.util.*;
+import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,6 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 /**
  * User.
@@ -35,7 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "nav_user", schema = "team_nav")
 @DynamicInsert
 @DynamicUpdate
-public class User implements UserDetails, Serializable {
+public class User implements UserDetails, OAuth2User, Serializable {
 
     private static final long serialVersionUID = -4826666254891063669L;
 
@@ -71,6 +68,20 @@ public class User implements UserDetails, Serializable {
     @Transient
     private Set<String> starCardIds;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ThirdPartUser> thirdPartUsers=new HashSet<>();
+
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        Map<String,Object> attributes = new HashMap<>();
+        attributes.put("email",getEmail());
+        attributes.put("avatar",getAvatar());
+        attributes.put("nickname",getNickname());
+        return attributes;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (SecurityUtils.isAdmin(this)) {
@@ -99,4 +110,8 @@ public class User implements UserDetails, Serializable {
         return true;
     }
 
+    @Override
+    public String getName() {
+        return id;// 通常返回用户的唯一标识
+    }
 }

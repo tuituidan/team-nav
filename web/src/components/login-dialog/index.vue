@@ -38,6 +38,7 @@
           <el-form-item label="">
             <el-checkbox v-model="rememberMe">记住密码</el-checkbox>
             <el-checkbox v-model="autoLogin" :disabled="!rememberMe">自动登录</el-checkbox>
+            <wechat-login></wechat-login>
           </el-form-item>
         </el-col>
         <el-col :span="24">
@@ -57,10 +58,13 @@
 <script>
 // 是否显示登录弹窗
 
+import WechatLogin from '@/admin/thirdpart/wechat/index.vue'
+
 export let isRelogin = {show: false};
 
 export default {
   name: "login-dialog-index",
+  components: { WechatLogin },
   data() {
     return {
       show: false,
