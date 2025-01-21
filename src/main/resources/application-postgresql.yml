@@ -1,8 +1,12 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:5432/team_nav
+    url: jdbc:postgresql://127.0.0.1:5432/db_dc
     username: root
     password: 123456
   jpa:
     database: postgresql
+  sql:
+    init:
+      schema-locations: classpath:sql/schema-pg.sql
+      mode: always

@@ -87,7 +87,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.3
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.4
 
 ```
 
@@ -112,7 +112,7 @@ location /ext-resources/modules {
 
 #### 数据库支持
 
-默认使用`H2`数据库，同时也支持`mysql`和`postgresql`，相应配置分别参考源码中`application-h2.yml`、`application-mysql.yml`、`application-postgresql.yml`三个配置文件。
+默认使用`H2`数据库，在V2.0.4开始支持`mysql`和`postgresql`，相应配置分别参考源码中`application-h2.yml`、`application-mysql.yml`、`application-postgresql.yml`三个配置文件。
 
 ```yaml
 # application-mysql.yml

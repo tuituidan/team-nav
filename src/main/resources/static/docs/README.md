@@ -87,7 +87,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.3
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.4
 
 ```
 
@@ -109,6 +109,36 @@ location /ext-resources/modules {
 	index  index.html index.htm;
 }
 ```
+
+#### 数据库支持
+
+默认使用`H2`数据库，在V2.0.4开始支持`mysql`和`postgresql`，相应配置分别参考源码中`application-h2.yml`、`application-mysql.yml`、`application-postgresql.yml`三个配置文件。
+
+```yaml
+# application-mysql.yml
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/team_nav?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+  jpa:
+    database: mysql
+```
+
+```yaml
+# application-postgresql.yml
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/team_nav
+    username: root
+    password: 123456
+  jpa:
+    database: postgresql
+```
+
+手动部署方式，修改对应配置文件后通过`spring.profiles.active=mysql/postgresql`即可启用对应配置，`Docker`部署也一样，通过`-e`参数即可替换相应配置。
 
 ## license
 
