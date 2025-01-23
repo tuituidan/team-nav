@@ -45,6 +45,12 @@ public class CardTypeZipServiceImpl implements ICardTypeService {
         }
     }
 
+    /**
+     * 已存在的卡片修改压缩文件
+     *
+     * @param id id
+     * @param card card
+     */
     @Override
     public void supplySave(String id, Card card) {
         if (StringUtils.isNotBlank(id)) {
@@ -60,7 +66,12 @@ public class CardTypeZipServiceImpl implements ICardTypeService {
             }
         }
         FileExtUtils.deleteFiles(true, "/ext-resources/modules/" + card.getId());
-        ZipUtils.unzip(card.getId(), card.getZip().getPath());
+        if (null!=card.getZip()){
+            ZipUtils.unzip(card.getId(), card.getZip().getPath());
+        }
+        Optional.ofNullable(card.getZip()).
+                ifPresent(zip-> ZipUtils.unzip(card.getId(), zip.getPath()));
+        //卡片存放压缩文件的地址是以‘日期_uuid’的格式命名的文件夹
         card.setUrl(StringExtUtils.format("/ext-resources/modules/{}/index.html", card.getId()));
     }
 
@@ -72,7 +83,7 @@ public class CardTypeZipServiceImpl implements ICardTypeService {
                 && !StringUtils.contains(cardIconDto.getSrc(), CardTypeEnum.DEFAULT.getType())) {
             deletePaths.add(cardIconDto.getSrc());
         }
-        deletePaths.add(card.getZip().getPath());
+        Optional.ofNullable(card.getZip()).ifPresent(zip->deletePaths.add(zip.getPath())); ;
         deletePaths.add("/ext-resources/modules/" + card.getId());
         FileExtUtils.deleteFiles(false, deletePaths.toArray(new String[0]));
     }

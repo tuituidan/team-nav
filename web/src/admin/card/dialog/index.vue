@@ -58,7 +58,7 @@
                   placeholder="请输入内容"/>
       </el-form-item>
       <el-form-item label="链接"
-                    v-if="form.type==='default'"
+                    v-if="form.type==='default' "
                     :rules="[{required: form.showQrcode, message:'链接不能为空', trigger:'blue' }]"
                     prop="url">
         <el-row>
@@ -70,13 +70,25 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="网站文件" prop="zip" v-else>
-        <file-uploader type="modules"
+      <el-form-item label="网站文件"  v-else>
+        <el-select v-model="form.pageFrom"  value-key="id">
+          <el-option
+            v-for="item in pageOptions"
+            :key="item.id"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        <file-uploader v-if="'fromUpload'===form.pageFrom"  type="modules"
                        accept="application/zip"
                        :file-list="form.zip?[form.zip]:[]"
                        @file-change="zipFileChange"
                        :limit="1">zip压缩包上传
         </file-uploader>
+      </el-form-item>
+      <el-form-item v-if="'generator'===form.pageFrom" label="网站链接">
+        <el-input v-model="form.url" placeholder="原站直达链接"
+                  clearable v-trim />
       </el-form-item>
       <el-form-item class="form-icon-loading" v-if="showFaviconLoading">
         <el-button loading type="text">正在尝试获取该地址的图标</el-button>

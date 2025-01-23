@@ -2,6 +2,11 @@ package com.tuituidan.openhub.util;
 
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.exception.ResourceWriteException;
+import lombok.experimental.UtilityClass;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,10 +14,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import lombok.experimental.UtilityClass;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 
 /**
  * IconUtils.

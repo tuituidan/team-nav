@@ -1,0 +1,16 @@
+
+.content-wrap {
+    height: 150vh;
+}
+
+.right-sidebar {
+    height: auto;
+    /*position: sticky;*/
+    /*top: 0;*/
+}
+
+.footer {
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}

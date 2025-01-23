@@ -43,6 +43,11 @@ public class CardDto {
 
     private Integer sort;
 
+    /**
+     * 网页来源
+     */
+    private String pageFrom;
+
     private String[] attachmentIds;
 
 }

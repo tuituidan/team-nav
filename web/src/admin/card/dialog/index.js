@@ -17,6 +17,7 @@ export default {
   },
   data() {
     return {
+
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -35,9 +36,20 @@ export default {
         showQrcode: false,
         icon: null,
         zip: null,
+        isNativeTemplate:false,
         attachmentIds: [],
         attachments: [],
+        pageFrom:'fromUpload',
       },
+      pageOptions: [{
+        id: 'fromUpload',
+        value: 'fromUpload',
+        label: '上传网页文件'
+      }, {
+        id: 'generator',
+        value: 'generator',
+        label: '使用内置模板生成'
+      }],
       types: [
         {
           id: 'default',
@@ -57,15 +69,13 @@ export default {
       ],
       // 表单校验
       rules: {
+
         category: [
           {required: true, message: "所属分类不能为空", trigger: "blur"}
         ],
         title: [
           {required: true, message: "标题不能为空", trigger: "blur"}
         ],
-        zip: [
-          {required: true, message: '请上传网站zip文件'}
-        ]
       },
       saveOption: {
         saveNotClear: false,
@@ -104,15 +114,18 @@ export default {
         showQrcode: false,
         icon: null,
         zip: null,
+        isNativeTemplate: false,
         attachmentIds: [],
         attachments: [],
+        pageFrom :'fromUpload',
       };
+
       this.$nextTick(() => {
         this.$refs.form.clearValidate();
       })
     },
     zipFileChange(fileList) {
-      if (fileList.length <= 0) {
+      if (  fileList.length <= 0) {
         this.form.zip = null;
       } else {
         this.form.zip = {...fileList[0], isNew: true};
@@ -127,6 +140,13 @@ export default {
     submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
+          if ('fromUpload'===this.form.pageFrom && null==this.form.zip) {
+            this.$message({
+              message: '请上传网页文件',
+              type: 'error'
+            });
+            return;
+          }
           const newZip = this.form.type === 'zip' && this.form.zip && this.form.zip.isNew;
           if (newZip) {
             this.$modal.loading('压缩包解压时间较长，请耐心等待...');

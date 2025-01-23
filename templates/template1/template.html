@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src="./assets/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="./assets/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./assets/icons/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="./assets/css/main.css" rel="stylesheet">
+    <title th:text="${title}"></title>
+</head>
+<body class="">
+<div class="flex-fill" style="height: auto;">
+    <div class="container" style="height: auto;">
+        <div class="row target-site-info py-4" style=" height: auto">
+            <div class="col-xl-2 target-site-ico-section" >
+                <div class="target-site-ico-card card mb-3 text-center" >
+                    <img class="target-site-ico "  alt="目标网站Logo" style="width: 12rem" th:src="@{./assets/images/target-site-logo-108x108.png}">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${title}"></h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col" >
+                <h1 th:text="${title}"></h1>
+                <div class="target-site-go">
+                    <span class="target-site-url">
+                        <a class="btn btn-link " th:href="@{|${url}|}" target="_blank" title="目标网站网址">
+                            直达链接</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <main class="site-main container" >
+        <div class="row py-4" style="height: auto;">
+            <div class="col-xl-9  content-wrap">
+                <span class="site-main-content" th:text="${content}"></span>
+            </div>
+            <div class="col-xl-3  right-sidebar">
+                <div class="ourself-information card text-center text-white bg-info mb-3">
+                    <img alt="Card image" class="card-img-top" th:src="@{./assets/images/ourself-logo-512x512.png}">
+                    <div class="card-body">
+                        <h5 class="card-title">天顶星科技</h5>
+                        <p class="card-text">专注人类进步</p>
+                        <a class="btn btn-primary" href="#">Go somewhere</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </main>
+</div>
+<footer class="footer mt-auto py-3 bg-light">
+
+</footer>
+</body>
+</html>

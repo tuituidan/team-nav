@@ -13,34 +13,27 @@ import com.tuituidan.openhub.bean.vo.HomeDataVo;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.repository.UserRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
-import com.tuituidan.openhub.util.BeanExtUtils;
-import com.tuituidan.openhub.util.HttpUtils;
-import com.tuituidan.openhub.util.IconUtils;
-import com.tuituidan.openhub.util.ListUtils;
-import com.tuituidan.openhub.util.SecurityUtils;
-import com.tuituidan.openhub.util.StringExtUtils;
-import com.tuituidan.openhub.util.TransactionUtils;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
+import com.tuituidan.openhub.service.cardtype.StaticPageGenerator;
+import com.tuituidan.openhub.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * CardService.
@@ -54,22 +47,21 @@ import org.springframework.stereotype.Service;
 public class CardService {
 
     @Resource
+    StaticPageGenerator generator;
+    @Resource
     private CardRepository cardRepository;
-
     @Resource
     private CategoryService categoryService;
-
     @Resource
     private CacheService cacheService;
-
     @Resource
     private CardTypeServiceFactory cardTypeServiceFactory;
-
     @Resource
     private AttachmentService attachmentService;
-
     @Resource
     private UserRepository userRepository;
+    @Resource
+    private CommonService commonService;
 
     /**
      * 首页查询
@@ -207,7 +199,7 @@ public class CardService {
      * 查询申请列表
      *
      * @param pageIndex pageIndex
-     * @param pageSize pageSize
+     * @param pageSize  pageSize
      * @return Page
      */
     public Page<CardVo> selectApply(Integer pageIndex, Integer pageSize) {
@@ -232,14 +224,23 @@ public class CardService {
     /**
      * 保存卡片
      *
-     * @param id id
+     * @param id      id
      * @param cardDto cardDto
      */
     public void save(String id, CardDto cardDto) {
         this.saveIcon(cardDto.getIcon());
         Card card = BeanExtUtils.convert(cardDto, Card::new);
         card.setId(StringUtils.isBlank(id) ? StringExtUtils.getUuid() : id);
-        cardTypeServiceFactory.getService(card.getType()).supplySave(id, card);
+        //设置文件上传地址，如果是上传的网页文件，存放在card.url中
+        if ("generator".equals(cardDto.getPageFrom())) {
+            String savePath = File.separator + "ext-resources" + File.separator + "modules" +
+                    File.separator + card.getId() + File.separator;
+            //这里的URL是本站生成的模板网页的访问链接
+            card.setUrl(savePath+"index.html");
+            staticPageSave(cardDto,card.getUrl());
+        } else {
+            cardTypeServiceFactory.getService(card.getType()).supplySave(id, card);
+        }
         if (card.getSort() == null) {
             card.setSort(cardRepository.getMaxSort(card.getCategory()) + 1);
         }
@@ -251,10 +252,39 @@ public class CardService {
             card.setApplyTime(LocalDateTime.now());
         }
         TransactionUtils.execute(() -> {
-            card.setHasAttachment(ArrayUtils.isNotEmpty(cardDto.getAttachmentIds()));
             cardRepository.save(card);
+            card.setHasAttachment(ArrayUtils.isNotEmpty(cardDto.getAttachmentIds()));
             attachmentService.saveAttachment(card.getId(), cardDto.getAttachmentIds());
         });
+    }
+
+    private void staticPageSave(CardDto cardDto,String finalUrl) {
+        String indexFileSavePath = createPage(cardDto,finalUrl);
+        copyStaticAssets(indexFileSavePath);
+    }
+
+    private String createPage(CardDto cardDto,String finalUrl){
+        String templateName = "template.html";
+        Map<String, Object> pageContent = new HashMap<String, Object>() {{
+            put("title", cardDto.getTitle());
+            put("content", cardDto.getContent());
+            put("url",cardDto.getUrl());
+        }};
+        //创建静态网页
+        return generator.createHTML(pageContent, finalUrl, templateName);
+    }
+
+    private void copyStaticAssets(String  indexFileSavePath){
+        File destination = Paths.get(indexFileSavePath).getParent().toFile();
+        File sourceFile= FileUtils.getFile("./"+"templates"
+                +File.separator + "template1" + File.separator + "assets");
+        log.info("准备从{}复制资源文件",sourceFile.getPath());
+        log.info("文件将被复制到{}",destination);
+        try {
+            FileUtils.copyDirectoryToDirectory(sourceFile, destination);
+        } catch (IOException ex) {
+            log.error("复制静态网页的资源文件时发生问题:", ex);
+        }
     }
 
     private void saveIcon(CardIconDto cardIconDto) {
@@ -272,7 +302,7 @@ public class CardService {
      * 上移和下移，交换两个卡片序号
      *
      * @param category 分类ID
-     * @param sortDto sortDto
+     * @param sortDto  sortDto
      */
     public void changeSort(String category, SortDto sortDto) {
         List<Card> cards = cardRepository.findByAuditTrueAndCategory(category).stream()

@@ -14,14 +14,6 @@ import com.tuituidan.openhub.repository.UserStarRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import javax.persistence.criteria.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -42,6 +34,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.Predicate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * UserService.

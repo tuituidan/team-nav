@@ -8,20 +8,17 @@ import com.tuituidan.openhub.service.UserService;
 import com.tuituidan.openhub.util.RequestUtils;
 import com.tuituidan.openhub.util.ResponseUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
-import java.io.IOException;
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * LoginController.
