@@ -192,7 +192,50 @@ spring:
 
 ![后台管理-系统设置](https://github.com/user-attachments/assets/2173ca27-a82b-4447-8a30-398f37bf99f1)
 
+# 从源码构建一体jar包
 
+基于Rocky Linux 9
+
+
+```shell
+dnf install git maven java-1.8.0-openjdk -y
+
+dnf module install nodejs:20 -y
+
+dnf install npm -y
+
+# 安装依赖
+
+cd ~
+
+git clone https://github.com/tuituidan/team-nav.git
+
+
+cd team-nav/web
+
+npm  install
+
+npm install @vue/cli-service -g
+
+cd ..
+
+mvn clean package -Dmaven.npm.skip=false
+
+```
+
+注：在 ./team-nav/target/jpack/ 目录下有Linux部署的压缩包。
+
+## 构建Docker镜像(要先操作完上面)
+
+```shell
+
+cd team-nav
+
+cat Dockerfile
+
+docker build -t team-nav:2.0.2 .
+
+```
 
 ## 结语
 
