@@ -35,7 +35,7 @@ public class EmailSettingService implements ApplicationRunner {
     private SettingService settingService;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         List<EmailSetting> list = emailSettingRepository.findAll();
         if (CollectionUtils.isEmpty(list)) {
             return;

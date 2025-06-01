@@ -68,3 +68,9 @@ clear-useless-files:
 project:
   remote-version-url: https://gitee.com/tuituidan/team-nav/releases/latest
   version: @project.version@
+
+backup-sql:
+  select-table: select table_name from information_schema.tables where lower(table_schema)='team_nav'
+  select-data: select * from team_nav.{}
+  select-id: select id from team_nav.{} where id=:id
+  insert-sql: insert into team_nav.{}({}) values({});

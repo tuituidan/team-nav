@@ -1,16 +1,27 @@
 package com.tuituidan.openhub.service;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONWriter.Feature;
+import com.alibaba.fastjson2.filter.Filter;
+import com.alibaba.fastjson2.filter.NameFilter;
+import com.alibaba.fastjson2.filter.ValueFilter;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.entity.Card;
+import com.tuituidan.openhub.config.BackupSqlProperties;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.consts.UploadTypeEnum;
 import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
+import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.HttpUtils;
 import com.tuituidan.openhub.util.QrCodeUtils;
 import com.tuituidan.openhub.util.ResponseUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
+import com.tuituidan.openhub.util.TransactionUtils;
+import com.tuituidan.openhub.util.ZipUtils;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,7 +31,11 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -32,9 +47,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,24 +71,41 @@ public class CommonService implements ApplicationRunner {
 
     private static final String CARD_ICON_PATH = "/ext-resources/images/default/";
 
+    private static final String PATH_EXT_SOURCE = Consts.ROOT_DIR
+            + File.separator + "ext-resources";
+
+    private static final String DATA_BACKUP_FILE = PATH_EXT_SOURCE + File.separator + "data-backup.json";
+
     @Resource
     private CardRepository cardRepository;
 
     @Resource
     private AttachmentService attachmentService;
 
+    @Resource
+    private BackupSqlProperties backupSqlProperties;
+
+    @Resource
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Resource
+    private CacheService cacheService;
+
+    @Resource
+    private EmailSettingService emailSettingService;
+
     /**
      * 初始化
      */
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        loadCardIcons();
+        this.loadCardIcons();
     }
 
     /**
      * 加载放置在/ext-resources/images/default路径下的图片图标用于卡片图标选择
      */
-    public void loadCardIcons() {
+    private void loadCardIcons() {
         CARD_ICONS.clear();
         File root = new File(Consts.ROOT_DIR + CARD_ICON_PATH);
         if (!root.exists()) {
@@ -94,6 +128,10 @@ public class CommonService implements ApplicationRunner {
      * @return 保存路径
      */
     public String upload(MultipartFile file, String type) {
+        if ("revert".equals(type)) {
+            revertData(file);
+            return type;
+        }
         String savePath = formatSavePath(type, file);
         File saveFile = new File(Consts.ROOT_DIR + savePath);
         try {
@@ -235,6 +273,97 @@ public class CommonService implements ApplicationRunner {
         } catch (Exception ex) {
             throw new ResourceWriteException("二维码写入失败");
         }
+    }
+
+    /**
+     * backupData
+     */
+    public void backupData() {
+        List<String> tables = namedParameterJdbcTemplate.queryForList(backupSqlProperties.getSelectTable(),
+                Collections.emptyMap(), String.class);
+        Map<String, List<Map<String, Object>>> dataMap = new HashMap<>();
+        for (String table : tables) {
+            List<Map<String, Object>> list = namedParameterJdbcTemplate.queryForList(
+                    StringExtUtils.format(backupSqlProperties.getSelectData(), table), Collections.emptyMap());
+            dataMap.put(table, list);
+        }
+        FileExtUtils.writeString(DATA_BACKUP_FILE, JSON.toJSONString(dataMap,
+                new Filter[] {
+                        (NameFilter) (object, name, value) -> name.toLowerCase(),
+                        (ValueFilter) (object, name, value) -> value,
+                },
+                Feature.WriteNulls, Feature.PrettyFormat));
+        List<String> paths = new ArrayList<>();
+        paths.add(PATH_EXT_SOURCE + File.separator + "attachments");
+        paths.add(PATH_EXT_SOURCE + File.separator + "images");
+        paths.add(PATH_EXT_SOURCE + File.separator + "modules");
+        paths.add(DATA_BACKUP_FILE);
+        String zipPath = PATH_EXT_SOURCE + ".zip";
+        FileExtUtils.deleteOnExists(zipPath);
+        ZipUtils.zip(zipPath, paths);
+        ResponseUtils.download("backup-" + System.currentTimeMillis() + ".zip", zipPath);
+    }
+
+    /**
+     * revertData
+     *
+     * @param file file
+     */
+    private void revertData(MultipartFile file) {
+        String zipPath = PATH_EXT_SOURCE + ".zip";
+        FileExtUtils.transferTo(file, zipPath);
+        ZipUtils.unzip(zipPath);
+        String json = FileExtUtils.readString(DATA_BACKUP_FILE);
+        JSONObject dataMap = JSON.parseObject(json);
+        List<Pair<String, List<JSONObject>>> pairList = new ArrayList<>();
+        for (Entry<String, Object> entry : dataMap.entrySet()) {
+            String tableName = entry.getKey();
+            JSONArray values = (JSONArray) entry.getValue();
+            if (CollectionUtils.isEmpty(values)) {
+                continue;
+            }
+            String insertSql = buildInsertSql(tableName, values.getJSONObject(0));
+            List<JSONObject> list = extractRealDataList(tableName, values);
+            if (CollectionUtils.isNotEmpty(list)) {
+                pairList.add(Pair.of(insertSql, list));
+            }
+        }
+        TransactionUtils.execute(() -> {
+            for (Pair<String, List<JSONObject>> pair : pairList) {
+                for (JSONObject item : pair.getValue()) {
+                    namedParameterJdbcTemplate.update(pair.getKey(), item);
+                }
+            }
+        });
+
+        //初始化
+        cacheService.run(null);
+        emailSettingService.run(null);
+        this.loadCardIcons();
+    }
+
+    private List<JSONObject> extractRealDataList(String tableName, JSONArray values) {
+        List<JSONObject> list = new ArrayList<>();
+        for (Object item : values) {
+            JSONObject value = (JSONObject) item;
+            List<String> ids = namedParameterJdbcTemplate.queryForList(
+                    StringExtUtils.format(backupSqlProperties.getSelectId(), tableName), value, String.class);
+            if (CollectionUtils.isEmpty(ids)) {
+                list.add(value);
+            }
+        }
+        return list;
+    }
+
+    private String buildInsertSql(String tableName, JSONObject data) {
+        List<String> cols = new ArrayList<>();
+        List<String> vals = new ArrayList<>();
+        for (String key : data.keySet()) {
+            cols.add(key);
+            vals.add(":" + key);
+        }
+        return StringExtUtils.format(backupSqlProperties.getInsertSql(), tableName,
+                StringUtils.join(cols, ","), StringUtils.join(vals, ","));
     }
 
 }

@@ -123,7 +123,7 @@ export default {
   data() {
     return {
       // 遮罩层
-      loading: true,
+      loading: false,
       // 选中数组
       selections: [],
       dataList: [],
@@ -142,8 +142,10 @@ export default {
         return;
       }
       this.loading = true;
-      this.$http.get(`/api/v1/category/${this.queryParams.category}/card`).then(res => {
-        this.dataList = res;
+      this.$http.get(`/api/v1/category/${this.queryParams.category}/card`)
+        .then(res => {
+          this.dataList = res;
+        }).finally(() => {
         this.loading = false;
       });
     },

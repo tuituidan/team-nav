@@ -25,6 +25,9 @@ service.interceptors.request.use(config => {
 
 // 响应拦截器
 service.interceptors.response.use(res => {
+    if (res.request.responseType === 'blob') {
+      return res;
+    }
     return res.data;
   },
   err => {

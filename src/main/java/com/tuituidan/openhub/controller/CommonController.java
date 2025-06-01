@@ -139,4 +139,12 @@ public class CommonController {
         return ResponseEntity.ok(StringExtUtils.toHanYuPinyin(hanyu));
     }
 
+    /**
+     * backupData
+     */
+    @GetMapping("/data/backup")
+    public void backupData() {
+        commonService.backupData();
+    }
+
 }

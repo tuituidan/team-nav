@@ -4,6 +4,7 @@ import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.util.thread.CompletableUtils;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -11,6 +12,8 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * FileExtUtils.
@@ -84,6 +87,69 @@ public class FileExtUtils {
         }
         if (sync && CollectionUtils.isNotEmpty(futures)) {
             CompletableUtils.waitAll(futures);
+        }
+    }
+
+    /**
+     * deleteOnExists
+     *
+     * @param path path
+     */
+    public static void deleteOnExists(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            try {
+                FileUtils.forceDelete(file);
+            } catch (IOException ex) {
+                throw new IllegalArgumentException("文件删除失败", ex);
+            }
+        }
+    }
+
+    /**
+     * transferTo
+     *
+     * @param file file
+     * @param zipPath zipPath
+     */
+    public static void transferTo(MultipartFile file, String zipPath) {
+        deleteOnExists(zipPath);
+        try {
+            file.transferTo(new File(zipPath));
+        } catch (IOException ex) {
+            throw new IllegalArgumentException("文件转储失败", ex);
+        }
+    }
+
+    /**
+     * readString
+     *
+     * @param path path
+     * @return String
+     */
+    public static String readString(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            try {
+                return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                throw new IllegalArgumentException("文件读取失败", ex);
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * writeString
+     *
+     * @param path path
+     * @param source source
+     */
+    public static void writeString(String path, String source) {
+        try {
+            FileUtils.writeStringToFile(new File(path), source, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            throw new IllegalArgumentException("文件存储失败", ex);
         }
     }
 

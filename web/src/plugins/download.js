@@ -4,13 +4,13 @@ import {saveAs} from 'file-saver'
 
 export default {
   download(url, downloadName) {
-    http.get(url, {responseType: 'blob'})
+    return http.get(url, {responseType: 'blob'})
       .then((res) => {
         // 从content-disposition中获取文件名
         const disposition = res.headers['content-disposition'];
         const name = downloadName || decodeURIComponent(disposition.split('filename*=utf-8\'\'')[1]);
-        const blob = new Blob([res.data])
-        this.saveAs(blob, name)
+        const blob = new Blob([res.data]);
+        this.saveAs(blob, name);
       })
       .catch(err => {
         if (err.response.data.type === 'application/json') {
