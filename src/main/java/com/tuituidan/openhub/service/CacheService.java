@@ -8,12 +8,16 @@ import com.tuituidan.openhub.bean.entity.RoleCategory;
 import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.repository.RoleCategoryRepository;
 import com.tuituidan.openhub.repository.RoleRepository;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.Getter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
@@ -35,7 +39,7 @@ public class CacheService implements ApplicationRunner {
     private final Cache<String, Role> roleCache = Caffeine.newBuilder().build();
 
     @Getter
-    private final Cache<String, List<Role>> categoryRolesCache = Caffeine.newBuilder().build();
+    private final Cache<String, Set<String>> categoryRolesCache = Caffeine.newBuilder().build();
 
     @Resource
     private CategoryRepository categoryRepository;
@@ -73,11 +77,15 @@ public class CacheService implements ApplicationRunner {
      * @return List
      */
     public List<Role> getRolesByCategoryId(String categoryId) {
-        return categoryRolesCache.get(categoryId, id ->
+        Set<String> roleIds = categoryRolesCache.get(categoryId, id ->
                 roleCategoryRepository.findByCategoryId(id).stream()
-                        .map(item -> this.getRole(item.getRoleId()))
-                        .collect(Collectors.toList())
+                        .map(RoleCategory::getRoleId)
+                        .collect(Collectors.toSet())
         );
+        if (CollectionUtils.isEmpty(roleIds)) {
+            return Collections.emptyList();
+        }
+        return roleIds.stream().map(this::getRole).collect(Collectors.toList());
     }
 
     @Override
@@ -106,8 +114,7 @@ public class CacheService implements ApplicationRunner {
                         Collectors.mapping(RoleCategory::getRoleId, Collectors.toList())));
         categoryRolesCache.invalidateAll();
         for (Entry<String, List<String>> entry : categoryRoleIdsMap.entrySet()) {
-            categoryRolesCache.put(entry.getKey(), entry.getValue().stream()
-                    .map(this::getRole).collect(Collectors.toList()));
+            categoryRolesCache.put(entry.getKey(), new HashSet<>(entry.getValue()));
         }
     }
 

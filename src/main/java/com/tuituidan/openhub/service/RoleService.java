@@ -105,6 +105,7 @@ public class RoleService {
             role.setId(StringExtUtils.getUuid());
         }
         roleRepository.save(role);
+        cacheService.getRoleCache().invalidate(role.getId());
     }
 
     /**
@@ -175,6 +176,7 @@ public class RoleService {
         List<RoleUser> users = roleUserRepository.findByRoleId(id);
         Assert.isTrue(CollectionUtils.isEmpty(users), "该角色下存在用户，不能删除");
         roleRepository.deleteById(id);
+        cacheService.getRoleCache().invalidate(id);
     }
 
 }
