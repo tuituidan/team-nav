@@ -5,6 +5,7 @@
     :accept="accept"
     :on-remove="fileRemove"
     :on-success="fileUploadSuccess"
+    :on-error="fileUploadError"
     :multiple="multiple"
     :limit="limit">
     <el-button icon="el-icon-upload" size="small">
@@ -48,8 +49,11 @@ export default {
     fileUploadSuccess(response, file, fileList) {
       this.callBackFileList(fileList);
     },
-    callBackFileList(fileList){
-      this.$emit('file-change', fileList.map(item => ({name: item.name, path: item.response||item.id})));
+    fileUploadError(err) {
+      this.$modal.msgError(err.message);
+    },
+    callBackFileList(fileList) {
+      this.$emit('file-change', fileList.map(item => ({name: item.name, path: item.response || item.id})));
     },
   }
 }

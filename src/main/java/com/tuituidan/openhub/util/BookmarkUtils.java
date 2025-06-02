@@ -13,6 +13,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.util.Assert;
 
 /**
  * BookmarkUtils.
@@ -33,7 +34,10 @@ public class BookmarkUtils {
     public static List<BookmarkVo> extractTreeData(String html) {
         Document doc = Jsoup.parse(html);
         List<BookmarkVo> bookmarks = processFolder(doc.select("body > dl > dt"));
-        return bookmarks.get(0).getChildren();
+        Assert.notEmpty(bookmarks, "书签解析失败");
+        List<BookmarkVo> rootBookmarks = bookmarks.get(0).getChildren();
+        Assert.notEmpty(rootBookmarks, "书签解析失败");
+        return rootBookmarks;
     }
 
     private static List<BookmarkVo> processFolder(Elements items) {
