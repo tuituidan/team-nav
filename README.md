@@ -49,6 +49,8 @@
   - 基本设置，包括设置当前网站服务名、LOGO、公告切换时间等设置。
   - 卡片自定义图标上传。
   - 邮箱设置，用于发送随机密码给新用户
+  - 数据备份还原，备份是将所有资源文件及数据库数据导出为一个zip包，还原则是将zip包重新上传拆解为相应数据。
+  - 浏览器书签导入：在浏览器书签管理中导出书签，将得到的书签html文件上传，在预览窗口根据规则进行调整后即可导入成功。
 
 
 ## 在线体验
@@ -148,50 +150,51 @@ spring:
 
 #### 首页
 
-![首页](https://github.com/tuituidan/team-nav/assets/20398244/d272556d-d841-4303-9a3e-c1d2c46d7ca3)
+![首页](https://foruda.gitee.com/images/1748847830957034703/2aab0c00_1328008.png)
 
 #### 首页-主题切换
 
-![主题切换](https://github.com/tuituidan/team-nav/assets/20398244/d82720fe-e6e1-4439-9459-493414a433a5)
+![主题切换](https://foruda.gitee.com/images/1748847899719581246/b83cde3f_1328008.png)
 
 #### 首页-布局设置
 
-![布局设置](https://github.com/user-attachments/assets/f8b13dec-0894-480a-95f6-d460b452f7ac)
+![布局设置](https://foruda.gitee.com/images/1748847923731713322/40d65b2e_1328008.png)
 
 #### 首页-未登录
 
-![首页-未登录](https://github.com/tuituidan/team-nav/assets/20398244/fa06e4d1-3f3c-4a8e-849e-8825f7da4c62)
+![首页-未登录](https://foruda.gitee.com/images/1748847954167416693/9e6c57b3_1328008.png)
 
 #### 后台管理-分类管理
 
-![后台管理-分类管理](https://github.com/tuituidan/team-nav/assets/20398244/328de0d3-2f63-4638-a57e-ec9095f6ba39)
+![后台管理-分类管理](https://foruda.gitee.com/images/1748847976883050517/1cc3ed5d_1328008.png)
 
 #### 后台管理-卡片管理
 
-![后台管理-卡片管理](https://github.com/tuituidan/team-nav/assets/20398244/f0638ea5-64e7-45cd-8a30-9b2740e748d3)
+![后台管理-卡片管理](https://foruda.gitee.com/images/1748848000531793018/405cc875_1328008.png)
 
 #### 后台管理-卡片添加
 
-![后台管理-卡片添加](https://github.com/user-attachments/assets/e3a6d15c-eb94-4d44-b8a8-9659f019811f)
+![后台管理-卡片添加](https://foruda.gitee.com/images/1748848025599846369/b5457622_1328008.png)
 
 #### 后台管理-角色管理
 
-![后台管理-角色管理](https://github.com/tuituidan/team-nav/assets/20398244/7d3a1160-522b-4a7c-a995-a0888b4b4039)
+![后台管理-角色管理](https://foruda.gitee.com/images/1748848051496772289/5a6a4a1f_1328008.png)
 
 #### 后台管理-用户管理
 
-![后台管理-用户管理-用户添加](https://github.com/user-attachments/assets/8e7c8f06-513d-4794-a0c0-a42cc235fb5f)
+![后台管理-用户管理-用户添加](https://foruda.gitee.com/images/1748848077975467078/24f472da_1328008.png)
 
-![后台管理-用户管理](https://github.com/user-attachments/assets/14e79fc9-e81e-405f-9cb1-2b470f09b85f)
+![后台管理-用户管理](https://foruda.gitee.com/images/1748848104553441622/7355ee09_1328008.png)
 
 #### 后台管理-通知公告
 
-![后台管理-通知公告](https://github.com/tuituidan/team-nav/assets/20398244/42a872c3-60d1-4245-be5f-1a78aa1e3dbd)
+![后台管理-通知公告](https://foruda.gitee.com/images/1748848133265740572/9f0aa9f5_1328008.png)
 
 #### 后台管理-系统设置
 
-![后台管理-系统设置](https://github.com/user-attachments/assets/2173ca27-a82b-4447-8a30-398f37bf99f1)
+![后台管理-系统设置](https://foruda.gitee.com/images/1748848310938163504/cbfbde91_1328008.png)
 
+![后台管理-系统设置-书签导入](https://foruda.gitee.com/images/1748848489807219414/cc8dbbea_1328008.png)
 
 
 ## 结语
