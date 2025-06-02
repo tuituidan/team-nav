@@ -1,6 +1,6 @@
 package com.tuituidan.openhub;
 
-import com.tuituidan.openhub.util.RandomColorUtils;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
@@ -19,8 +19,7 @@ public class TeamNavApplication {
      * @param args args
      */
     public static void main(String[] args) {
-        //SpringApplication.run(TeamNavApplication.class, args);
-        System.out.println(RandomColorUtils.generate());
+        SpringApplication.run(TeamNavApplication.class, args);
     }
 
 }
