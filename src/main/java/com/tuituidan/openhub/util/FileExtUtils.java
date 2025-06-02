@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.util;
 
 import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.util.thread.CompletableUtils;
 import java.io.File;
 import java.io.IOException;
@@ -150,6 +151,21 @@ public class FileExtUtils {
             FileUtils.writeStringToFile(new File(path), source, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             throw new IllegalArgumentException("文件存储失败", ex);
+        }
+    }
+
+    /**
+     * forceMkdirParent
+     *
+     * @param path path
+     */
+    public static File forceMkdirParent(String path) {
+        File saveFile = new File(path);
+        try {
+            FileUtils.forceMkdirParent(saveFile);
+            return saveFile;
+        } catch (IOException ex) {
+            throw new ResourceWriteException("父目录生成失败", ex);
         }
     }
 

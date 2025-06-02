@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.consts;
 
+import java.time.format.DateTimeFormatter;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -34,5 +35,10 @@ public class Consts {
      * 默认ID
      */
     public static final String DEFAULT_ID = "1";
+
+    /**
+     * TIME_FORMATTER
+     */
+    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 }

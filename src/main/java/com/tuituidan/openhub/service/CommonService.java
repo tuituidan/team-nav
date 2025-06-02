@@ -13,8 +13,10 @@ import com.tuituidan.openhub.config.BackupSqlProperties;
 import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.consts.UploadTypeEnum;
+import com.tuituidan.openhub.exception.ResourceReadException;
 import com.tuituidan.openhub.exception.ResourceWriteException;
 import com.tuituidan.openhub.repository.CardRepository;
+import com.tuituidan.openhub.util.BookmarkUtils;
 import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.HttpUtils;
 import com.tuituidan.openhub.util.QrCodeUtils;
@@ -28,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -127,10 +130,17 @@ public class CommonService implements ApplicationRunner {
      * @param type 文件类型 images 或者 modules
      * @return 保存路径
      */
-    public String upload(MultipartFile file, String type) {
-        if ("revert".equals(type)) {
+    public Object upload(MultipartFile file, String type) {
+        if (UploadTypeEnum.REVERT.getType().equals(type)) {
             revertData(file);
             return type;
+        }
+        if (UploadTypeEnum.BOOKMARK.getType().equals(type)) {
+            try (InputStream in = file.getInputStream()) {
+                return BookmarkUtils.extractTreeData(IOUtils.toString(in, StandardCharsets.UTF_8));
+            } catch (IOException ex) {
+                throw new ResourceReadException("浏览器书签解析失败", ex);
+            }
         }
         String savePath = formatSavePath(type, file);
         File saveFile = new File(Consts.ROOT_DIR + savePath);

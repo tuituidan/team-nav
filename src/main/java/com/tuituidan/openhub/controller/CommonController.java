@@ -57,7 +57,7 @@ public class CommonController {
      * @return 保存路径
      */
     @PostMapping("/upload/{type}")
-    public ResponseEntity<String> upload(@PathVariable("type") String type, MultipartFile file) {
+    public ResponseEntity<Object> upload(@PathVariable("type") String type, MultipartFile file) {
         return ResponseEntity.ok(commonService.upload(file, type));
     }
 

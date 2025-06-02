@@ -1,19 +1,25 @@
 package com.tuituidan.openhub.service;
 
+import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CategoryDto;
 import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.bean.entity.Role;
 import com.tuituidan.openhub.bean.entity.User;
+import com.tuituidan.openhub.bean.vo.BookmarkVo;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
+import com.tuituidan.openhub.consts.Consts;
+import com.tuituidan.openhub.consts.UploadTypeEnum;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.IconUtils;
 import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import com.tuituidan.openhub.util.TransactionUtils;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -313,6 +319,82 @@ public class CategoryService {
         }
         categories.addAll(upCascade(parents));
         return categories;
+    }
+
+    /**
+     * importBookmark
+     *
+     * @param datas datas
+     */
+    public void importBookmark(List<BookmarkVo> datas) {
+        checkBookmarkNodes(null, datas, 1);
+        TransactionUtils.execute(() -> saveImportBookmark(datas));
+    }
+
+    private void saveImportBookmark(List<BookmarkVo> datas) {
+        if (CollectionUtils.isEmpty(datas)) {
+            return;
+        }
+        int index = 1;
+        for (BookmarkVo item : datas) {
+            if (UploadTypeEnum.BOOKMARK.getType().equals(item.getType())) {
+                Assert.isTrue(StringUtils.length(item.getUrl()) <= 200,
+                        "保存失败，链接【" + item.getName() + "】的地址长度超过200");
+                Card card = new Card();
+                card.setId(item.getId());
+                card.setAudit(true);
+                card.setCategory(item.getPid());
+                card.setContent(item.getUrl());
+                card.setHasAttachment(false);
+                if (StringUtils.isNotBlank(item.getIcon())) {
+                    card.setIcon(new CardIconDto().setSrc(IconUtils.saveBase64(item.getIcon())));
+                } else {
+                    card.setIcon(IconUtils.buildTextIcon(item.getName()));
+                }
+                card.setPrivateContent(StringUtils.EMPTY);
+                card.setShowQrcode(false);
+                card.setSort(index);
+                card.setTitle(StringUtils.truncate(item.getName(), 200));
+                card.setType(UploadTypeEnum.DEFAULT.getType());
+                card.setUrl(item.getUrl());
+                cardRepository.save(card);
+            } else {
+                Category category = BeanExtUtils.convert(item, Category::new);
+                category.setIcon("dashboard");
+                category.setSort(index);
+                category.setUpdateTime(LocalDateTime.parse(item.getCreateTime(), Consts.TIME_FORMATTER));
+                category.setValid(true);
+                categoryRepository.save(category);
+            }
+            index++;
+            saveImportBookmark(item.getChildren());
+        }
+    }
+
+    private void checkBookmarkNodes(BookmarkVo parent, List<BookmarkVo> children, int level) {
+        String curCheckFold;
+        if (parent != null) {
+            curCheckFold = "目录【" + parent.getFullName() + "】";
+            Assert.isTrue(parent.getLevel() < 4, curCheckFold + "层级结构已经超过三级");
+        } else {
+            curCheckFold = "根目录";
+        }
+        Assert.isTrue(children.stream().map(BookmarkVo::getType).distinct().count() <= 1,
+                curCheckFold + "下同时存在链接和目录");
+
+        for (BookmarkVo item : children) {
+            if (parent == null) {
+                item.setFullName(item.getName());
+                item.setPid("0");
+            } else {
+                item.setFullName(parent.getFullName() + "/" + item.getName());
+                item.setPid(parent.getId());
+            }
+            item.setLevel(level);
+            if (CollectionUtils.isNotEmpty(item.getChildren())) {
+                checkBookmarkNodes(item, item.getChildren(), level + 1);
+            }
+        }
     }
 
 }

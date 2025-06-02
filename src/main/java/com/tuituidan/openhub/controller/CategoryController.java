@@ -2,6 +2,7 @@ package com.tuituidan.openhub.controller;
 
 import com.tuituidan.openhub.bean.dto.CategoryDto;
 import com.tuituidan.openhub.bean.dto.SortDto;
+import com.tuituidan.openhub.bean.vo.BookmarkVo;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CategoryService;
@@ -130,6 +131,18 @@ public class CategoryController {
     @PatchMapping("/valid/{valid}")
     public ResponseEntity<Void> setValid(@RequestBody List<String> ids, @PathVariable Boolean valid) {
         categoryService.setValid(ids, valid);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * importBookmark
+     *
+     * @param datas datas
+     * @return Void
+     */
+    @PostMapping("/bookmark/actions/import")
+    public ResponseEntity<Void> importBookmark(@RequestBody List<BookmarkVo> datas) {
+        categoryService.importBookmark(datas);
         return ResponseEntity.noContent().build();
     }
 

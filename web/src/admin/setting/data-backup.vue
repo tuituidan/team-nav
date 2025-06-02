@@ -20,12 +20,18 @@
                        @file-change="revertUploadSuccess"
                        :limit="1">还原备份数据
         </file-uploader>
-        </div>
-        <el-divider content-position="left">浏览器书签导入</el-divider>
-        <el-row>
-          <el-button type="primary" icon="el-icon-upload" size="small">浏览器书签</el-button>
-        </el-row>
       </div>
+      <el-divider content-position="left">浏览器书签导入</el-divider>
+      <div class="backup-panel">
+        <file-uploader type="bookmark"
+                       accept="text/html"
+                       :file-list="[]"
+                       @file-change="bookmarkUploadSuccess"
+                       :limit="1">上传浏览器书签
+        </file-uploader>
+      </div>
+      <bookmark-preview ref="refBookmark"></bookmark-preview>
+    </div>
   </el-card>
 </template>
 
@@ -35,6 +41,7 @@ export default {
   components: {
     'com-tip': () => import('@/components/com-tip/index.vue'),
     'file-uploader': () => import('@/components/file-uploader/index.vue'),
+    'bookmark-preview': () => import('@/admin/setting/dialog/bookmark-preview.vue'),
   },
   data() {
     return {
@@ -60,6 +67,9 @@ export default {
         location.reload();
       }, 1000);
     },
+    bookmarkUploadSuccess(list){
+      this.$refs.refBookmark.open(list[0].path);
+    }
   }
 }
 </script>
