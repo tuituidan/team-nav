@@ -91,6 +91,10 @@
       }
     }
 
+    & .theme-dark .submenu-title-noDropdown.is-active {
+      color: rgb(64, 158, 255) !important;
+    }
+
     & .theme-dark .is-active > .el-submenu__title {
       color: $base-menu-color-active !important;
     }
