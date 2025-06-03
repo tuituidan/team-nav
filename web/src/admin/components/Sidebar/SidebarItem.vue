@@ -100,11 +100,15 @@ export default {
 </script>
 <style scoped lang="scss">
 .el-submenu .svg-icon {
-  width: 14px;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
   font-size: 14px;
 }
 .el-menu-item .svg-icon {
-  width: 14px;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
   font-size: 14px;
 }
 </style>
