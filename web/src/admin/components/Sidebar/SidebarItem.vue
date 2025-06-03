@@ -98,3 +98,13 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+.el-submenu .svg-icon {
+  width: 14px;
+  font-size: 14px;
+}
+.el-menu-item .svg-icon {
+  width: 14px;
+  font-size: 14px;
+}
+</style>
