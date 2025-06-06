@@ -70,6 +70,7 @@ export default {
       saveOption: {
         saveNotClear: false,
         saveKeepAdd: false,
+        allowEmpty: true,
       },
     }
   },
@@ -137,7 +138,7 @@ export default {
               color: this.$refs.refCardIcon.getRandomColor(),
             };
           }
-          if (!this.form.content) {
+          if (!this.form.content && false===this.saveOption.allowEmpty) {
             this.form.content = this.form.url || this.form.title;
           }
           this.$http.save('/api/v1/card', {...this.form})

@@ -94,6 +94,13 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-tooltip placement="top">
+        <div slot="content">
+          允许保存后内容栏完全为空，不使用链接和标题填充
+        </div>
+        <i class="el-icon-question"></i>
+      </el-tooltip>
+      <el-checkbox v-if="!Boolean(form.id)" v-model="saveOption.allowEmpty">保存后内容可空</el-checkbox>
       <el-checkbox v-if="!Boolean(form.id)" v-model="saveOption.saveKeepAdd">保存后不关闭</el-checkbox>
       <el-checkbox v-if="!Boolean(form.id)" v-model="saveOption.saveNotClear" style="margin-right: 25px">保存后不清空</el-checkbox>
       <el-button v-if="apply" type="success" @click="submitForm">通 过</el-button>
