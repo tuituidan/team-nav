@@ -29,7 +29,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -156,21 +155,11 @@ public class CardService {
         if (CollectionUtils.isEmpty(cards)) {
             return Collections.emptyMap();
         }
-        List<Function<CardVo, String>> tipsFunc = new ArrayList<>();
-        tipsFunc.add(CardVo::getTitle);
-        tipsFunc.add(CardVo::getContent);
-        boolean isLogin = SecurityUtils.isLogin();
-        if (isLogin) {
-            tipsFunc.add(CardVo::getPrivateContent);
-        }
-        tipsFunc.add(CardVo::getUrl);
+        String ignoreProperty = SecurityUtils.isLogin() ? null : "privateContent";
         Map<String, List<AttachmentVo>> attachmentMap = attachmentService.getCardAttachmentMap(cards);
         return cards.stream().map(item -> {
-            CardVo vo = BeanExtUtils.convert(item, CardVo::new);
+            CardVo vo = BeanExtUtils.convert(item, CardVo::new, ignoreProperty);
             cardTypeServiceFactory.getService(item.getType()).formatCardVo(vo);
-            vo.setTip(tipsFunc.stream().map(func -> func.apply(vo))
-                    .filter(StringUtils::isNotBlank).distinct()
-                    .collect(Collectors.joining("<br/>")));
             vo.setAttachments(attachmentMap.get(item.getId()));
             vo.setStar(false);
             return vo;

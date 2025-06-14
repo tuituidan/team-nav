@@ -29,7 +29,15 @@
           <i v-else class="el-icon-star-off card-star"
              @click="starHandler(card)"
              title="置为常用"></i>
-          <div v-html="card.tip"></div>
+          <div v-if="card.title" v-text="card.title"></div>
+          <div v-if="card.content" v-text="card.content"></div>
+          <div v-if="card.privateContent" style="color: #f56c6c" v-text="card.privateContent"></div>
+          <div v-if="card.url">
+            <el-link icon="el-icon-link"
+                     type="success"
+                     target="_blank"
+                     :href="card.url">{{card.url}}</el-link>
+          </div>
           <div v-if="card.showQrcode">
             <img :src="showQrcodeHandler(card.url)" alt=""/>
           </div>
