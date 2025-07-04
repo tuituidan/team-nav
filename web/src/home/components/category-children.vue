@@ -18,7 +18,10 @@
             </ivu-avatar>
             <div class="nav-card-content">
               <div v-text="card.title" class="card-title text-ellipsis"></div>
-              <div v-text="card.content" class="card-content text-ellipsis"></div>
+              <div v-if="card.type.startsWith('dynamic') && !card.content" class="card-content text-ellipsis">
+                <i class="el-icon-loading"></i>正在加载...
+              </div>
+              <div v-else v-text="card.content" class="card-content text-ellipsis"></div>
             </div>
           </div>
         </el-card>
@@ -31,7 +34,7 @@
              title="置为常用"></i>
           <div v-if="card.title" v-text="card.title"></div>
           <div v-if="card.content" v-text="card.content"></div>
-          <div v-if="card.privateContent" style="color: #f56c6c" v-text="card.privateContent"></div>
+          <div v-if="card.privateContent" class="text-danger" v-text="card.privateContent"></div>
           <div v-if="card.url">
             <el-link icon="el-icon-link"
                      type="success"

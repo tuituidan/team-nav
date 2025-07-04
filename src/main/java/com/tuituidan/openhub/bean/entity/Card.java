@@ -1,5 +1,6 @@
 package com.tuituidan.openhub.bean.entity;
 
+import com.tuituidan.openhub.bean.dto.CardDynamicBuilder;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
 import java.time.LocalDateTime;
@@ -62,6 +63,9 @@ public class Card implements ISortEntity<Card> {
 
     @Column(name = "zip", length = 600)
     private CardZipDto zip;
+
+    @Column(name = "dynamic_builder", length = 2000)
+    private CardDynamicBuilder dynamicBuilder;
 
     @Column(name = "has_attachment")
     private Boolean hasAttachment;

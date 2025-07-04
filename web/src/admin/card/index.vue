@@ -67,6 +67,9 @@
       <el-table-column label="序号" type="index" width="55" align="center"/>
       <el-table-column type="selection" width="50" align="center"/>
       <el-table-column label="分类" align="center" prop="categoryName" show-overflow-tooltip/>
+      <el-table-column label="卡片类型" align="center" prop="type" width="120"
+                       :formatter="(row, column, cellValue)=>$utils.transDict($store.getters.cardTypes, cellValue, ['id','name'])"
+                       show-overflow-tooltip/>
       <el-table-column label="图标" align="center" width="80" prop="icon" class-name="narrow-padding">
         <template slot-scope="scope">
           <ivu-avatar v-if="scope.row.icon.src"

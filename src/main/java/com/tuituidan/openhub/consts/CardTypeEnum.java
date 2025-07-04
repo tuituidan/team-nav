@@ -26,9 +26,13 @@ public enum CardTypeEnum {
      */
     ZIP("zip"),
     /**
-     * 文件
+     * 动态-http
      */
-    FILE("file");
+    DYNAMIC_HTTP("dynamic-http"),
+    /**
+     * 动态-sql
+     */
+    DYNAMIC_SQL("dynamic-sql");
 
     private String type;
 

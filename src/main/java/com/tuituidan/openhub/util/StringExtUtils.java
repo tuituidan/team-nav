@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
@@ -92,6 +94,19 @@ public class StringExtUtils {
         } catch (BadHanyuPinyinOutputFormatCombination ex) {
             log.error("汉语转拼音失败", ex);
             return StringUtils.EMPTY;
+        }
+    }
+
+    /**
+     * validSql
+     *
+     * @param sql sql
+     */
+    public static Statement getStatement(String sql) {
+        try {
+            return CCJSqlParserUtil.parse(sql);
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("sql校验失败", e);
         }
     }
 

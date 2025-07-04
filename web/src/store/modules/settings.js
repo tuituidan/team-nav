@@ -14,6 +14,24 @@ const state = {
   cardIconShape: storageSetting.cardIconShape || 'circle',
   cardSize: storageSetting.cardSize || 'small',
   version: {},
+  cardTypes: [
+    {
+      id: 'default',
+      name: '普通卡片',
+    },
+    {
+      id: 'zip',
+      name: '静态网站',
+    },
+    {
+      id: 'dynamic-http',
+      name: 'http动态卡片',
+    },
+    {
+      id: 'dynamic-sql',
+      name: 'sql动态卡片',
+    },
+  ],
 }
 const mutations = {
   CHANGE_SETTING: (state, {key, value}) => {

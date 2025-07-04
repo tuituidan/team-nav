@@ -1,6 +1,7 @@
 package com.tuituidan.openhub.bean.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tuituidan.openhub.bean.dto.CardDynamicBuilder;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
 import java.time.LocalDateTime;
@@ -44,6 +45,8 @@ public class CardVo {
     private CardZipDto zip;
 
     private Integer sort;
+
+    private CardDynamicBuilder dynamicBuilder;
 
     private List<AttachmentVo> attachments;
 

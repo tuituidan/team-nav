@@ -1,5 +1,5 @@
 import http from '@/plugins/http';
-import {buildStarCard, saveStarCard} from "@/utils";
+import {buildStarCard, saveStarCard, loadCardDynamicContent} from "@/utils";
 
 const state = {
   menus: [],
@@ -47,6 +47,7 @@ const actions = {
     return http.get(`/api/v1/card/tree?keywords=${keywords}`).then(res => {
       commit('CHANGE_DATA', res);
       commit('LOAD_STAR_CARD');
+      loadCardDynamicContent(state.datas);
       return res;
     });
   },

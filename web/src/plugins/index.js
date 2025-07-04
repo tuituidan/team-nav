@@ -2,6 +2,7 @@ import cache from './cache'
 import modal from './modal'
 import download from './download'
 import http from './http'
+import utils from './utils'
 
 export default {
   install(Vue) {
@@ -13,5 +14,7 @@ export default {
     Vue.prototype.$download = download
     // http请求
     Vue.prototype.$http = http
+    // utils
+    Vue.prototype.$utils = utils
   }
 }

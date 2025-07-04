@@ -8,6 +8,8 @@ export default {
     'category-select': () => import('@/components/category-select/index.vue'),
     'card-icon-select': () => import('@/components/card-icon-select/index.vue'),
     'file-uploader': () => import('@/components/file-uploader/index.vue'),
+    'card-http-builder': () => import('@/components/card-http-builder/index.vue'),
+    'card-sql-builder': () => import('@/components/card-sql-builder/index.vue'),
   },
   props: {
     apply: {
@@ -35,26 +37,10 @@ export default {
         showQrcode: false,
         icon: null,
         zip: null,
+        dynamicBuilder: null,
         attachmentIds: [],
         attachments: [],
       },
-      types: [
-        {
-          id: 'default',
-          name: '普通卡片',
-          disabled: false,
-        },
-        {
-          id: 'zip',
-          name: '静态网站',
-          disabled: false,
-        },
-        {
-          id: 'dynamic',
-          name: '动态卡片',
-          disabled: true,
-        },
-      ],
       // 表单校验
       rules: {
         category: [
@@ -63,9 +49,12 @@ export default {
         title: [
           {required: true, message: "标题不能为空", trigger: "blur"}
         ],
+        dynamicBuilder: [
+          {required: true, message: '动态构建内容不能为空'}
+        ],
         zip: [
           {required: true, message: '请上传网站zip文件'}
-        ]
+        ],
       },
       saveOption: {
         saveNotClear: false,
@@ -87,6 +76,8 @@ export default {
       } else {
         this.title = '申请卡片';
       }
+      console.log(JSON.stringify(this.form))
+      console.log(JSON.stringify(item))
       this.show = true;
       this.$nextTick(() => {
         this.$refs.refCategory.init();
@@ -137,7 +128,7 @@ export default {
               color: this.$refs.refCardIcon.getRandomColor(),
             };
           }
-          if (!this.form.content) {
+          if (!this.form.content && !this.form.type.startsWith('dynamic')) {
             this.form.content = this.form.url || this.form.title;
           }
           this.$http.save('/api/v1/card', {...this.form})
@@ -153,6 +144,7 @@ export default {
                   this.form.privateContent = '';
                   this.form.showQrcode = false;
                   this.form.zip = null;
+                  this.form.dynamicBuilder = null;
                   this.form.attachmentIds = [];
                   this.form.attachments = [];
                 }

@@ -45,4 +45,6 @@ public class CardDto {
 
     private String[] attachmentIds;
 
+    private CardDynamicBuilder dynamicBuilder;
+
 }

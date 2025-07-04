@@ -1,6 +1,9 @@
 package com.tuituidan.openhub.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSONPath;
 import com.tuituidan.openhub.bean.dto.CardDto;
+import com.tuituidan.openhub.bean.dto.CardDynamicBuilder;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Card;
@@ -10,6 +13,7 @@ import com.tuituidan.openhub.bean.vo.AttachmentVo;
 import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.bean.vo.HomeDataVo;
+import com.tuituidan.openhub.consts.CardTypeEnum;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.repository.UserRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
@@ -39,7 +43,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * CardService.
@@ -69,6 +77,9 @@ public class CardService {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    private RestTemplate restTemplate;
 
     /**
      * 首页查询
@@ -161,6 +172,7 @@ public class CardService {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new, ignoreProperty);
             cardTypeServiceFactory.getService(item.getType()).formatCardVo(vo);
             vo.setAttachments(attachmentMap.get(item.getId()));
+            vo.setContent(StringUtils.defaultString(vo.getContent()));
             vo.setStar(false);
             return vo;
         }).collect(Collectors.groupingBy(CardVo::getCategory));
@@ -300,6 +312,31 @@ public class CardService {
         List<Card> cards = cardRepository.findAllById(ids);
         cards.forEach(item -> item.setAudit(true));
         cardRepository.saveAll(cards);
+    }
+
+    /**
+     * 获取动态卡片内容
+     *
+     * @param id id
+     * @return string
+     */
+    public String cardDynamicContent(String id) {
+        Card card = cardRepository.getReferenceById(id);
+        if (CardTypeEnum.DYNAMIC_HTTP.getType().equals(card.getType())) {
+            CardDynamicBuilder builder = card.getDynamicBuilder();
+            Assert.notNull(builder, "数据异常，动态内容构建为空");
+            HttpMethod httpMethod = HttpMethod.resolve(builder.getHttpMethod());
+            Assert.notNull(httpMethod, "http-method异常");
+            ResponseEntity<String> exchange = restTemplate.exchange(
+                    HttpUtils.buildQueryParams(builder.getUrl(), builder.getQueryParams()),
+                    httpMethod, HttpUtils.buildHttpEntity(builder), String.class);
+            Assert.hasText(exchange.getBody(), "接口未返回数据");
+            if (JSON.isValid(exchange.getBody()) && StringUtils.isNotBlank(builder.getResultExp())) {
+                return (String) JSONPath.eval(exchange.getBody(), builder.getResultExp());
+            }
+            return exchange.getBody();
+        }
+        return StringUtils.EMPTY;
     }
 
 }

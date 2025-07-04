@@ -140,4 +140,14 @@ public class CardController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * 首页获取动态
+     *
+     * @param id id
+     * @return List
+     */
+    @GetMapping("/card/{id}/dynamic/content")
+    public ResponseEntity<String> cardDynamicContent(@PathVariable String id) {
+        return ResponseEntity.ok(cardService.cardDynamicContent(id));
+    }
 }

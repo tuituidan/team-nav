@@ -1,3 +1,5 @@
+import http from '@/plugins/http';
+
 export function saveStarCard(cardIds) {
   if (Array.isArray(cardIds) && cardIds.length > 0) {
     const sets = new Set(cardIds);
@@ -15,7 +17,7 @@ export function buildStarCard(datas) {
   const ids = localStorage.starCardIds.split(',');
   const stars = [];
   for (const data of datas) {
-    if(data.id === '1'){
+    if (data.id === '1') {
       continue;
     }
     if (data.cards) {
@@ -50,6 +52,29 @@ const cardStar = (ids, cards, stars) => {
     if (ids.includes(card.id)) {
       card.star = true;
       stars.push({...card})
+    }
+  }
+}
+
+export function loadCardDynamicContent(categories) {
+  for (let category of categories) {
+    if (category.children && category.children.length > 0) {
+      loadCardDynamicContent(category.children)
+    }
+    doLoadCardDynamicContent(category.cards)
+  }
+}
+
+function doLoadCardDynamicContent(cards) {
+  if (!cards || (Array.isArray(cards) && cards.length <= 0)) {
+    return
+  }
+  for (let card of cards) {
+    if (card.type.startsWith('dynamic') && !card.content) {
+      http.get(`/api/v1/card/${card.id}/dynamic/content`)
+        .then(res => {
+          card.content = res
+        })
     }
   }
 }
