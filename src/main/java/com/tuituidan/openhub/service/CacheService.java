@@ -5,9 +5,11 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.tuituidan.openhub.bean.entity.Category;
 import com.tuituidan.openhub.bean.entity.Role;
 import com.tuituidan.openhub.bean.entity.RoleCategory;
+import com.tuituidan.openhub.bean.entity.SysDatasource;
 import com.tuituidan.openhub.repository.CategoryRepository;
 import com.tuituidan.openhub.repository.RoleCategoryRepository;
 import com.tuituidan.openhub.repository.RoleRepository;
+import com.tuituidan.openhub.repository.DatasourceRepository;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +22,8 @@ import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,6 +45,9 @@ public class CacheService implements ApplicationRunner {
     @Getter
     private final Cache<String, Set<String>> categoryRolesCache = Caffeine.newBuilder().build();
 
+    @Getter
+    private final Cache<String, JdbcTemplate> jdbcTemplateCache = Caffeine.newBuilder().build();
+
     @Resource
     private CategoryRepository categoryRepository;
 
@@ -49,6 +56,9 @@ public class CacheService implements ApplicationRunner {
 
     @Resource
     private RoleCategoryRepository roleCategoryRepository;
+
+    @Resource
+    private DatasourceRepository sysDatasourceRepository;
 
     /**
      * getCategory
@@ -86,6 +96,25 @@ public class CacheService implements ApplicationRunner {
             return Collections.emptyList();
         }
         return roleIds.stream().map(this::getRole).collect(Collectors.toList());
+    }
+
+    /**
+     * getCategory
+     *
+     * @param id id
+     * @return Category
+     */
+    public JdbcTemplate getJdbcTemplate(String id) {
+        return jdbcTemplateCache.get(id, key -> {
+            SysDatasource sysDatasource = sysDatasourceRepository.findById(key)
+                    .orElseThrow(() -> new NullPointerException("数据源不存在"));
+            return new JdbcTemplate(DataSourceBuilder.create()
+                    .url(sysDatasource.getJdbcUrl())
+                    .driverClassName(sysDatasource.getDriverClassName())
+                    .username(sysDatasource.getUsername())
+                    .password(sysDatasource.getPassword())
+                    .build());
+        });
     }
 
     @Override

@@ -9,11 +9,15 @@ import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.consts.AuthTypeEnum;
 import com.tuituidan.openhub.consts.CardTypeEnum;
+import com.tuituidan.openhub.service.CacheService;
 import com.tuituidan.openhub.util.FileExtUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
+import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectItem;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Elements;
@@ -30,6 +34,9 @@ import org.springframework.util.Assert;
 @Service
 @CardType({CardTypeEnum.DYNAMIC_HTTP, CardTypeEnum.DYNAMIC_SQL})
 public class CardTypeDynamicServiceImpl implements ICardTypeService {
+
+    @Resource
+    private CacheService cacheService;
 
     @Override
     public void formatCardVo(CardVo cardVo) {
@@ -61,13 +68,17 @@ public class CardTypeDynamicServiceImpl implements ICardTypeService {
             if (AuthTypeEnum.JWT.getType().equals(dynamicBuilder.getAuthType())) {
                 Assert.hasText(dynamicBuilder.getJwtSecret(), "jwt认证的密钥不能为空");
             }
+            return;
         }
         if (CardTypeEnum.DYNAMIC_SQL.getType().equals(card.getType())) {
             CardDynamicBuilder dynamicBuilder = card.getDynamicBuilder();
             Assert.hasText(dynamicBuilder.getSql(), "sql语句不能为空");
             Statement statement = StringExtUtils.getStatement(dynamicBuilder.getSql());
             Assert.isTrue(statement instanceof Select, "sql必须是一个查询语句");
-            // todo 判断必须只返回一列
+            List<SelectItem<?>> selectItems = ((Select) statement).getPlainSelect().getSelectItems();
+            Assert.isTrue(selectItems.size() == 1, "查询语句仅支持返回一列文本");
+            Assert.isTrue(!selectItems.get(0).toString().contains("*"), "查询语句仅支持返回一列，不能带*");
+            cacheService.getJdbcTemplateCache().invalidate(dynamicBuilder.getDatasourceId());
         }
     }
 

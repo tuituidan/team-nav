@@ -26,6 +26,7 @@ spring:
       - /api/v1/category/tree
       - /api/v1/app/version
       - /api/v1/user/password
+      - /api/v1/datasource
     permit-url:
       - /docs/**
       - /assets/**

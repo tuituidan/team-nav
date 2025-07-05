@@ -52,7 +52,7 @@
         </div>
 
         <div v-if="value.authType === 'jwt'">
-          <el-select v-model="value.jwtAlgorithm" placeholder="请输入选择加密算法" clearable
+          <el-select v-model="value.jwtAlgorithm" placeholder="请选择加密算法" clearable
                      style="width: 100%; margin-bottom: 10px">
             <el-option v-for="algorithm in signatureAlgorithms"
                        :key="algorithm"

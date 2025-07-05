@@ -238,7 +238,8 @@ public class HttpUtils {
         if (JsonFactory.FORMAT_NAME_JSON.equalsIgnoreCase(dynamicBuilder.getBodyType())) {
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
             return new HttpEntity<>(dynamicBuilder.getBodyJsonData(), httpHeaders);
-        } else if (FileUploadBase.FORM_DATA.equalsIgnoreCase(dynamicBuilder.getBodyType())) {
+        }
+        if (FileUploadBase.FORM_DATA.equalsIgnoreCase(dynamicBuilder.getBodyType())) {
             httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
             return new HttpEntity<>(paramMap, httpHeaders);

@@ -45,6 +45,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
@@ -169,6 +170,8 @@ public class CardService {
         String ignoreProperty = SecurityUtils.isLogin() ? null : "privateContent";
         Map<String, List<AttachmentVo>> attachmentMap = attachmentService.getCardAttachmentMap(cards);
         return cards.stream().map(item -> {
+            // 敏感信息不暴露
+            item.setDynamicBuilder(null);
             CardVo vo = BeanExtUtils.convert(item, CardVo::new, ignoreProperty);
             cardTypeServiceFactory.getService(item.getType()).formatCardVo(vo);
             vo.setAttachments(attachmentMap.get(item.getId()));
@@ -321,20 +324,42 @@ public class CardService {
      * @return string
      */
     public String cardDynamicContent(String id) {
-        Card card = cardRepository.getReferenceById(id);
+        Card card = cardRepository.findById(id).orElseThrow(NullPointerException::new);
         if (CardTypeEnum.DYNAMIC_HTTP.getType().equals(card.getType())) {
             CardDynamicBuilder builder = card.getDynamicBuilder();
             Assert.notNull(builder, "数据异常，动态内容构建为空");
             HttpMethod httpMethod = HttpMethod.resolve(builder.getHttpMethod());
             Assert.notNull(httpMethod, "http-method异常");
-            ResponseEntity<String> exchange = restTemplate.exchange(
-                    HttpUtils.buildQueryParams(builder.getUrl(), builder.getQueryParams()),
-                    httpMethod, HttpUtils.buildHttpEntity(builder), String.class);
-            Assert.hasText(exchange.getBody(), "接口未返回数据");
-            if (JSON.isValid(exchange.getBody()) && StringUtils.isNotBlank(builder.getResultExp())) {
-                return (String) JSONPath.eval(exchange.getBody(), builder.getResultExp());
+            String body;
+            try {
+                ResponseEntity<String> exchange = restTemplate.exchange(
+                        HttpUtils.buildQueryParams(builder.getUrl(), builder.getQueryParams()),
+                        httpMethod, HttpUtils.buildHttpEntity(builder), String.class);
+                Assert.hasText(exchange.getBody(), "接口未返回数据");
+                body = exchange.getBody();
+            } catch (Exception ex) {
+                log.error("http接口请求失败", ex);
+                return ex.getMessage();
             }
-            return exchange.getBody();
+            if (JSON.isValid(body) && StringUtils.isNotBlank(builder.getResultExp())) {
+                return (String) JSONPath.eval(body, builder.getResultExp());
+            }
+            return body;
+        }
+        if (CardTypeEnum.DYNAMIC_SQL.getType().equals(card.getType())) {
+            CardDynamicBuilder builder = card.getDynamicBuilder();
+            Assert.notNull(builder, "数据异常，动态内容构建为空");
+            try {
+                JdbcTemplate jdbcTemplate = cacheService.getJdbcTemplate(builder.getDatasourceId());
+                List<String> results = jdbcTemplate.queryForList(builder.getSql(), String.class);
+                if (CollectionUtils.isEmpty(results)) {
+                    return StringUtils.EMPTY;
+                }
+                return results.get(0);
+            } catch (Exception ex) {
+                log.error("数据库查询失败", ex);
+                return ex.getMessage();
+            }
         }
         return StringUtils.EMPTY;
     }
