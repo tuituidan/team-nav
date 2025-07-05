@@ -12,7 +12,7 @@
             <div slot="content">
               普通卡片：内容型卡片，通过添加链接跳转对应网址<br/>
               静态网站：上传静态网站的zip压缩包，自动生成可访问链接<br/>
-              http动态卡片：通过http接口动态获取的卡片显示内容
+              http动态卡片：通过http接口动态获取的卡片显示内容<br/>
               sql动态卡片：通过sql动态获取的卡片显示内容
             </div>
             <i class="el-icon-question"></i>
