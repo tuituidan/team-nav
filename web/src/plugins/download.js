@@ -4,7 +4,7 @@ import {saveAs} from 'file-saver'
 
 export default {
   download(url, downloadName) {
-    return http.get(url, {responseType: 'blob'})
+    return http.get(url, {responseType: 'blob', timeout: 300000})
       .then((res) => {
         // 从content-disposition中获取文件名
         const disposition = res.headers['content-disposition'];

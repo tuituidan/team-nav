@@ -57,6 +57,7 @@ service.interceptors.response.use(res => {
     return Promise.reject(err)
   }
 )
-service.save = (url, data) => data.id ? service.patch(`${url}/${data.id}`, data) : service.post(url, data);
+service.save = (url, data, config) => data.id
+  ? service.patch(`${url}/${data.id}`, data, config) : service.post(url, data, config);
 
 export default service

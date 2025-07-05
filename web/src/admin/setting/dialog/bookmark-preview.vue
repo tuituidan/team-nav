@@ -74,7 +74,7 @@ export default {
       children.splice(index, 1);
     },
     submitForm() {
-      this.$http.post('/api/v1/category/bookmark/actions/import', this.datas)
+      this.$http.post('/api/v1/category/bookmark/actions/import', this.datas, {timeout: 300000})
       .then(()=>{
         this.$modal.msgSuccess('保存成功');
         this.show = false;

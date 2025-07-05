@@ -131,7 +131,8 @@ export default {
           if (!this.form.content && !this.form.type.startsWith('dynamic')) {
             this.form.content = this.form.url || this.form.title;
           }
-          this.$http.save('/api/v1/card', {...this.form})
+
+          this.$http.save('/api/v1/card', {...this.form}, {timeout: 300000})
             .then(() => {
               this.$modal.msgSuccess('保存成功');
               if (this.form.id) {
