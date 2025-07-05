@@ -23,7 +23,7 @@ public enum DbTypeEnum {
      */
     MYSQL("mysql", "com.mysql.cj.jdbc.Driver"),
     POSTGRESQL("postgresql", "org.postgresql.Driver"),
-    SQLSERVER("sqlserver", "");
+    SQLSERVER("sqlserver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
     private static final Map<String, DbTypeEnum> DATA_MAP = Arrays.stream(values())
             .collect(Collectors.toMap(DbTypeEnum::getType, Function.identity()));
