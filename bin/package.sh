@@ -1,6 +1,9 @@
 #! /bin/bash
 cd ..
 cd web
-rm -rf dist
+npm run build
 cd ..
-mvn clean package -DskipTests -Dmaven.npm.skip=false
+mvn clean compile -DskipTests
+cp -rf web/dist/* target/classes/static/
+mvn package -DskipTests
+echo 打包完成

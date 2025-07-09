@@ -17,12 +17,17 @@ export default {
           const reader = new FileReader();
           reader.readAsText(err.response.data);
           reader.onload = () => {
-            const {message} = JSON.parse(reader.result);
-            Message.error(message || '下载失败');
+            try {
+              const {message} = JSON.parse(reader.result);
+              Message.error(message || '下载失败');
+            }catch (e){
+              Message.error(reader.result || '下载失败');
+            }
           };
-          return;
+          return Promise.reject('下载失败');
         }
         Message.error('下载失败');
+        return Promise.reject('下载失败');
       })
   },
   saveAs(text, name, opts) {

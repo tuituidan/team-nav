@@ -53,7 +53,9 @@ service.interceptors.response.use(res => {
       location.href = '/';
       return Promise.reject(err)
     }
-    Message.error(err.response.data);
+    if(err.response.data instanceof String){
+      Message.error(err.response.data);
+    }
     return Promise.reject(err)
   }
 )
