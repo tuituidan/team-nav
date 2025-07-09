@@ -87,6 +87,9 @@ public class ZipUtils {
         try (ZipFile zipFile = new ZipFile(zipPath)) {
             for (String path : paths) {
                 File file = new File(path);
+                if (!file.exists()) {
+                    continue;
+                }
                 if (file.isDirectory()) {
                     zipFile.addFolder(file);
                 } else {
