@@ -11,7 +11,7 @@
         <el-input v-model="form.host" placeholder="请输入邮箱服务地址" maxlength="100" v-trim/>
       </el-form-item>
       <el-form-item label="邮箱服务协议" prop="host">
-        <el-input v-model="form.protocol" placeholder="请输入邮箱服务地址" maxlength="100" v-trim/>
+        <el-input v-model="form.protocol" placeholder="请输入邮箱服务协议" maxlength="100" v-trim/>
       </el-form-item>
       <el-form-item label="邮箱服务端口" prop="port">
         <el-input-number v-model="form.port"

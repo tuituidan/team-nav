@@ -126,7 +126,7 @@ export default {
       this.$refs.uploader.submit();
     },
     handleEdit(file) {
-      this.$prompt('', '', {
+      this.$prompt('', '图标名称修改', {
         inputPlaceholder: '请输入要修改的图标名称...',
         inputValue: file.name,
         closeOnClickModal: false,
