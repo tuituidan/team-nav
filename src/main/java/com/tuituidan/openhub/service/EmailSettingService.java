@@ -56,7 +56,9 @@ public class EmailSettingService implements ApplicationRunner {
         sender.setProtocol(setting.getProtocol());
         sender.setDefaultEncoding(StandardCharsets.UTF_8.name());
         Properties properties = new Properties();
-        properties.setProperty("mail.smtp.ocketFactoryClass", "javax.net.ssl.SSLSocketFactory");
+        properties.setProperty("mail.smtp.ssl.trust", "*");
+        properties.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
+        properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         sender.setJavaMailProperties(properties);
         this.javaMailSender = sender;
     }
