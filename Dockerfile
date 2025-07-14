@@ -1,4 +1,4 @@
-FROM openjdk:8u201-alpine
+FROM eclipse-temurin:8-jdk-alpine
 #维护者
 MAINTAINER tuituidan@163.com
 
