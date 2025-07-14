@@ -14,14 +14,6 @@ import com.tuituidan.openhub.repository.UserStarRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import javax.persistence.criteria.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -42,6 +34,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.Predicate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * UserService.
@@ -94,9 +91,9 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     /**
      * 分页查询用户
      *
-     * @param keywords keywords
+     * @param keywords  keywords
      * @param pageIndex pageIndex
-     * @param pageSize pageSize
+     * @param pageSize  pageSize
      * @return Page
      */
     public Page<UserVo> selectPage(String keywords, Integer pageIndex, Integer pageSize) {
@@ -138,13 +135,14 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     /**
      * 保存
      *
-     * @param id id
+     * @param id      id
      * @param userDto userDto
      */
     public void save(String id, UserDto userDto) {
         Assert.isTrue(!StringUtils.equalsIgnoreCase(userDto.getUsername(), "admin"), "默认管理员不可操作");
         User user;
         User exitUser = userRepository.findByUsername(userDto.getUsername());
+        //Id为空，说明用户是新增用户
         if (StringUtils.isBlank(id)) {
             Assert.isTrue(exitUser == null, "登录账号已存在");
             user = BeanExtUtils.convert(userDto, User::new);
@@ -193,7 +191,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     /**
      * changePassword
      *
-     * @param userId userId
+     * @param userId         userId
      * @param changePassword changePassword
      */
     public void changePassword(String userId, ChangePassword changePassword) {
@@ -220,7 +218,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     /**
      * changeStatus
      *
-     * @param id id
+     * @param id     id
      * @param status status
      */
     public void changeStatus(String id, String status) {
@@ -231,7 +229,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
     /**
      * userStarCard
      *
-     * @param userId userId
+     * @param userId  userId
      * @param cardIds cardIds
      */
     public void userStarCard(String userId, String[] cardIds) {

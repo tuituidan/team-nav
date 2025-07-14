@@ -1,8 +1,9 @@
 package com.tuituidan.openhub.config;
 
 import com.tuituidan.openhub.service.UserService;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+import com.tuituidan.openhub.service.thirdpart.WechatOAuth2UserLoginService;
+import com.tuituidan.openhub.service.thirdpart.WechatOAuth2AccessTokenResponseClient;
+import com.tuituidan.openhub.service.thirdpart.WechatOAuth2AuthorizationRequestResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * SecurityConfig.
  *
@@ -30,13 +34,18 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
 public class SecurityConfig {
 
     @Resource
-    private SecurityProperties securityProperties;
+    WechatOAuth2AccessTokenResponseClient wechatOAuth2AccessTokenResponseClient;
+    @Resource
+    WechatOAuth2AuthorizationRequestResolver resolver;
 
+    @Resource
+    private SecurityProperties securityProperties;
     @Resource
     private UserService userService;
-
     @Resource
     private LoginSuccessHandler loginSuccessHandler;
+    @Resource
+    private WechatOAuth2UserLoginService wechatOAuth2UserLoginService;
 
     /**
      * filterChain
@@ -51,7 +60,23 @@ public class SecurityConfig {
         http.csrf().disable();
         http.userDetailsService(userService);
 
+        //账号密码登录
         setLogin(http.formLogin());
+        // OAuth2 登录
+        http.oauth2Login(oauth2 ->
+                oauth2.authorizationEndpoint(authorizationEndpointConfig ->
+                                authorizationEndpointConfig.
+                                        authorizationRequestResolver(resolver))
+                        .tokenEndpoint(token -> token
+                                .accessTokenResponseClient(wechatOAuth2AccessTokenResponseClient.accessTokenResponseClient())
+                        )
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(wechatOAuth2UserLoginService)
+                        )
+                        .defaultSuccessUrl("/", true)
+        );
+
+
         setLogout(http.logout());
 
         http.authorizeRequests()

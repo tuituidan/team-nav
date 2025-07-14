@@ -1,4 +1,8 @@
 spring:
+  config:
+    import:
+      - application-oauth2.yml
+
   profiles:
     active: h2
   jpa:
@@ -40,7 +44,7 @@ spring:
       - /api/v1/login/user
       - /api/v1/user/star/card
       - /login
-  jackson:
+      - /login/oauth2/code/wechat
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
     default-property-inclusion: non_null

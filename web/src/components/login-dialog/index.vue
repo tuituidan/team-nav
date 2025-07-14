@@ -49,6 +49,9 @@
             </el-button>
           </el-form-item>
         </el-col>
+        <hr>
+        <wechat-login></wechat-login>
+
       </el-row>
     </el-form>
   </el-dialog>
@@ -57,10 +60,13 @@
 <script>
 // 是否显示登录弹窗
 
+import WechatLogin from '@/admin/thirdpart/wechat/index.vue'
+
 export let isRelogin = {show: false};
 
 export default {
   name: "login-dialog-index",
+  components: { WechatLogin },
   data() {
     return {
       show: false,
