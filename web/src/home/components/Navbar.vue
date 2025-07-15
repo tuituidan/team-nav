@@ -105,7 +105,12 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('user/LogOut').then(() => {
+
+
+
+
           this.$store.dispatch('settings/loadVersion');
+
         })
       }).catch(() => {
       });

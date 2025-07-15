@@ -61,8 +61,18 @@ const actions = {
 
   // 退出系统
   LogOut({commit, state}) {
+    // 清空 localStorage 和 sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // // 强制刷新页面
+    // // 跳转到主页并强制刷新
+    window.location.href = '/';
+    window.location.reload(true);
+    
     return http.post('/logout').then(() => {
       window.localStorage.userLogout = true;
+
     })
   },
 }
